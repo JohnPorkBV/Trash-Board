@@ -1,7 +1,54 @@
 ﻿@page "/"
+@using TrashBoard.Models
+@inject TrashBoard.Services.ITrashDataService DataService
 
-<PageTitle>Home</PageTitle>
+<h3>Trash Detections</h3>
 
-<h1>Hello, world!</h1>
+@if (trashDetections == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!trashDetections.Any())
+{
+    <p>No trash detections found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Object</th>
+                <th>Confidence</th>
+                <th>Temp (°C)</th>
+                <th>Humidity</th>
+                <th>Precip</th>
+                <th>Wind</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in trashDetections)
+            {
+                <tr>
+                    <td>@item.Timestamp</td>
+                    <td>@item.DetectedObject</td>
+                    <td>@item.ConfidenceScore</td>
+                    <td>@item.Temp</td>
+                    <td>@item.Humidity</td>
+                    <td>@item.Precipitation</td>
+                    <td>@item.Windforce</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
-Welcome to your new app.
+@code {
+    private IEnumerable<TrashDetection>? trashDetections;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        trashDetections = await DataService.GetAllAsync();
+    }
+}

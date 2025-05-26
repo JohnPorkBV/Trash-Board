@@ -7,7 +7,7 @@ namespace TrashBoard.Models
         public int Id { get; set; }
 
         public string DetectedObject { get; set; } = string.Empty;
-        public float ConfidenceScore { get; set; }
+        public string ConfidenceScore { get; set; }
 
         public DateTime Timestamp { get; set; }
         public DateTime Date { get; set; }
