@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Trash-Board</RootNamespace>
+    <RootNamespace>TrashBoard</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
     <UserSecretsId>afa0bd1d-9685-448e-a6a1-650cf40b4c3a</UserSecretsId>
   </PropertyGroup>

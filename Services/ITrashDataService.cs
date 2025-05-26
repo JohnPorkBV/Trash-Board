@@ -1,6 +1,6 @@
-﻿using Trash_Board.Models;
+﻿using TrashBoard.Models;
 
-namespace Trash_Board.Services
+namespace TrashBoard.Services
 {
     public interface ITrashDataService
     {

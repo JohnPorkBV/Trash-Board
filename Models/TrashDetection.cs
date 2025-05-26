@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Trash_Board.Models
+namespace TrashBoard.Models
 {
     public class TrashDetection
     {

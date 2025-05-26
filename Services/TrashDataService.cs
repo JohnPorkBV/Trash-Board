@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Trash_Board.Data;
-using Trash_Board.Models;
-using Trash_Board.Services;
+using TrashBoard.Data;
+using TrashBoard.Models;
+using TrashBoard.Services;
 
-namespace Trash_Board.Services
+namespace TrashBoard.Services
 {
     public class TrashDataService : ITrashDataService
     {

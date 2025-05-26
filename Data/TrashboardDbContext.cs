@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Trash_Board.Models;
+using TrashBoard.Models;
 
-namespace Trash_Board.Data
+namespace TrashBoard.Data
 {
     public class TrashboardDbContext : DbContext
     {

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Trash_Board.Components;
-using Trash_Board.Data;
-using Trash_Board.Services;
+using TrashBoard.Components;
+using TrashBoard.Data;
+using TrashBoard.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");

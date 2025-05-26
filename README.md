@@ -1,1 +1,1 @@
-# Trash-Board
+# TrashBoard
