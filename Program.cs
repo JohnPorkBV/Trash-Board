@@ -1,10 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Trash_Board.Components;
+using Trash_Board.Data;
+using Trash_Board.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+.AddInteractiveServerComponents();
+
+// DB context
+builder.Services.AddDbContextFactory<TrashboardDbContext>(options =>
+    options.UseSqlServer(sqlConnectionString));
+
+builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 
 var app = builder.Build();
 
