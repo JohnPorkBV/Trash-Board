@@ -9,8 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      SqlConnectionLocal: ${{ secrets.SQLCONNECTIONLOCAL }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
