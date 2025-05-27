@@ -1,0 +1,17 @@
+name: Deploy to Portainer
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  trigger_portainer_webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Call Portainer webhook to update stack
+      env:
+        WEBHOOK_URL: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+      run: |
+        curl -X POST $WEBHOOK_URL
