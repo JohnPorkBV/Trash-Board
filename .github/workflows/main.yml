@@ -6,8 +6,10 @@ on:
       - Dev
 
 jobs:
-  build-test-deploy:
+  build:
     runs-on: ubuntu-latest
+    env:
+      SqlConnectionLocal: ${{ secrets.SQLCONNECTIONLOCAL }}
 
     steps:
       - name: Checkout repository
@@ -23,10 +25,21 @@ jobs:
 
       - name: Build project
         run: dotnet build --no-restore --configuration Release
-
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      SqlConnectionLocal: ${{ secrets.SQLCONNECTIONLOCAL }}
+    
+    steps:
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release --verbosity normal
-
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
       - name: Deploy to Portainer via webhook
         if: success()
         run: curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL }}
