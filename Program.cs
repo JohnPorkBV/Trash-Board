@@ -17,6 +17,10 @@ builder.Services.AddDbContextFactory<TrashboardDbContext>(options =>
 
 builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 
+
+// Bootstrap
+builder.Services.AddBlazorBootstrap();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
