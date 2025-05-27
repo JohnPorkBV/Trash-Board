@@ -3,7 +3,8 @@ name: Deploy to Portainer
 on:
   push:
     branches:
-      - dev
+      - main
+      - Dev
 
 jobs:
   trigger_portainer_webhook:
