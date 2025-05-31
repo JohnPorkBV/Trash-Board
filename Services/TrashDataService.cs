@@ -32,6 +32,8 @@ namespace TrashBoard.Services
             if (!string.IsNullOrEmpty(trashType))
                 query = query.Where(t => t.DetectedObject == trashType);
 
+            query = query.OrderByDescending(t => t.Timestamp);
+
             return await query.ToListAsync();
         }
 
