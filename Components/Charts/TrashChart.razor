@@ -18,26 +18,54 @@ else
     private LineChart lineChart = default!;
     private List<TrashDetection> detections = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private bool chartInitialized = false;
+    private bool chartNeedsUpdate = false;
+
+    protected override Task OnParametersSetAsync()
     {
-        if (firstRender && TrashDetections != null)
+        if (TrashDetections is not null && TrashDetections.Any())
         {
             detections = TrashDetections.ToList();
-            StateHasChanged();
-            // await RenderChartAsync();
+            chartNeedsUpdate = true;
         }
-        if (lineChart is not null && detections != null && detections.Any())
-        {
-            await RenderChartAsync();
 
-        }
+        return Task.CompletedTask;
     }
 
-    private async Task RenderChartAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (lineChart is null || !chartNeedsUpdate || detections.Count == 0)
+            return;
+
+        if (!chartInitialized)
+        {
+            await InitializeChartAsync();
+            chartInitialized = true;
+        }
+        else
+        {
+            await UpdateChartAsync();
+        }
+
+        chartNeedsUpdate = false;
+    }
+
+    private async Task InitializeChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await lineChart.InitializeAsync(data, options);
+    }
+
+    private async Task UpdateChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await lineChart.UpdateAsync(data, options);
+    }
+
+    private (ChartData, LineChartOptions) BuildChartDataAndOptions()
     {
         int totalItems = detections.Count;
 
-        // Choose a bucket size
         TimeSpan bucketSize = totalItems switch
         {
             <= 20 => TimeSpan.FromMinutes(1),
@@ -51,26 +79,19 @@ else
             _ => TimeSpan.FromDays(7)
         };
 
+        string labelFormat = bucketSize <= TimeSpan.FromHours(12) ? "HH:mm" : "yyyy-MM-dd";
 
-        // Align timestamps to bucket
-        DateTime start = detections.Min(d => d.Date);
+        DateTime start = detections.Min(d => d.Timestamp);
+
         var grouped = detections
             .GroupBy(d =>
             {
-                var elapsed = d.Date - start;
-                var bucketIndex = (int)(elapsed.Ticks / bucketSize.Ticks);
+                var elapsedTicks = d.Timestamp.Ticks - start.Ticks;
+                var bucketIndex = elapsedTicks / bucketSize.Ticks;
                 return start.AddTicks(bucketIndex * bucketSize.Ticks);
             })
             .OrderBy(g => g.Key)
             .ToList();
-
-        // Format label based on bucket size
-        string labelFormat = bucketSize.TotalDays switch
-        {
-            1 => "yyyy-MM-dd HH:mm",
-            7 => "yyyy-MM-dd",
-            _ => "'Week of' yyyy-MM-dd"
-        };
 
         var labels = grouped.Select(g => g.Key.ToString(labelFormat)).ToList();
         var dataPoints = grouped.Select(g => (double?)g.Count()).ToList();
@@ -79,18 +100,18 @@ else
             {
                 Labels = labels,
                 Datasets = new List<IChartDataset>
-                {
+            {
                 new LineChartDataset
                 {
-                Label = "Trash Detections",
-                Data = dataPoints,
-                BackgroundColor = "rgba(54, 162, 235, 0.2)",
-                BorderColor = "rgba(54, 162, 235, 1)",
-                BorderWidth = 2,
-                PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
-                PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
+                    Label = "Trash Detections",
+                    Data = dataPoints,
+                    BackgroundColor = "rgba(54, 162, 235, 0.2)",
+                    BorderColor = "rgba(54, 162, 235, 1)",
+                    BorderWidth = 2,
+                    PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
+                    PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
                 }
-                }
+            }
             };
 
         var options = new LineChartOptions
@@ -127,6 +148,6 @@ else
                 }
             };
 
-        await lineChart.InitializeAsync(data, options);
+        return (data, options);
     }
 }

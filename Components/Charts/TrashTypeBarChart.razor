@@ -18,24 +18,54 @@ else
     private BarChart barChart = default!;
     private Dictionary<string, int> GroupedCounts = new();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private bool chartInitialized = false;
+    private bool chartNeedsUpdate = false;
+
+    protected override Task OnParametersSetAsync()
     {
-        if (firstRender && TrashDetections != null)
+        if (TrashDetections is not null)
         {
             GroupedCounts = TrashDetections
                 .GroupBy(d => d.DetectedObject ?? "Unknown")
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            StateHasChanged(); // Trigger chart render
+            chartNeedsUpdate = true;
         }
 
-        if (barChart is not null && GroupedCounts.Any())
-        {
-            await RenderBarChartAsync();
-        }
+        return Task.CompletedTask;
     }
 
-    private async Task RenderBarChartAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (barChart is null || !chartNeedsUpdate || GroupedCounts.Count == 0)
+            return;
+
+        if (!chartInitialized)
+        {
+            await InitializeBarChartAsync();
+            chartInitialized = true;
+        }
+        else
+        {
+            await UpdateBarChartAsync();
+        }
+
+        chartNeedsUpdate = false;
+    }
+
+    private async Task InitializeBarChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await barChart.InitializeAsync(data, options);
+    }
+
+    private async Task UpdateBarChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await barChart.UpdateAsync(data, options);
+    }
+
+    private (ChartData, BarChartOptions) BuildChartDataAndOptions()
     {
         var labels = GroupedCounts.Keys.ToList();
         var values = GroupedCounts.Values.Select(v => (double?)v).ToList();
@@ -46,7 +76,6 @@ else
                 Data = values,
                 BackgroundColor = labels.Select(_ => GetRandomColor()).ToList(),
                 BorderColor = labels.Select(_ => "rgba(0,0,0,0.1)").ToList()
-                // BorderWidth = 1
             };
 
         var data = new ChartData
@@ -89,7 +118,7 @@ else
                 }
             };
 
-        await barChart.InitializeAsync(data, options);
+        return (data, options);
     }
 
     private static string GetRandomColor()
