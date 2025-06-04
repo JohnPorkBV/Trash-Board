@@ -34,10 +34,7 @@ jobs:
          dotnet tool restore 
 
       - name: Bundle EF Migrations 
-        run: | 
-         dotnet ef migrations bundle
-         -r linux-x64
-         --project ${{ secrets.PROJECT_NAME }}
+        run: dotnet ef migrations bundle -r linux-x64 --project ${{ secrets.PROJECT_NAME }}
 
   deploy:
     runs-on: ubuntu-latest
