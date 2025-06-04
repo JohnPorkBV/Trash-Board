@@ -20,6 +20,7 @@ builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 
 // Api Services
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 
 
 var app = builder.Build();
