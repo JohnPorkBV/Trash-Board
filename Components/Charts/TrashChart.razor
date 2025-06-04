@@ -40,16 +40,17 @@ else
         // Choose a bucket size
         TimeSpan bucketSize = totalItems switch
         {
-            20 => TimeSpan.FromMinutes(1),
-            50 => TimeSpan.FromMinutes(15),
-            100 => TimeSpan.FromHours(1),
-            200 => TimeSpan.FromHours(6),
-            400 => TimeSpan.FromHours(12),
-            700 => TimeSpan.FromDays(1),
-            1000 => TimeSpan.FromDays(2),
-            1500 => TimeSpan.FromDays(3),
+            <= 20 => TimeSpan.FromMinutes(1),
+            <= 50 => TimeSpan.FromMinutes(15),
+            <= 100 => TimeSpan.FromHours(1),
+            <= 200 => TimeSpan.FromHours(6),
+            <= 400 => TimeSpan.FromHours(12),
+            <= 700 => TimeSpan.FromDays(1),
+            <= 1000 => TimeSpan.FromDays(2),
+            <= 1500 => TimeSpan.FromDays(3),
             _ => TimeSpan.FromDays(7)
         };
+
 
         // Align timestamps to bucket
         DateTime start = detections.Min(d => d.Date);
