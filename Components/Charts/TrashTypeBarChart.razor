@@ -1,0 +1,100 @@
+﻿@using TrashBoard.Models
+@using BlazorBootstrap
+@rendermode InteractiveServer
+
+@if (GroupedCounts?.Any() == true)
+{
+    <BarChart @ref="barChart" Class="mb-4" />
+}
+else
+{
+    <p>No trash type data to show.</p>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<TrashDetection>? TrashDetections { get; set; }
+
+    private BarChart barChart = default!;
+    private Dictionary<string, int> GroupedCounts = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && TrashDetections != null)
+        {
+            GroupedCounts = TrashDetections
+                .GroupBy(d => d.DetectedObject ?? "Unknown")
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            StateHasChanged(); // Trigger chart render
+        }
+
+        if (barChart is not null && GroupedCounts.Any())
+        {
+            await RenderBarChartAsync();
+        }
+    }
+
+    private async Task RenderBarChartAsync()
+    {
+        var labels = GroupedCounts.Keys.ToList();
+        var values = GroupedCounts.Values.Select(v => (double?)v).ToList();
+
+        var dataset = new BarChartDataset
+            {
+                Label = "Trash Count by Type",
+                Data = values,
+                BackgroundColor = labels.Select(_ => GetRandomColor()).ToList(),
+                BorderColor = labels.Select(_ => "rgba(0,0,0,0.1)").ToList()
+                // BorderWidth = 1
+            };
+
+        var data = new ChartData
+            {
+                Labels = labels,
+                Datasets = new List<IChartDataset> { dataset }
+            };
+
+        var options = new BarChartOptions
+            {
+                Responsive = true,
+                Plugins = new BarChartPlugins
+                {
+                    Title = new ChartPluginsTitle
+                    {
+                        Display = true,
+                        Text = "Trash by Type",
+                        Font = new ChartFont { Size = 18 }
+                    }
+                },
+                Scales = new Scales
+                {
+                    Y = new ChartAxes
+                    {
+                        BeginAtZero = true,
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = "Items Detected"
+                        }
+                    },
+                    X = new ChartAxes
+                    {
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = "Trash Type"
+                        }
+                    }
+                }
+            };
+
+        await barChart.InitializeAsync(data, options);
+    }
+
+    private static string GetRandomColor()
+    {
+        var rnd = new Random();
+        return $"rgba({rnd.Next(50, 200)}, {rnd.Next(50, 200)}, {rnd.Next(50, 200)}, 0.7)";
+    }
+}
