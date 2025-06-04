@@ -1,0 +1,118 @@
+﻿@page "/selector"
+@inject TrashBoard.Services.ITrashDataService TrashDataService
+@using TrashBoard.Models
+@rendermode InteractiveServer
+
+<h3>Filter Trash Detections</h3>
+
+<div style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+        <button @onclick="() => ApplyQuickFilter(0)">Today</button>
+        <button @onclick="() => ApplyQuickFilter(1)">Yesterday</button>
+        <button @onclick="() => ApplyQuickFilter(7)">Last 7 Days</button>
+        <button @onclick="() => ApplyQuickFilter(14)">Last 14 Days</button>
+        <button @onclick="() => ApplyQuickFilter(30)">Last 30 Days</button>
+    </div>
+    <div>
+        <label>From Date:</label>
+        <input type="date" @bind="fromDate" />
+        <input type="time" @bind="fromTime" />
+    </div>
+    <div>
+        <label>To Date:</label>
+        <input type="date" @bind="toDate" />
+        <input type="time" @bind="toTime" />
+    </div>
+    <button type="button" @onclick="ApplyFilter">Apply Filter</button>
+</div>
+
+@if (results != null && results.Any())
+{
+    <h4>Filtered Results</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Detected Object</th>
+                <th>Confidence Score</th>
+                <th>Temperature</th>
+                <th>Humidity</th>
+                <th>Precipitation</th>
+                <th>Windforce</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in results)
+            {
+                <tr>
+                    <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@item.DetectedObject</td>
+                    <td>@item.ConfidenceScore</td>
+                    <td>@item.Temp</td>
+                    <td>@item.Humidity</td>
+                    <td>@item.Precipitation</td>
+                    <td>@item.Windforce</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (results != null && !results.Any())
+{
+    <p><em>No detections found in the selected range.</em></p>
+}
+
+@code {
+    private DateTime? fromDate;
+    private TimeOnly? fromTime;
+    private DateTime? toDate;
+    private TimeOnly? toTime;
+
+    private IEnumerable<TrashDetection>? results;
+
+    private async Task ApplyFilter()
+    {
+        DateTime? from = null;
+        DateTime? to = null;
+
+        if (fromDate.HasValue)
+        {
+            var time = fromTime ?? TimeOnly.MinValue;
+            from = fromDate.Value.Date + time.ToTimeSpan();
+        }
+
+        if (toDate.HasValue)
+        {
+            var time = toTime ?? new TimeOnly(23, 59, 59);
+            to = toDate.Value.Date + time.ToTimeSpan();
+        }
+
+        results = await TrashDataService.GetFilteredAsync(from, to, null);
+    }
+
+    private async Task ApplyQuickFilter(int daysBack)
+    {
+        DateTime now = DateTime.Now;
+        DateTime from;
+        DateTime to;
+
+        if (daysBack == 0) // Today
+        {
+            from = now.Date;
+            to = now;
+        }
+        else if (daysBack == 1) // Yesterday
+        {
+            from = now.Date.AddDays(-1);
+            to = now.Date.AddTicks(-1);
+        }
+        else
+        {
+            from = now.Date.AddDays(-daysBack);
+            to = now;
+        }
+
+        results = (await TrashDataService.GetFilteredAsync(from, to, null))
+                  .OrderByDescending(r => r.Timestamp);
+    }
+}
