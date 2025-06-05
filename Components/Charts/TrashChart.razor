@@ -1,0 +1,153 @@
+﻿@using TrashBoard.Models
+@using BlazorBootstrap
+@rendermode InteractiveServer
+
+@if (detections != null && detections.Any())
+{
+    <LineChart @ref="lineChart" Class="mb-4" />
+}
+else
+{
+    <p>No data to show.</p>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<TrashDetection>? TrashDetections { get; set; }
+
+    private LineChart lineChart = default!;
+    private List<TrashDetection> detections = new();
+
+    private bool chartInitialized = false;
+    private bool chartNeedsUpdate = false;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (TrashDetections is not null && TrashDetections.Any())
+        {
+            detections = TrashDetections.ToList();
+            chartNeedsUpdate = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (lineChart is null || !chartNeedsUpdate || detections.Count == 0)
+            return;
+
+        if (!chartInitialized)
+        {
+            await InitializeChartAsync();
+            chartInitialized = true;
+        }
+        else
+        {
+            await UpdateChartAsync();
+        }
+
+        chartNeedsUpdate = false;
+    }
+
+    private async Task InitializeChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await lineChart.InitializeAsync(data, options);
+    }
+
+    private async Task UpdateChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await lineChart.UpdateAsync(data, options);
+    }
+
+    private (ChartData, LineChartOptions) BuildChartDataAndOptions()
+    {
+        int totalItems = detections.Count;
+
+        TimeSpan bucketSize = totalItems switch
+        {
+            <= 20 => TimeSpan.FromMinutes(1),
+            <= 50 => TimeSpan.FromMinutes(15),
+            <= 100 => TimeSpan.FromHours(1),
+            <= 200 => TimeSpan.FromHours(6),
+            <= 400 => TimeSpan.FromHours(12),
+            <= 700 => TimeSpan.FromDays(1),
+            <= 1000 => TimeSpan.FromDays(2),
+            <= 1500 => TimeSpan.FromDays(3),
+            _ => TimeSpan.FromDays(7)
+        };
+
+        string labelFormat = bucketSize <= TimeSpan.FromHours(12) ? "HH:mm" : "yyyy-MM-dd";
+
+        DateTime start = detections.Min(d => d.Timestamp);
+
+        var grouped = detections
+            .GroupBy(d =>
+            {
+                var elapsedTicks = d.Timestamp.Ticks - start.Ticks;
+                var bucketIndex = elapsedTicks / bucketSize.Ticks;
+                return start.AddTicks(bucketIndex * bucketSize.Ticks);
+            })
+            .OrderBy(g => g.Key)
+            .ToList();
+
+        var labels = grouped.Select(g => g.Key.ToString(labelFormat)).ToList();
+        var dataPoints = grouped.Select(g => (double?)g.Count()).ToList();
+
+        var data = new ChartData
+            {
+                Labels = labels,
+                Datasets = new List<IChartDataset>
+            {
+                new LineChartDataset
+                {
+                    Label = "Trash Detections",
+                    Data = dataPoints,
+                    BackgroundColor = "rgba(54, 162, 235, 0.2)",
+                    BorderColor = "rgba(54, 162, 235, 1)",
+                    BorderWidth = 2,
+                    PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
+                    PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
+                }
+            }
+            };
+
+        var options = new LineChartOptions
+            {
+                Responsive = true,
+                Plugins = new LineChartPlugins
+                {
+                    Title = new ChartPluginsTitle
+                    {
+                        Display = true,
+                        Text = "Trash Detections Over Time",
+                        Font = new ChartFont { Size = 18 }
+                    }
+                },
+                Scales = new Scales
+                {
+                    X = new ChartAxes
+                    {
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = $"Time ({bucketSize.TotalMinutes:N0} min intervals)"
+                        }
+                    },
+                    Y = new ChartAxes
+                    {
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = "Detections"
+                        },
+                        BeginAtZero = true
+                    }
+                }
+            };
+
+        return (data, options);
+    }
+}

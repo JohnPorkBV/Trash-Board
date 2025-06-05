@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using TrashBoard.Models
 @inject TrashBoard.Services.ITrashDataService DataService
+@rendermode InteractiveServer
 
 <h3>Trash Detections</h3>
 
@@ -14,6 +15,11 @@ else if (!trashDetections.Any())
 }
 else
 {
+    <TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
+    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
+
+    <hr />
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -45,7 +51,6 @@ else
 
 @code {
     private IEnumerable<TrashDetection>? trashDetections;
-
 
     protected override async Task OnInitializedAsync()
     {
