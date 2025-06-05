@@ -45,6 +45,8 @@
 @if (results != null && results.Any())
 {
     <h4>Filtered Results</h4>
+    <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
+    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
     <table class="table">
         <thead>
             <tr>
