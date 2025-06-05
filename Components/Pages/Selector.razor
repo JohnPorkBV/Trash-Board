@@ -37,6 +37,10 @@
     </div>
     <button type="button" @onclick="ApplyFilter">Apply Filter</button>
 </div>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color: red;"><strong>@errorMessage</strong></p>
+}
 
 @if (results != null && results.Any())
 {
@@ -79,6 +83,7 @@ else if (results != null && !results.Any())
     private TimeOnly? fromTime;
     private DateTime? toDate;
     private TimeOnly? toTime;
+    private string? errorMessage;
     private List<string> trashTypes = new(); // from DB
     private HashSet<string> selectedTrashTypes = new(); // for multi-select
 
@@ -86,6 +91,7 @@ else if (results != null && !results.Any())
 
     private async Task ApplyFilter()
     {
+        errorMessage = null;
         DateTime? from = null;
         DateTime? to = null;
 
@@ -101,34 +107,64 @@ else if (results != null && !results.Any())
             to = toDate.Value.Date + time.ToTimeSpan();
         }
 
-        results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList());
+        if (from.HasValue && to.HasValue && from.Value == to.Value)
+        {
+            errorMessage = "From and To date/time cannot be the same.";
+            results = null;
+            return;
+        }
+
+        try
+        {
+            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList());
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error during filter: {ex.Message}";
+        }
     }
+
 
     private async Task ApplyQuickFilter(int daysBack)
     {
-        DateTime now = DateTime.Now;
-        DateTime from;
-        DateTime to;
+        errorMessage = null;
+        try
+        {
+            DateTime now = DateTime.Now;
+            DateTime from;
+            DateTime to;
 
-        if (daysBack == 0) // Today
-        {
-            from = now.Date;
-            to = now;
-        }
-        else if (daysBack == 1) // Yesterday
-        {
-            from = now.Date.AddDays(-1);
-            to = now.Date.AddTicks(-1);
-        }
-        else
-        {
-            from = now.Date.AddDays(-daysBack);
-            to = now;
-        }
+            if (daysBack == 0) // Today
+            {
+                from = now.Date;
+                to = now;
+            }
+            else if (daysBack == 1) // Yesterday
+            {
+                from = now.Date.AddDays(-1);
+                to = now.Date.AddTicks(-1);
+            }
+            else
+            {
+                from = now.Date.AddDays(-daysBack);
+                to = now;
+            }
 
-        results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList()))
-          .OrderByDescending(r => r.Timestamp);
+            // Update UI fields
+            fromDate = from.Date;
+            fromTime = TimeOnly.FromDateTime(from);
+            toDate = to.Date;
+            toTime = TimeOnly.FromDateTime(to);
+
+            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList()))
+                .OrderByDescending(r => r.Timestamp);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error applying quick filter: {ex.Message}";
+        }
     }
+
 
     protected override async Task OnInitializedAsync()
     {
