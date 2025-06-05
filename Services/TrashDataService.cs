@@ -19,7 +19,8 @@ namespace TrashBoard.Services
             return await _context.TrashDetections.ToListAsync();
         }
 
-        public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(DateTime? from, DateTime? to, string? trashType)
+        public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
+    DateTime? from, DateTime? to, List<string>? trashTypes)
         {
             var query = _context.TrashDetections.AsQueryable();
 
@@ -29,14 +30,13 @@ namespace TrashBoard.Services
             if (to.HasValue)
                 query = query.Where(t => t.Timestamp <= to.Value);
 
-            if (!string.IsNullOrEmpty(trashType))
-                query = query.Where(t => t.DetectedObject == trashType);
+            if (trashTypes != null && trashTypes.Any())
+                query = query.Where(t => trashTypes.Contains(t.DetectedObject));
 
             query = query.OrderByDescending(t => t.Timestamp);
 
             return await query.ToListAsync();
         }
-
 
         public async Task<TrashDetection?> GetByIdAsync(int id)
         {
@@ -61,6 +61,15 @@ namespace TrashBoard.Services
 
             await _context.SaveChangesAsync();
         }
-    }
 
+        public async Task<IEnumerable<string>> GetAvailableTrashTypesAsync()
+        {
+            return await _context.TrashDetections
+                .Select(td => td.DetectedObject)
+                .Where(type => type != null && type != "")
+                .Distinct()
+                .OrderBy(type => type)
+                .ToListAsync();
+        }
+    }
 }

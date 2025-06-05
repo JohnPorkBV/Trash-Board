@@ -23,6 +23,18 @@
         <input type="date" @bind="toDate" />
         <input type="time" @bind="toTime" />
     </div>
+    <div>
+        <label>Select Trash Types:</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            @foreach (var type in trashTypes)
+            {
+                <label>
+                    <input type="checkbox" @onchange="e => ToggleTrashType(type, e.Value is true)" />
+                    @type
+                </label>
+            }
+        </div>
+    </div>
     <button type="button" @onclick="ApplyFilter">Apply Filter</button>
 </div>
 
@@ -67,6 +79,8 @@ else if (results != null && !results.Any())
     private TimeOnly? fromTime;
     private DateTime? toDate;
     private TimeOnly? toTime;
+    private List<string> trashTypes = new(); // from DB
+    private HashSet<string> selectedTrashTypes = new(); // for multi-select
 
     private IEnumerable<TrashDetection>? results;
 
@@ -87,7 +101,7 @@ else if (results != null && !results.Any())
             to = toDate.Value.Date + time.ToTimeSpan();
         }
 
-        results = await TrashDataService.GetFilteredAsync(from, to, null);
+        results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList());
     }
 
     private async Task ApplyQuickFilter(int daysBack)
@@ -112,7 +126,20 @@ else if (results != null && !results.Any())
             to = now;
         }
 
-        results = (await TrashDataService.GetFilteredAsync(from, to, null))
-                  .OrderByDescending(r => r.Timestamp);
+        results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList()))
+          .OrderByDescending(r => r.Timestamp);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+    }
+
+    private void ToggleTrashType(string type, bool isSelected)
+    {
+        if (isSelected)
+            selectedTrashTypes.Add(type);
+        else
+            selectedTrashTypes.Remove(type);
     }
 }
