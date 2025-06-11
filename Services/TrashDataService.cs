@@ -8,11 +8,14 @@ namespace TrashBoard.Services
     public class TrashDataService : ITrashDataService
     {
         private readonly TrashboardDbContext _context;
+        private readonly IHolidayService _holidayService;
 
-        public TrashDataService(TrashboardDbContext context)
+        public TrashDataService(TrashboardDbContext context, IHolidayService holidayService)
         {
             _context = context;
+            _holidayService = holidayService;
         }
+
 
         public async Task<IEnumerable<TrashDetection>> GetAllAsync()
         {
@@ -42,9 +45,25 @@ namespace TrashBoard.Services
 
         public async Task AddAsync(TrashDetection detection)
         {
+            // Check for holiday
+            var holidays = await _holidayService.GetHolidaysForYearAsync(detection.Timestamp.Year);
+            var holiday = holidays.FirstOrDefault(h => h.Date.Date == detection.Timestamp.Date);
+
+            if (holiday != null)
+            {
+                detection.IsHoliday = true;
+                detection.HolidayName = holiday.LocalName; // or holiday.Name if you prefer English
+            }
+            else
+            {
+                detection.IsHoliday = false;
+                detection.HolidayName = null;
+            }
+
             _context.TrashDetections.Add(detection);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task UpdateWeatherInfoAsync(int id, float temperature, string condition, float humidity, float precipitation, DateTime date)
         {
@@ -58,6 +77,22 @@ namespace TrashBoard.Services
 
             await _context.SaveChangesAsync();
         }
+        public async Task<TrashDetection> UpdateHolidayInfoForAsync(TrashDetection detection)
+        {
+            var holidays = await _holidayService.GetHolidaysForYearAsync(detection.Timestamp.Year);
+            var holiday = holidays.FirstOrDefault(h => h.Date.Date == detection.Timestamp.Date);
+
+            detection.IsHoliday = holiday != null;
+            detection.HolidayName = holiday?.LocalName;
+
+            _context.TrashDetections.Update(detection);
+            await _context.SaveChangesAsync();
+
+            return detection;
+        }
+
+
+
     }
 
 }
