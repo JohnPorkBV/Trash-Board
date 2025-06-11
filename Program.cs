@@ -15,8 +15,12 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContextFactory<TrashboardDbContext>(options =>
     options.UseSqlServer(sqlConnectionString));
 
+// Data Services
 builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 
+// Api Services
+builder.Services.AddHttpClient<IHolidayService, HolidayService>();
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 // Bootstrap
 builder.Services.AddBlazorBootstrap();

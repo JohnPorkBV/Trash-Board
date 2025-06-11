@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿
+@using Microsoft.EntityFrameworkCore;
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TrashBoard</a>
     </div>
@@ -19,5 +23,30 @@
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Selector
             </NavLink>
         </div>
+
+        @if (true) // Todo Add user roles
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/admin/holiday-updater">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Holiday Update
+                </NavLink>
+            </div>
+
+        }
+
+        @code {
+
+            protected override async Task OnInitializedAsync()
+            {
+
+            }
+            protected override async Task OnAfterRenderAsync(bool firstRender)
+            {
+                if (firstRender)
+                {
+                    
+                }
+            }
+        }
     </nav>
 </div>

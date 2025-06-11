@@ -17,6 +17,9 @@ namespace TrashBoard.Models
         public float Humidity { get; set; }
         public float Precipitation { get; set; }
         public float Windforce { get; set; }
+        public bool IsHoliday { get; set; }
+        public string? HolidayName { get; set; }
+
     }
 
 

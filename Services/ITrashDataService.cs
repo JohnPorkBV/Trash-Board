@@ -1,4 +1,4 @@
-﻿using TrashBoard.Models;
+using TrashBoard.Models;
 
 namespace TrashBoard.Services
 {
@@ -11,6 +11,7 @@ namespace TrashBoard.Services
         Task<TrashDetection?> GetByIdAsync(int id);
         Task AddAsync(TrashDetection detection);
         Task UpdateWeatherInfoAsync(int id, float temperature, string condition, float humidity, float precipitation, DateTime date);
+        Task<TrashDetection> UpdateHolidayInfoForAsync(TrashDetection detection);
         Task<IEnumerable<string>> GetAvailableTrashTypesAsync();
 
     }
