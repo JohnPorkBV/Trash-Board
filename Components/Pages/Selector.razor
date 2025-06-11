@@ -1,233 +1,253 @@
 ﻿@page "/selector"
 @inject TrashBoard.Services.ITrashDataService TrashDataService
 @using TrashBoard.Models
+@using BlazorBootstrap
 @rendermode InteractiveServer
 
 <section class="filter-panel">
-    <h3>Afvaldetecties filteren</h3>
+	<h3>Afvaldetecties filteren</h3>
 
-    <section class="intro-text">
-        <p>
-            Gebruik de filters hieronder om snel en eenvoudig afvaldetecties te zoeken op datum, afvaltype en of de detectie plaatsvond op een feestdag. <br />
-            Pas de filters aan en klik op "Filter toepassen" om de resultaten te bekijken.
-        </p>
-    </section>
+	<section class="intro-text">
+		<p>
+			Gebruik de filters hieronder om snel en eenvoudig afvaldetecties te zoeken op datum, afvaltype en of de detectie plaatsvond op een feestdag. <br />
+			Pas de filters aan en klik op "Filter toepassen" om de resultaten te bekijken.
+		</p>
+	</section>
 
 
-    <div class="filter-row">
-        <button @onclick="() => ApplyQuickFilter(0)">Vandaag</button>
-        <button @onclick="() => ApplyQuickFilter(1)">Gisteren</button>
-        <button @onclick="() => ApplyQuickFilter(7)">Laatste 7 dagen</button>
-        <button @onclick="() => ApplyQuickFilter(14)">Laatste 14 dagen</button>
-        <button @onclick="() => ApplyQuickFilter(30)">Laatste 30 dagen</button>
-    </div>
+	<div class="filter-row">
+		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(0)">Vandaag</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(1)">Gisteren</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(7)">Laatste 7 dagen</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(14)">Laatste 14 dagen</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(30)">Laatste 30 dagen</BlazorBootstrap.Button>
+	</div>
 
-    <div class="filter-row">
-        <label>Van:</label>
-        <input type="date" @bind="fromDate" />
-        <input type="time" @bind="fromTime" />
+	<div class="filter-row">
+		<div class="mb-3">
+			<label>Van:</label>
+			<DateInput @bind-Value="fromDate" />
+			<TimeInput @bind-Value="fromTime" />
+		</div>
+		<div class="mb-3">
+			<label>Tot:</label>
+			<DateInput @bind-Value="toDate" />
+			<TimeInput @bind-Value="toTime" />
+		</div>
+	</div>
 
-        <label>Tot:</label>
-        <input type="date" @bind="toDate" />
-        <input type="time" @bind="toTime" />
-    </div>
+	<div>
+		<Dropdown Color="DropdownColor.Secondary">
+			<DropdownToggleButton>
+				@if (selectedTrashTypes.Count == 0)
+				{
+					<span>Kies afvaltypes</span>
+				}
+				else
+				{
+					<span>@string.Join(", ", selectedTrashTypes)</span>
+				}
+			</DropdownToggleButton>
+			<DropdownMenu>
+				@foreach (var type in trashTypes)
+				{
+					<DropdownItem onclick="@(()=>ToggleTrashType(type,!selectedTrashTypes.Contains(type)))">
+						@type
+						@if (selectedTrashTypes.Contains(type))
+						{
+							<span>&#10003;</span>
+						}
+					</DropdownItem>
+				}
+			</DropdownMenu>
+		</Dropdown>
+	</div>
 
-    <div>
-        <label>Selecteer afvaltypes:</label>
-        <div class="trash-type-container">
-            @foreach (var type in trashTypes)
-            {
-                <label>
-                    <input type="checkbox" @onchange="e => ToggleTrashType(type, e.Value is true)" checked="@selectedTrashTypes.Contains(type)" />
-                    @type
-                </label>
-            }
-        </div>
-    </div>
+	<div>
+		<label>Filter op feestdag:</label>
+		<div class="holiday-type-container">
+			<label>
+				<input type="checkbox" @onchange="e => ToggleHolidayFilter(true, e.Value is true)" checked="@selectedHolidayFilters.Contains(true)" />
+				Ja
+			</label>
+			<label>
+				<input type="checkbox" @onchange="e => ToggleHolidayFilter(false, e.Value is true)" checked="@selectedHolidayFilters.Contains(false)" />
+				Nee
+			</label>
+		</div>
+	</div>
 
-    <div>
-        <label>Filter op feestdag:</label>
-        <div class="holiday-type-container">
-            <label>
-                <input type="checkbox" @onchange="e => ToggleHolidayFilter(true, e.Value is true)" checked="@selectedHolidayFilters.Contains(true)" />
-                Ja
-            </label>
-            <label>
-                <input type="checkbox" @onchange="e => ToggleHolidayFilter(false, e.Value is true)" checked="@selectedHolidayFilters.Contains(false)" />
-                Nee
-            </label>
-        </div>
-    </div>
-
-    <div>
-        <button class="btn btn-primary" @onclick="ApplyFilter">Filter toepassen</button>
-    </div>
+	<div>
+		<button class="btn btn-primary" @onclick="ApplyFilter">Filter toepassen</button>
+	</div>
 </section>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <p style="color: red;"><strong>@errorMessage</strong></p>
+	<p style="color: red;"><strong>@errorMessage</strong></p>
 }
 
 @if (results != null && results.Any())
 {
-    <h4>Gefilterde resultaten</h4>
-    <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
-    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Tijdstip</th>
-                <th>Gedetecteerd object</th>
-                <th>Vertrouwensscore</th>
-                <th>Temperatuur</th>
-                <th>Vochtigheid</th>
-                <th>Neerslag</th>
-                <th>Windkracht</th>
-                <th>Feestdag</th>
-                <th>Naam feestdag</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in results)
-            {
-                <tr>
-                    <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@item.DetectedObject</td>
-                    <td>@item.ConfidenceScore</td>
-                    <td>@item.Temp</td>
-                    <td>@item.Humidity</td>
-                    <td>@item.Precipitation</td>
-                    <td>@item.Windforce</td>
-                    <td>@(item.IsHoliday ? "Ja" : "Nee")</td>
-                    <td>@item.HolidayName</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<h4>Gefilterde resultaten</h4>
+	<TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
+	<TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Tijdstip</th>
+				<th>Gedetecteerd object</th>
+				<th>Vertrouwensscore</th>
+				<th>Temperatuur</th>
+				<th>Vochtigheid</th>
+				<th>Neerslag</th>
+				<th>Windkracht</th>
+				<th>Feestdag</th>
+				<th>Naam feestdag</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in results)
+			{
+				<tr>
+					<td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+					<td>@item.DetectedObject</td>
+					<td>@item.ConfidenceScore</td>
+					<td>@item.Temp</td>
+					<td>@item.Humidity</td>
+					<td>@item.Precipitation</td>
+					<td>@item.Windforce</td>
+					<td>@(item.IsHoliday ? "Ja" : "Nee")</td>
+					<td>@item.HolidayName</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 else if (results != null && !results.Any())
 {
-    <p><em>Geen detecties gevonden binnen het geselecteerde bereik.</em></p>
+	<p><em>Geen detecties gevonden binnen het geselecteerde bereik.</em></p>
 }
 
 @code {
-    private DateTime? fromDate;
-    private TimeOnly? fromTime;
-    private DateTime? toDate;
-    private TimeOnly? toTime;
-    private string? errorMessage;
-    private List<string> trashTypes = new(); // afkomstig uit DB
-    private HashSet<string> selectedTrashTypes = new(); // voor multi-selectie
-    private HashSet<bool> selectedHolidayFilters = new(); // voor feestdag filter: true = Ja, false = Nee
+	private DateTime? fromDate;
+	private TimeOnly? fromTime;
+	private DateTime? toDate;
+	private TimeOnly? toTime;
+	private string? errorMessage;
+	private List<string> trashTypes = new(); // afkomstig uit DB
+	private HashSet<string> selectedTrashTypes = new(); // voor multi-selectie
+	private HashSet<bool> selectedHolidayFilters = new(); // voor feestdag filter: true = Ja, false = Nee
 
-    private IEnumerable<TrashDetection>? results;
+	private IEnumerable<TrashDetection>? results;
 
-    private void ToggleTrashType(string type, bool isSelected)
-    {
-        if (isSelected)
-            selectedTrashTypes.Add(type);
-        else
-            selectedTrashTypes.Remove(type);
-    }
+	private void ToggleTrashType(string type, bool isSelected)
+	{
+		if (isSelected)
+			selectedTrashTypes.Add(type);
+		else
+			selectedTrashTypes.Remove(type);
+		StateHasChanged();
+	}
 
-    private void ToggleHolidayFilter(bool value, bool isSelected)
-    {
-        if (isSelected)
-            selectedHolidayFilters.Add(value);
-        else
-            selectedHolidayFilters.Remove(value);
-    }
 
-    private async Task ApplyFilter()
-    {
-        errorMessage = null;
-        DateTime? from = null;
-        DateTime? to = null;
+	private void ToggleHolidayFilter(bool value, bool isSelected)
+	{
+		if (isSelected)
+			selectedHolidayFilters.Add(value);
+		else
+			selectedHolidayFilters.Remove(value);
+	}
 
-        if (fromDate.HasValue)
-        {
-            var time = fromTime ?? TimeOnly.MinValue;
-            from = fromDate.Value.Date + time.ToTimeSpan();
-        }
+	private async Task ApplyFilter()
+	{
+		errorMessage = null;
+		DateTime? from = null;
+		DateTime? to = null;
 
-        if (toDate.HasValue)
-        {
-            var time = toTime ?? new TimeOnly(23, 59, 59);
-            to = toDate.Value.Date + time.ToTimeSpan();
-        }
+		if (fromDate.HasValue)
+		{
+			var time = fromTime ?? TimeOnly.MinValue;
+			from = fromDate.Value.Date + time.ToTimeSpan();
+		}
 
-        if (from.HasValue && to.HasValue && from.Value == to.Value)
-        {
-            errorMessage = "Van en Tot mogen niet exact hetzelfde zijn.";
-            results = null;
-            return;
-        }
+		if (toDate.HasValue)
+		{
+			var time = toTime ?? new TimeOnly(23, 59, 59);
+			to = toDate.Value.Date + time.ToTimeSpan();
+		}
 
-        bool? isHolidayFilter = null;
-        if (selectedHolidayFilters.Count == 1)
-            isHolidayFilter = selectedHolidayFilters.First();
-        else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
-            isHolidayFilter = null;
+		if (from.HasValue && to.HasValue && from.Value == to.Value)
+		{
+			errorMessage = "Van en Tot mogen niet exact hetzelfde zijn.";
+			results = null;
+			return;
+		}
 
-        try
-        {
-            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Fout tijdens het toepassen van de filter: {ex.Message}";
-        }
-    }
+		bool? isHolidayFilter = null;
+		if (selectedHolidayFilters.Count == 1)
+			isHolidayFilter = selectedHolidayFilters.First();
+		else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
+			isHolidayFilter = null;
 
-    private async Task ApplyQuickFilter(int daysBack)
-    {
-        errorMessage = null;
-        try
-        {
-            DateTime nu = DateTime.Now;
-            DateTime from;
-            DateTime to;
+		try
+		{
+			results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Fout tijdens het toepassen van de filter: {ex.Message}";
+		}
+	}
 
-            if (daysBack == 0) // Vandaag
-            {
-                from = nu.Date;
-                to = nu;
-            }
-            else if (daysBack == 1) // Gisteren
-            {
-                from = nu.Date.AddDays(-1);
-                to = nu.Date.AddTicks(-1);
-            }
-            else
-            {
-                from = nu.Date.AddDays(-daysBack);
-                to = nu;
-            }
+	private async Task ApplyQuickFilter(int daysBack)
+	{
+		errorMessage = null;
+		try
+		{
+			DateTime nu = DateTime.Now;
+			DateTime from;
+			DateTime to;
 
-            // UI-velden bijwerken
-            fromDate = from.Date;
-            fromTime = TimeOnly.FromDateTime(from);
-            toDate = to.Date;
-            toTime = TimeOnly.FromDateTime(to);
+			if (daysBack == 0) // Vandaag
+			{
+				from = nu.Date;
+				to = nu;
+			}
+			else if (daysBack == 1) // Gisteren
+			{
+				from = nu.Date.AddDays(-1);
+				to = nu.Date.AddTicks(-1);
+			}
+			else
+			{
+				from = nu.Date.AddDays(-daysBack);
+				to = nu;
+			}
 
-            bool? isHolidayFilter = null;
-            if (selectedHolidayFilters.Count == 1)
-                isHolidayFilter = selectedHolidayFilters.First();
-            else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
-                isHolidayFilter = null;
+			// UI-velden bijwerken
+			fromDate = from.Date;
+			fromTime = TimeOnly.FromDateTime(from);
+			toDate = to.Date;
+			toTime = TimeOnly.FromDateTime(to);
 
-            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
-                .OrderByDescending(r => r.Timestamp);
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Fout bij het toepassen van de snelle filter: {ex.Message}";
-        }
-    }
+			bool? isHolidayFilter = null;
+			if (selectedHolidayFilters.Count == 1)
+				isHolidayFilter = selectedHolidayFilters.First();
+			else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
+				isHolidayFilter = null;
 
-    protected override async Task OnInitializedAsync()
-    {
-        trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
-    }
+			results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
+				.OrderByDescending(r => r.Timestamp);
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Fout bij het toepassen van de snelle filter: {ex.Message}";
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+	}
 }

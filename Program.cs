@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using TrashBoard.Components;
 using TrashBoard.Data;
 using TrashBoard.Services;
