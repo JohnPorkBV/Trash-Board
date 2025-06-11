@@ -1,7 +1,8 @@
-﻿
+﻿@implements IDisposable
 @using Microsoft.EntityFrameworkCore;
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
+@inject UserSessionService SessionService
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TrashBoard</a>
@@ -24,7 +25,7 @@
             </NavLink>
         </div>
 
-        @if (true) // Todo Add user roles
+        @if (SessionService.IsAdmin) // Todo Add user roles
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="/admin/holiday-updater">
@@ -44,8 +45,14 @@
             {
                 if (firstRender)
                 {
-                    
+                    await SessionService.InitializeAsync();
+                    SessionService.OnChange += StateHasChanged;
+                    StateHasChanged(); // refresh UI after loading session data
                 }
+            }
+            public void Dispose()
+            {
+                SessionService.OnChange -= StateHasChanged;
             }
         }
     </nav>
