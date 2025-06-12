@@ -1,4 +1,4 @@
-﻿@page "/selector"
+@page "/selector"
 @inject TrashBoard.Services.ITrashDataService TrashDataService
 @using TrashBoard.Models
 @using BlazorBootstrap
@@ -16,11 +16,11 @@
 
 
 	<div class="filter-row">
-		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(0)">Vandaag</BlazorBootstrap.Button>
-		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(1)">Gisteren</BlazorBootstrap.Button>
-		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(7)">Laatste 7 dagen</BlazorBootstrap.Button>
-		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(14)">Laatste 14 dagen</BlazorBootstrap.Button>
-		<BlazorBootstrap.Button class="btn btn-secondary" @onclick="() => ApplyQuickFilter(30)">Laatste 30 dagen</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(0)">Vandaag</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(1)">Gisteren</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(7)">Laatste 7 dagen</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(14)">Laatste 14 dagen</BlazorBootstrap.Button>
+		<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(30)">Laatste 30 dagen</BlazorBootstrap.Button>
 	</div>
 
 	<div class="filter-row">
@@ -37,7 +37,7 @@
 	</div>
 
 	<div>
-		<Dropdown Color="DropdownColor.Secondary">
+		<Dropdown Color="DropdownColor.Primary">
 			<DropdownToggleButton>
 				@if (selectedTrashTypes.Count == 0)
 				{
@@ -67,12 +67,14 @@
 		<label>Filter op feestdag:</label>
 		<div class="holiday-type-container">
 			<label>
-				<input type="checkbox" @onchange="e => ToggleHolidayFilter(true, e.Value is true)" checked="@selectedHolidayFilters.Contains(true)" />
-				Ja
-			</label>
-			<label>
-				<input type="checkbox" @onchange="e => ToggleHolidayFilter(false, e.Value is true)" checked="@selectedHolidayFilters.Contains(false)" />
-				Nee
+				<CheckboxInput Label="Toon feestdagen"
+							   Value="@showHolidays"
+							   ValueExpression="() => showHolidays"
+							   ValueChanged="(value) => ToggleHolidayFilter(true, value)" />
+				<CheckboxInput Label="Toon werkdagen"
+							   Value="@showWorkdays"
+							   ValueExpression="() => showWorkdays"
+							   ValueChanged="(value) => ToggleHolidayFilter(false, value)" />
 			</label>
 		</div>
 	</div>
@@ -135,11 +137,27 @@ else if (results != null && !results.Any())
 	private DateTime? toDate;
 	private TimeOnly? toTime;
 	private string? errorMessage;
-	private List<string> trashTypes = new(); // afkomstig uit DB
-	private HashSet<string> selectedTrashTypes = new(); // voor multi-selectie
-	private HashSet<bool> selectedHolidayFilters = new(); // voor feestdag filter: true = Ja, false = Nee
-
+	private List<string> trashTypes = new();
+	private HashSet<string> selectedTrashTypes = new();
+	private HashSet<bool> selectedHolidayFilters = new();
 	private IEnumerable<TrashDetection>? results;
+
+	private bool showHolidays;
+	private bool showWorkdays;
+
+
+	private void ToggleHolidayFilter(bool filter, bool enabled)
+	{
+		if (enabled)
+			selectedHolidayFilters.Add(filter);
+		else
+			selectedHolidayFilters.Remove(filter);
+
+		showHolidays = selectedHolidayFilters.Contains(true);
+		showWorkdays = selectedHolidayFilters.Contains(false);
+	}
+
+
 
 	private void ToggleTrashType(string type, bool isSelected)
 	{
@@ -151,13 +169,6 @@ else if (results != null && !results.Any())
 	}
 
 
-	private void ToggleHolidayFilter(bool value, bool isSelected)
-	{
-		if (isSelected)
-			selectedHolidayFilters.Add(value);
-		else
-			selectedHolidayFilters.Remove(value);
-	}
 
 	private async Task ApplyFilter()
 	{
