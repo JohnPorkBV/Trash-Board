@@ -1,12 +1,24 @@
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using TrashBoard.Components;
 using TrashBoard.Data;
 using TrashBoard.Services;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 
-// Add services to the container.
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { new CultureInfo("nl"), new CultureInfo("en") };
+    options.DefaultRequestCulture = new RequestCulture("nl");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
 builder.Services.AddRazorComponents()
 .AddInteractiveServerComponents();
 
@@ -26,6 +38,9 @@ builder.Services.AddBlazorBootstrap();
 
 var app = builder.Build();
 
+var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
+app.UseRequestLocalization(localizationOptions);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -41,5 +56,10 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+var culture = new CultureInfo("nl");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
+
 
 app.Run();

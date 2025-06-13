@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.JSInterop
+@using System.Globalization
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<select @onchange="OnLanguageChange" class="form-select w-auto">
+    <option value="nl" selected="@IsSelected("nl")">Nederlands</option>
+    <option value="en">English</option>
+</select>
+
+@code {
+    private async Task OnLanguageChange(ChangeEventArgs e)
+    {
+        var selectedCulture = e.Value?.ToString() ?? "nl";
+
+        // Set the culture cookie
+        var cookieValue = $"c={selectedCulture}|uic={selectedCulture}";
+        await JS.InvokeVoidAsync("document.cookie", $"CookieName=.AspNetCore.Culture; value={cookieValue}; path=/");
+
+        // Reload the page to apply changes
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    private string? IsSelected(string culture) =>
+        CultureInfo.CurrentUICulture.Name.StartsWith(culture) ? "selected" : null;
+}

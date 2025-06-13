@@ -20,6 +20,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		RESX_NeutralResourcesLanguage = nl-NL
 		SolutionGuid = {D4132B08-5C8D-43C8-A0E9-F2E28245921F}
+		RESX_PrefixTranslations = False
 	EndGlobalSection
 EndGlobal
