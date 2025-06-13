@@ -23,7 +23,10 @@ namespace TrashBoard.Services
         }
 
         public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
-    DateTime? from, DateTime? to, List<string>? trashTypes)
+    DateTime? from,
+    DateTime? to,
+    List<string>? trashTypes,
+    bool? isHoliday)
         {
             var query = _context.TrashDetections.AsQueryable();
 
@@ -35,6 +38,9 @@ namespace TrashBoard.Services
 
             if (trashTypes != null && trashTypes.Any())
                 query = query.Where(t => trashTypes.Contains(t.DetectedObject));
+
+            if (isHoliday.HasValue)
+                query = query.Where(t => t.IsHoliday == isHoliday.Value);
 
             query = query.OrderByDescending(t => t.Timestamp);
 

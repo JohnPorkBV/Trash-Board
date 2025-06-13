@@ -2,62 +2,62 @@
 @using TrashBoard.Models
 @inject TrashBoard.Services.ITrashDataService DataService
 @rendermode InteractiveServer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
 
-<h3>Trash Detections</h3>
-
+<h3>@L["Header_Detections"]</h3>
 @if (trashDetections == null)
 {
-    <p><em>Loading...</em></p>
+	<p><em>Loading...</em></p>
 }
 else if (!trashDetections.Any())
 {
-    <p>No trash detections found.</p>
+	<p>No trash detections found.</p>
 }
 else
 {
-    <TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
-    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
+	<TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
+	<TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
 
-    <hr />
+	<hr />
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Object</th>
-                <th>Confidence</th>
-                <th>Temp (°C)</th>
-                <th>Humidity</th>
-                <th>Precip</th>
-                <th>Wind</th>
-                <th>Is Holiday</th>
-                <th>Holiday</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in trashDetections)
-            {
-                <tr>
-                    <td>@item.Timestamp</td>
-                    <td>@item.DetectedObject</td>
-                    <td>@item.ConfidenceScore</td>
-                    <td>@item.Temp</td>
-                    <td>@item.Humidity</td>
-                    <td>@item.Precipitation</td>
-                    <td>@item.Windforce</td>
-                    <td>@item.IsHoliday</td>
-                    <td>@item.HolidayName</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>@L["Table_Timestamp"]Tijdstip</th>
+				<th>@L["Table_Object"]Gedetecteerd object</th>
+				<th>@L["Table_Confidence"]Vertrouwensscore</th>
+				<th>@L["Table_Temperature"]Temperatuur</th>
+				<th>@L["Table_Humidity"]Vochtigheid</th>
+				<th>@L["Table_Precipitation"]Neerslag</th>
+				<th>@L["Table_Windforce"]Windkracht</th>
+				<th>@L["Table_IsHoliday"]Feestdag</th>
+				<th>@L["Table_HolidayName"]Naam feestdag</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in trashDetections)
+			{
+				<tr>
+					<td>@item.Timestamp</td>
+					<td>@item.DetectedObject</td>
+					<td>@item.ConfidenceScore</td>
+					<td>@item.Temp</td>
+					<td>@item.Humidity</td>
+					<td>@item.Precipitation</td>
+					<td>@item.Windforce</td>
+					<td>@item.IsHoliday</td>
+					<td>@item.HolidayName</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 
 @code {
-    private IEnumerable<TrashDetection>? trashDetections;
+	private IEnumerable<TrashDetection>? trashDetections;
 
-    protected override async Task OnInitializedAsync()
-    {
-        trashDetections = await DataService.GetAllAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		trashDetections = await DataService.GetAllAsync();
+	}
 }

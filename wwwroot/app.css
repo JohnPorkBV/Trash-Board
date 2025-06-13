@@ -49,3 +49,32 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.filter-panel {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    margin: 1rem 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: 100%;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+    .filter-row label {
+        min-width: 80px;
+    }
+
+.trash-type-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
