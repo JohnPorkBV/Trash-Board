@@ -14,14 +14,13 @@
     private async Task OnLanguageChange(ChangeEventArgs e)
     {
         var selectedCulture = e.Value?.ToString() ?? "nl";
+        var cookieValue = $".AspNetCore.Culture=c={selectedCulture}|uic={selectedCulture}; path=/";
 
-        // Set the culture cookie
-        var cookieValue = $"c={selectedCulture}|uic={selectedCulture}";
-        await JS.InvokeVoidAsync("document.cookie", $"CookieName=.AspNetCore.Culture; value={cookieValue}; path=/");
+        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}';");
 
-        // Reload the page to apply changes
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
+
 
     private string? IsSelected(string culture) =>
         CultureInfo.CurrentUICulture.Name.StartsWith(culture) ? "selected" : null;
