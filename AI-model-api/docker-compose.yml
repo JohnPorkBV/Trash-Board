@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  ai-api:
+    build: .
+    ports:
+      - "8000:8000"
+    # environment:
+    #   - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING}
+    env_file:
+      - .env
