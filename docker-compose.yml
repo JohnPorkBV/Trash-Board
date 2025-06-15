@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  dashboard:
+    build: ./Trash-Board
+    container_name: dashboard
+    ports:
+      - ${TrashBoard_PORT}:8080
+    restart: unless-stopped
+    environment:
+      - SqlConnectionStringLocal=${SQL_CONNECTION_STRING}
+
+  ai:
+    build: ./AI-model-api
+    container_name: ai
+    ports:
+      - "${TrashBoard_AI_PORT}:8000"
+    # environment:
+    #   - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING}
+    restart: unless-stopped
+    environment:
+      - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING_AI}
