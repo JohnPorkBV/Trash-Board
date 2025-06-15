@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6be3f781-c159-4d61-84ad-a63f78c82d96</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AI_model_api.py</StartupFile>
+    <StartupFile>AI_model_api_trainer.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

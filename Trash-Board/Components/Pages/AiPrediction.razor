@@ -1,0 +1,59 @@
+﻿@page "/ai-predict"
+@using TrashBoard.Models
+@using TrashBoard.Services
+@inject AiPredictionService AiService
+
+<h3>AI Prediction</h3>
+
+<EditForm Model="@input" OnValidSubmit="HandleSubmit" FormName="AI">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Humidity</label>
+        <InputNumber @bind-Value="input.Humidity" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Confidence Score</label>
+        <InputNumber @bind-Value="input.ConfidenceScore" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Hour</label>
+        <InputNumber @bind-Value="input.Hour" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Precipitation</label>
+        <InputNumber @bind-Value="input.Precipitation" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Temperature</label>
+        <InputNumber @bind-Value="input.Temp" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Windforce</label>
+        <InputNumber @bind-Value="input.Windforce" class="form-control" />
+    </div>
+    <div class="form-group form-check">
+        <InputCheckbox @bind-Value="input.IsHoliday" class="form-check-input" />
+        <label class="form-check-label">Is Holiday?</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Predict</button>
+</EditForm>
+
+@if (result is not null)
+{
+    <div class="alert alert-info mt-3">
+        <strong>Prediction:</strong> @result
+    </div>
+}
+
+@code {
+    private TrashDetectionInput input = new(); // Default values set in class
+    private string? result;
+
+    private async Task HandleSubmit()
+    {
+        result = await AiService.PredictAsync(input);
+    }
+}

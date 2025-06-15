@@ -12,15 +12,11 @@ model = joblib.load("model.pkl")
 
 # Define the request schema
 class PredictionRequest(BaseModel):
-    Timestamp: str
-    DetectedObject: str
     Humidity: float
-    Date: str
     Hour: int
     Precipitation: float
     Temp: float
     Windforce: float
-    HolidayName: str
     IsHoliday: bool
 
 app = FastAPI()
@@ -33,7 +29,7 @@ def predict(req: PredictionRequest):
         input_data = pd.DataFrame([req.dict()])
 
         # Drop non-numeric or unused columns
-        input_data = input_data.drop(columns=["Timestamp", "Date", "HolidayName", "DetectedObject"])
+        #input_data = input_data.drop(columns=["Timestamp", "Date", "HolidayName", "DetectedObject"])
 
         prediction = model.predict(input_data)
         logger.info(f"Prediction: {prediction[0]}")

@@ -39,6 +39,8 @@ builder.Services.AddScoped<UserSessionService>();
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddHttpClient<AiPredictionService>();
+
 
 // Bootstrap
 builder.Services.AddBlazorBootstrap();
