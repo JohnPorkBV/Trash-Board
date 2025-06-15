@@ -1,0 +1,38 @@
+name: Build and Deploy to Wall-e
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push dashboard
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/dashboard:latest ./Trash-Board
+          docker push ghcr.io/${{ github.repository_owner }}/dashboard:latest
+
+      - name: Build and push AI API
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/ai:latest ./AI-model-api
+          docker push ghcr.io/${{ github.repository_owner }}/ai:latest
+
+      - name: Trigger Portainer Stack Webhook
+        run: |
+          curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL_STORM }}

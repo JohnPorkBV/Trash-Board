@@ -18,4 +18,4 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run FastAPI + training (at runtime)
-CMD ["sh", "-c", "python AI_model_api_trainer.py && uvicorn main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "python AI_model_api_trainer.py && uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"]

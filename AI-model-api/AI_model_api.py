@@ -43,7 +43,6 @@ def predict(req: PredictionRequest):
         logger.error(f"Error during prediction: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
-# Add this to run the app with 'python main.py'
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("AI_model_api:app", host="0.0.0.0", port=8000, reload=True)
