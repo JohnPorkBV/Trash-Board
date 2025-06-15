@@ -2,86 +2,94 @@
 @inject TrashBoard.Services.ITrashDataService TrashDataService
 @using TrashBoard.Models
 @rendermode InteractiveServer
+@inject TrashBoard.Services.UserSessionService SessionService
 
-<h3>Filter Trash Detections</h3>
+@if (!String.IsNullOrEmpty (SessionService.Username))
+{
+    <h3>Filter Trash Detections</h3>
 
-<div style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
-    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
-        <button @onclick="() => ApplyQuickFilter(0)">Today</button>
-        <button @onclick="() => ApplyQuickFilter(1)">Yesterday</button>
-        <button @onclick="() => ApplyQuickFilter(7)">Last 7 Days</button>
-        <button @onclick="() => ApplyQuickFilter(14)">Last 14 Days</button>
-        <button @onclick="() => ApplyQuickFilter(30)">Last 30 Days</button>
-    </div>
-    <div>
-        <label>From Date:</label>
-        <input type="date" @bind="fromDate" />
-        <input type="time" @bind="fromTime" />
-    </div>
-    <div>
-        <label>To Date:</label>
-        <input type="date" @bind="toDate" />
-        <input type="time" @bind="toTime" />
-    </div>
-    <div>
-        <label>Select Trash Types:</label>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-            @foreach (var type in trashTypes)
-            {
-                <label>
-                    <input type="checkbox" @onchange="e => ToggleTrashType(type, e.Value is true)" />
-                    @type
-                </label>
-            }
+    <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+            <button @onclick="() => ApplyQuickFilter(0)">Today</button>
+            <button @onclick="() => ApplyQuickFilter(1)">Yesterday</button>
+            <button @onclick="() => ApplyQuickFilter(7)">Last 7 Days</button>
+            <button @onclick="() => ApplyQuickFilter(14)">Last 14 Days</button>
+            <button @onclick="() => ApplyQuickFilter(30)">Last 30 Days</button>
         </div>
+        <div>
+            <label>From Date:</label>
+            <input type="date" @bind="fromDate" />
+            <input type="time" @bind="fromTime" />
+        </div>
+        <div>
+            <label>To Date:</label>
+            <input type="date" @bind="toDate" />
+            <input type="time" @bind="toTime" />
+        </div>
+        <div>
+            <label>Select Trash Types:</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                @foreach (var type in trashTypes)
+                {
+                    <label>
+                        <input type="checkbox" @onchange="e => ToggleTrashType(type, e.Value is true)" />
+                        @type
+                    </label>
+                }
+            </div>
+        </div>
+        <button type="button" @onclick="ApplyFilter">Apply Filter</button>
     </div>
-    <button type="button" @onclick="ApplyFilter">Apply Filter</button>
-</div>
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <p style="color: red;"><strong>@errorMessage</strong></p>
-}
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color: red;"><strong>@errorMessage</strong></p>
+    }
 
-@if (results != null && results.Any())
-{
-    <h4>Filtered Results</h4>
-    <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
-    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Detected Object</th>
-                <th>Confidence Score</th>
-                <th>Temperature</th>
-                <th>Humidity</th>
-                <th>Precipitation</th>
-                <th>Windforce</th>
-                <th>Is Holiday</th>
-                <th>Holiday</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in results)
-            {
+    @if (results != null && results.Any())
+    {
+        <h4>Filtered Results</h4>
+        <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
+        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@item.DetectedObject</td>
-                    <td>@item.ConfidenceScore</td>
-                    <td>@item.Temp</td>
-                    <td>@item.Humidity</td>
-                    <td>@item.Precipitation</td>
-                    <td>@item.Windforce</td>
-                    <td>@item.IsHoliday</td>
-                    <td>@item.HolidayName</td>
+                    <th>Timestamp</th>
+                    <th>Detected Object</th>
+                    <th>Confidence Score</th>
+                    <th>Temperature</th>
+                    <th>Humidity</th>
+                    <th>Precipitation</th>
+                    <th>Windforce</th>
+                    <th>Is Holiday</th>
+                    <th>Holiday</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in results)
+                {
+                    <tr>
+                        <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@item.DetectedObject</td>
+                        <td>@item.ConfidenceScore</td>
+                        <td>@item.Temp</td>
+                        <td>@item.Humidity</td>
+                        <td>@item.Precipitation</td>
+                        <td>@item.Windforce</td>
+                        <td>@item.IsHoliday</td>
+                        <td>@item.HolidayName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (results != null && !results.Any())
+    {
+        <p><em>No detections found in the selected range.</em></p>
+    }
 }
-else if (results != null && !results.Any())
+else
 {
-    <p><em>No detections found in the selected range.</em></p>
+    <p>Please Login.</p>
 }
 
 @code {
