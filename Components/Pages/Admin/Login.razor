@@ -1,0 +1,59 @@
+﻿@page "/login"
+
+@using TrashBoard.Services
+@inject UserSessionService SessionService
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<h3>Admin Login</h3>
+
+@if (!loginFailed)
+{
+    <p>Please enter your admin credentials.</p>
+}
+else
+{
+    <p class="text-danger">Invalid login. Try again.</p>
+}
+
+<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin" FormName="Login">
+    <InputText @bind-Value="loginModel.Username" class="form-control" placeholder="Username" />
+    <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Password" />
+    <button type="submit" class="btn btn-primary mt-2">Login</button>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SessionService.InitializeAsync();
+            StateHasChanged(); // refresh UI after loading session data
+        }
+    }
+
+    private async void HandleLogin()
+    {
+        var result = await SessionService.LoginAsync(loginModel.Username, loginModel.Password);
+        if (result)
+        {
+            Nav.NavigateTo("/admin/admin");
+        }
+    }
+
+    private async void Logout()
+    {
+        await SessionService.LogoutAsync();
+        Nav.NavigateTo("/");
+    }
+
+    private bool loginFailed = false;
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

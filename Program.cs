@@ -29,6 +29,13 @@ builder.Services.AddDbContextFactory<TrashboardDbContext>(options =>
 // Data Services
 builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 
+// User Service
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSession();
+builder.Services.AddScoped<UserSessionService>();
+
+
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
@@ -41,6 +48,7 @@ var app = builder.Build();
 var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
 
+app.UseSession();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

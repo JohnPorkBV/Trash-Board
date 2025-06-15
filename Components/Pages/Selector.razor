@@ -1,10 +1,14 @@
-﻿@page "/selector"
+@page "/selector"
 @inject TrashBoard.Services.ITrashDataService TrashDataService
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
 @using TrashBoard.Models
 @using BlazorBootstrap
 @rendermode InteractiveServer
+@inject TrashBoard.Services.UserSessionService SessionService
 
+@if (!String.IsNullOrEmpty (SessionService.Username))
+{
+    <h3>Filter Trash Detections</h3>
 <section class="filter-panel">
 	<div class="d-flex justify-content-between align-items-center mb-2">
 		<h3>@L["Header_FilterSection"]</h3>
@@ -142,9 +146,10 @@
 		</table>
 	</div>
 }
-else if (results != null && !results.Any())
+else
 {
 	<p><em>@L["Message_NoResults"]</em></p>
+    <p>Please Login.</p>
 }
 
 @code {

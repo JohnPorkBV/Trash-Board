@@ -2,9 +2,10 @@
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject ITrashDataService TrashDataService
+@inject UserSessionService SessionService
 @rendermode InteractiveServer
 
-@if (true)// Todo Add user roles
+@if (SessionService.IsAdmin)// Todo Add user roles
 {
     <h3 class="text-xl font-bold mb-4">Update Trash Records with Holiday Info</h3>
 
@@ -61,7 +62,14 @@ else
     private int ProgressCount = 0;
     private int TotalCount = 0;
     private List<TrashDetection> UpdatedItems = new();
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SessionService.InitializeAsync();
+            StateHasChanged(); // refresh UI after loading session data
+        }
+    }
     private async Task StartUpdate()
     {
         IsRunning = true;

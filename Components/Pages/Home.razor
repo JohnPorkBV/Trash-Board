@@ -1,8 +1,12 @@
-﻿@page "/"
+@page "/"
 @using TrashBoard.Models
 @inject TrashBoard.Services.ITrashDataService DataService
+@inject TrashBoard.Services.UserSessionService SessionService
 @rendermode InteractiveServer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
+@if (!String.IsNullOrEmpty(SessionService.Username))
+{
+    <h3>Trash Detections</h3>
 
 <h3>@L["Header_Detections"]</h3>
 @if (trashDetections == null)
@@ -51,6 +55,10 @@ else
 			}
 		</tbody>
 	</table>
+}
+else
+{
+    <p>Please Login.</p>
 }
 
 @code {
