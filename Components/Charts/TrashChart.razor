@@ -1,5 +1,6 @@
 ﻿@using TrashBoard.Models
 @using BlazorBootstrap
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashDetectionsLineChart> L
 @rendermode InteractiveServer
 
 @if (detections != null && detections.Any())
@@ -78,40 +79,82 @@ else
             <= 1500 => TimeSpan.FromDays(3),
             _ => TimeSpan.FromDays(7)
         };
+        // TimeSpan bucketSize = TimeSpan.FromMinutes(1);
+        bool smallBuckets = bucketSize < TimeSpan.FromDays(1);
 
-        string labelFormat = bucketSize <= TimeSpan.FromHours(12) ? "HH:mm" : "yyyy-MM-dd";
+        // Define bucket start reference time:
+        DateTime minTimestamp = detections.Min(d => d.Timestamp);
+        DateTime bucketStartReference;
 
-        DateTime start = detections.Min(d => d.Timestamp);
+        if (smallBuckets||true)
+        {
+            // Use midnight of the earliest date for daily aligned buckets
+            bucketStartReference = minTimestamp.Date;
+        }
+        else
+        {
+            // Use the earliest timestamp (can be arbitrary)
+            bucketStartReference = minTimestamp;
+        }
 
+        // Group detections by bucket start time
         var grouped = detections
             .GroupBy(d =>
             {
-                var elapsedTicks = d.Timestamp.Ticks - start.Ticks;
+                // Calculate how many full buckets elapsed since bucketStartReference
+                var elapsedTicks = d.Timestamp.Ticks - bucketStartReference.Ticks;
                 var bucketIndex = elapsedTicks / bucketSize.Ticks;
-                return start.AddTicks(bucketIndex * bucketSize.Ticks);
+                return bucketStartReference.AddTicks(bucketIndex * bucketSize.Ticks);
             })
             .OrderBy(g => g.Key)
             .ToList();
 
-        var labels = grouped.Select(g => g.Key.ToString(labelFormat)).ToList();
+        // Build label dictionary by date to count buckets per day (only if smallBuckets)
+        Dictionary<DateTime, int> bucketsPerDay = new();
+        if (smallBuckets)
+        {
+            foreach (var group in grouped)
+            {
+                var day = group.Key.Date;
+                if (!bucketsPerDay.ContainsKey(day))
+                    bucketsPerDay[day] = 0;
+                bucketsPerDay[day]++;
+            }
+        }
+
+        List<string> labels = new();
+        foreach (var group in grouped)
+        {
+            if (smallBuckets)
+            {
+                // For small buckets, always show date and time
+                labels.Add(group.Key.ToString("yyyy-MM-dd HH:mm"));
+            }
+            else
+            {
+                // For big buckets, always show date
+                labels.Add(group.Key.ToString("yyyy-MM-dd"));
+            }
+        }
+
         var dataPoints = grouped.Select(g => (double?)g.Count()).ToList();
 
         var data = new ChartData
             {
                 Labels = labels,
                 Datasets = new List<IChartDataset>
+        {
+            new LineChartDataset
             {
-                new LineChartDataset
-                {
-                    Label = "Trash Detections",
-                    Data = dataPoints,
-                    BackgroundColor = "rgba(54, 162, 235, 0.2)",
-                    BorderColor = "rgba(54, 162, 235, 1)",
-                    BorderWidth = 2,
-                    PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
-                    PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
-                }
+                Label = L["ChartLabel"],
+                Data = dataPoints,
+                BackgroundColor = "rgba(54, 162, 235, 0.2)",
+                BorderColor = "rgba(54, 162, 235, 1)",
+                BorderWidth = 2,
+                PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
+                PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
             }
+        }
             };
 
         var options = new LineChartOptions
@@ -122,7 +165,7 @@ else
                     Title = new ChartPluginsTitle
                     {
                         Display = true,
-                        Text = "Trash Detections Over Time",
+                        Text = L["ChartTitle"],
                         Font = new ChartFont { Size = 18 }
                     }
                 },
@@ -133,7 +176,7 @@ else
                         Title = new ChartAxesTitle
                         {
                             Display = true,
-                            Text = $"Time ({bucketSize.TotalMinutes:N0} min intervals)"
+                            Text = string.Format(L["XAxisTitleTemplate"], FormatBucketSize(bucketSize))
                         }
                     },
                     Y = new ChartAxes
@@ -141,7 +184,7 @@ else
                         Title = new ChartAxesTitle
                         {
                             Display = true,
-                            Text = "Detections"
+                            Text = L["YAxisTitle"]
                         },
                         BeginAtZero = true
                     }
@@ -150,4 +193,16 @@ else
 
         return (data, options);
     }
+
+    private static string FormatBucketSize(TimeSpan bucketSize)
+    {
+        if (bucketSize.TotalDays >= 1)
+            return $"{bucketSize.TotalDays:N0} day{(bucketSize.TotalDays > 1 ? "s" : "")}";
+        if (bucketSize.TotalHours >= 1)
+            return $"{bucketSize.TotalHours:N0} hour{(bucketSize.TotalHours > 1 ? "s" : "")}";
+        if (bucketSize.TotalMinutes >= 1)
+            return $"{bucketSize.TotalMinutes:N0} minute{(bucketSize.TotalMinutes > 1 ? "s" : "")}";
+        return $"{bucketSize.TotalSeconds:N0} second{(bucketSize.TotalSeconds > 1 ? "s" : "")}";
+    }
+
 }

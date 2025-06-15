@@ -2,13 +2,14 @@
 @using BlazorBootstrap
 @rendermode InteractiveServer
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashTypeBarChart> L
 @if (GroupedCounts?.Any() == true)
 {
     <BarChart @ref="barChart" Class="mb-4" />
 }
 else
 {
-    <p>No trash type data to show.</p>
+    <p>@L["NoData"]</p>
 }
 
 @code {
@@ -72,7 +73,7 @@ else
 
         var dataset = new BarChartDataset
             {
-                Label = "Trash Count by Type",
+                Label = L["ChartLabel"],
                 Data = values,
                 BackgroundColor = labels.Select(_ => GetRandomColor()).ToList(),
                 BorderColor = labels.Select(_ => "rgba(0,0,0,0.1)").ToList()
@@ -92,7 +93,7 @@ else
                     Title = new ChartPluginsTitle
                     {
                         Display = true,
-                        Text = "Trash by Type",
+                        Text = L["ChartTitle"],
                         Font = new ChartFont { Size = 18 }
                     }
                 },
@@ -104,7 +105,7 @@ else
                         Title = new ChartAxesTitle
                         {
                             Display = true,
-                            Text = "Items Detected"
+                            Text = L["YAxisTitle"],
                         }
                     },
                     X = new ChartAxes
@@ -112,7 +113,7 @@ else
                         Title = new ChartAxesTitle
                         {
                             Display = true,
-                            Text = "Trash Type"
+                            Text = L["XAxisTitle"],
                         }
                     }
                 }
