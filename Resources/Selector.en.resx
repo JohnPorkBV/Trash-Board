@@ -216,4 +216,7 @@
   <data name="Header_Detections" xml:space="preserve">
     <value>Trash Detections</value>
   </data>
+  <data name="Login_Message" xml:space="preserve">
+    <value>Please Login</value>
+  </data>
 </root>

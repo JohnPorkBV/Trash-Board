@@ -196,6 +196,15 @@ namespace TrashBoard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gelieve in te loggen.
+        /// </summary>
+        public static string Login_Message {
+            get {
+                return ResourceManager.GetString("Login_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Geen detecties gevonden.
         /// </summary>
         public static string Message_NoResults {

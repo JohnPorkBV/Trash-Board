@@ -6,296 +6,299 @@
 @rendermode InteractiveServer
 @inject TrashBoard.Services.UserSessionService SessionService
 
-@if (!String.IsNullOrEmpty (SessionService.Username))
+@if (!String.IsNullOrEmpty(SessionService.Username))
 {
-    <h3>Filter Trash Detections</h3>
-<section class="filter-panel">
-	<div class="d-flex justify-content-between align-items-center mb-2">
-		<h3>@L["Header_FilterSection"]</h3>
-		<BlazorBootstrap.Button Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="ToggleFilters">
-			@(filtersVisible ? @L["Button_HideFilters"] : @L["Button_ShowFilters"])
-		</BlazorBootstrap.Button>
-	</div>
-	<Collapse @ref="filters">
+    <section class="filter-panel">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3>@L["Header_FilterSection"]</h3>
+            <BlazorBootstrap.Button Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="ToggleFilters">
+                @(filtersVisible ? @L["Button_HideFilters"] : @L["Button_ShowFilters"])
+            </BlazorBootstrap.Button>
+        </div>
+        <Collapse @ref="filters">
 
-		<section class="intro-text">
-			<p>@L["Intro_FilterInstructions"]</p>
-		</section>
+            <section class="intro-text">
+                <p>@L["Intro_FilterInstructions"]</p>
+            </section>
 
 
-		<div class="filter-row">
-			<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(0)">@L["QuickFilter_Today"]</BlazorBootstrap.Button>
-			<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(1)">@L["QuickFilter_Yesterday"]</BlazorBootstrap.Button>
-			<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(7)">@L["QuickFilter_Last7Days"]</BlazorBootstrap.Button>
-			<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(14)">@L["QuickFilter_Last14Days"]</BlazorBootstrap.Button>
-			<BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(30)">@L["QuickFilter_Last30Days"]</BlazorBootstrap.Button>
-		</div>
+            <div class="filter-row">
+                <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(0)">@L["QuickFilter_Today"]</BlazorBootstrap.Button>
+                <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(1)">@L["QuickFilter_Yesterday"]</BlazorBootstrap.Button>
+                <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(7)">@L["QuickFilter_Last7Days"]</BlazorBootstrap.Button>
+                <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(14)">@L["QuickFilter_Last14Days"]</BlazorBootstrap.Button>
+                <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(30)">@L["QuickFilter_Last30Days"]</BlazorBootstrap.Button>
+            </div>
 
-		<div class="filter-row">
-			<div class="mb-3">
-				<label>@L["Label_From"]</label>
-				<DateInput @bind-Value="fromDate"
-						   @onchange="ApplyFilter"
-						   @onblur="ApplyFilter" />
-				<TimeInput @bind-Value="fromTime"
-						   @onchange="ApplyFilter"
-						   @onblur="ApplyFilter" />
-			</div>
-			<div class="mb-3">
-				<label>@L["Label_To"]</label>
-				<DateInput @bind-Value="toDate"
-						   @onchange="ApplyFilter"
-						   @onblur="ApplyFilter" />
-				<TimeInput @bind-Value="toTime"
-						   @onchange="ApplyFilter"
-						   @onblur="ApplyFilter" />
-			</div>
-		</div>
+            <div class="filter-row">
+                <div class="mb-3">
+                    <label>@L["Label_From"]</label>
+                    <DateInput @bind-Value="fromDate"
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
+                    <TimeInput @bind-Value="fromTime"
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
+                </div>
+                <div class="mb-3">
+                    <label>@L["Label_To"]</label>
+                    <DateInput @bind-Value="toDate"
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
+                    <TimeInput @bind-Value="toTime"
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
+                </div>
+            </div>
 
-		<div>
-			<Dropdown Color="DropdownColor.Primary">
-				<DropdownToggleButton>
-					@if (selectedTrashTypes.Count == 0)
-					{
-						<span>@L["Placeholder_SelectTrashTypes"]</span>
-					}
-					else
-					{
-						<span>@string.Join(", ", selectedTrashTypes)</span>
-					}
-				</DropdownToggleButton>
-				<DropdownMenu>
-					@foreach (var type in trashTypes)
-					{
-						<DropdownItem onclick="@(async ()=>ToggleTrashType(type,!selectedTrashTypes.Contains(type)))">
-							@type
-							@if (selectedTrashTypes.Contains(type))
-							{
-								<span>&#10003;</span>
-							}
-						</DropdownItem>
-					}
-				</DropdownMenu>
-			</Dropdown>
-		</div>
+            <div>
+                <Dropdown Color="DropdownColor.Primary">
+                    <DropdownToggleButton>
+                        @if (selectedTrashTypes.Count == 0)
+                        {
+                            <span>@L["Placeholder_SelectTrashTypes"]</span>
+                        }
+                        else
+                        {
+                            <span>@string.Join(", ", selectedTrashTypes)</span>
+                        }
+                    </DropdownToggleButton>
+                    <DropdownMenu>
+                        @foreach (var type in trashTypes)
+                        {
+                            <DropdownItem onclick="@(async ()=>ToggleTrashType(type,!selectedTrashTypes.Contains(type)))">
+                                @type
+                                @if (selectedTrashTypes.Contains(type))
+                                {
+                                    <span>&#10003;</span>
+                                }
+                            </DropdownItem>
+                        }
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
 
-		<div>
-			<label>@L["Label_FilterOnHoliday"]</label>
-			<div class="holiday-type-container">
-				<label>
-					<CheckboxInput Label=@L["Checkbox_ShowHolidays"]
-								   Value="@showHolidays"
-								   ValueExpression="() => showHolidays"
-								   ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
-					<CheckboxInput Label=@L["Checkbox_ShowWorkdays"]
-								   Value="@showWorkdays"
-								   ValueExpression="() => showWorkdays"
-								   ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
+            <div>
+                <label>@L["Label_FilterOnHoliday"]</label>
+                <div class="holiday-type-container">
+                    <label>
+                        <CheckboxInput Label=@L["Checkbox_ShowHolidays"]
+                                       Value="@showHolidays"
+                                       ValueExpression="() => showHolidays"
+                                       ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
+                        <CheckboxInput Label=@L["Checkbox_ShowWorkdays"]
+                                       Value="@showWorkdays"
+                                       ValueExpression="() => showWorkdays"
+                                       ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
 
-				</label>
-			</div>
-		</div>
+                    </label>
+                </div>
+            </div>
 
-		<div>
-			<button class="btn btn-primary" @onclick="ApplyFilter">@L["Button_ApplyFilter"]</button>
-		</div>
-	</Collapse>
-</section>
+            <div>
+                <button class="btn btn-primary" @onclick="ApplyFilter">@L["Button_ApplyFilter"]</button>
+            </div>
+        </Collapse>
+    </section>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-	<p style="color: red;"><strong>@errorMessage</strong></p>
-}
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color: red;"><strong>@errorMessage</strong></p>
+    }
 
-@if (results != null && results.Any())
-{
-	<h4>@L["Header_FilteredResults"]</h4>
-	<TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
-	<TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
-	<div class="table-responsive">
-		<table class="table">
-			<thead>
-				<tr>
-					<th>@L["Table_Timestamp"]</th>
-					<th>@L["Table_Object"]</th>
-					<th>@L["Table_Confidence"]</th>
-					<th>@L["Table_Temperature"]</th>
-					<th>@L["Table_Humidity"]</th>
-					<th>@L["Table_Precipitation"]</th>
-					<th>@L["Table_Windforce"]</th>
-					<th>@L["Table_IsHoliday"]</th>
-					<th>@L["Table_HolidayName"]</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var item in results)
-				{
-					<tr>
-						<td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
-						<td>@item.DetectedObject</td>
-						<td>@item.ConfidenceScore</td>
-						<td>@item.Temp</td>
-						<td>@item.Humidity</td>
-						<td>@item.Precipitation</td>
-						<td>@item.Windforce</td>
-						<td>@(item.IsHoliday ? @L["Text_Yes"] : @L["Text_No"])</td>
-						<td>@item.HolidayName</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
+    @if (results != null && results.Any())
+    {
+        <h4>@L["Header_FilteredResults"]</h4>
+        <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
+        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@L["Table_Timestamp"]</th>
+                        <th>@L["Table_Object"]</th>
+                        <th>@L["Table_Confidence"]</th>
+                        <th>@L["Table_Temperature"]</th>
+                        <th>@L["Table_Humidity"]</th>
+                        <th>@L["Table_Precipitation"]</th>
+                        <th>@L["Table_Windforce"]</th>
+                        <th>@L["Table_IsHoliday"]</th>
+                        <th>@L["Table_HolidayName"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in results)
+                    {
+                        <tr>
+                            <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@item.DetectedObject</td>
+                            <td>@item.ConfidenceScore</td>
+                            <td>@item.Temp</td>
+                            <td>@item.Humidity</td>
+                            <td>@item.Precipitation</td>
+                            <td>@item.Windforce</td>
+                            <td>@(item.IsHoliday ? @L["Text_Yes"] : @L["Text_No"])</td>
+                            <td>@item.HolidayName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p><em>@L["Message_NoResults"]</em></p>
+    }
 }
 else
 {
-	<p><em>@L["Message_NoResults"]</em></p>
-    <p>Please Login.</p>
+    <p>@L["Login_Message"]</p>
 }
 
 @code {
-	private DateTime? fromDate;
-	private TimeOnly? fromTime;
-	private DateTime? toDate;
-	private TimeOnly? toTime;
-	private string? errorMessage;
-	private List<string> trashTypes = new();
-	private HashSet<string> selectedTrashTypes = new();
-	private HashSet<bool> selectedHolidayFilters = new();
-	private IEnumerable<TrashDetection>? results;
+    private DateTime? fromDate;
+    private TimeOnly? fromTime;
+    private DateTime? toDate;
+    private TimeOnly? toTime;
+    private string? errorMessage;
+    private List<string> trashTypes = new();
+    private HashSet<string> selectedTrashTypes = new();
+    private HashSet<bool> selectedHolidayFilters = new();
+    private IEnumerable<TrashDetection>? results;
 
-	private bool showHolidays;
-	private bool showWorkdays;
+    private bool showHolidays;
+    private bool showWorkdays;
 
-	private Collapse filters = default;
-	private bool filtersVisible = false;
+    private Collapse filters = default;
+    private bool filtersVisible = false;
 
-	private async void ToggleFilters()
-	{
-		filtersVisible = !filtersVisible;
-		await filters.ToggleAsync();
-	}
-
-
-	private async Task ToggleHolidayFilter(bool filter, bool enabled)
-	{
-		if (enabled)
-			selectedHolidayFilters.Add(filter);
-		else
-			selectedHolidayFilters.Remove(filter);
-
-		showHolidays = selectedHolidayFilters.Contains(true);
-		showWorkdays = selectedHolidayFilters.Contains(false);
-
-		await ApplyFilter();
-	}
-
-	private async Task ToggleTrashType(string type, bool isSelected)
-	{
-		if (isSelected)
-			selectedTrashTypes.Add(type);
-		else
-			selectedTrashTypes.Remove(type);
-
-		await ApplyFilter();
-	}
+    private async void ToggleFilters()
+    {
+        filtersVisible = !filtersVisible;
+        await filters.ToggleAsync();
+    }
 
 
+    private async Task ToggleHolidayFilter(bool filter, bool enabled)
+    {
+        if (enabled)
+            selectedHolidayFilters.Add(filter);
+        else
+            selectedHolidayFilters.Remove(filter);
+
+        showHolidays = selectedHolidayFilters.Contains(true);
+        showWorkdays = selectedHolidayFilters.Contains(false);
+
+        await ApplyFilter();
+    }
+
+    private async Task ToggleTrashType(string type, bool isSelected)
+    {
+        if (isSelected)
+            selectedTrashTypes.Add(type);
+        else
+            selectedTrashTypes.Remove(type);
+
+        await ApplyFilter();
+    }
 
 
-	private async Task ApplyFilter()
-	{
-		errorMessage = null;
-		DateTime? from = null;
-		DateTime? to = null;
 
-		if (fromDate.HasValue)
-		{
-			var time = fromTime ?? TimeOnly.MinValue;
-			from = fromDate.Value.Date + time.ToTimeSpan();
-		}
 
-		if (toDate.HasValue)
-		{
-			var time = toTime ?? new TimeOnly(23, 59, 59);
-			to = toDate.Value.Date + time.ToTimeSpan();
-		}
+    private async Task ApplyFilter()
+    {
+        errorMessage = null;
+        DateTime? from = null;
+        DateTime? to = null;
 
-		if (from.HasValue && to.HasValue && from.Value == to.Value)
-		{
-			errorMessage = L["Error_SameFromTo"];
-			results = null;
-			return;
-		}
+        if (fromDate.HasValue)
+        {
+            var time = fromTime ?? TimeOnly.MinValue;
+            from = fromDate.Value.Date + time.ToTimeSpan();
+        }
 
-		bool? isHolidayFilter = null;
-		if (selectedHolidayFilters.Count == 1)
-			isHolidayFilter = selectedHolidayFilters.First();
-		else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
-			isHolidayFilter = null;
+        if (toDate.HasValue)
+        {
+            var time = toTime ?? new TimeOnly(23, 59, 59);
+            to = toDate.Value.Date + time.ToTimeSpan();
+        }
 
-		try
-		{
-			results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
-			StateHasChanged();
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"{L["Error_FilterApply"]}{ex.Message}";
-		}
-	}
+        if (from.HasValue && to.HasValue && from.Value == to.Value)
+        {
+            errorMessage = L["Error_SameFromTo"];
+            results = null;
+            return;
+        }
 
-	private async Task ApplyQuickFilter(int daysBack)
-	{
-		errorMessage = null;
-		try
-		{
-			DateTime nu = DateTime.Now;
-			DateTime from;
-			DateTime to;
+        bool? isHolidayFilter = null;
+        if (selectedHolidayFilters.Count == 1)
+            isHolidayFilter = selectedHolidayFilters.First();
+        else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
+            isHolidayFilter = null;
 
-			if (daysBack == 0) // Vandaag
-			{
-				from = nu.Date;
-				to = nu;
-			}
-			else if (daysBack == 1) // Gisteren
-			{
-				from = nu.Date.AddDays(-1);
-				to = nu.Date.AddTicks(-1);
-			}
-			else
-			{
-				from = nu.Date.AddDays(-daysBack);
-				to = nu;
-			}
+        try
+        {
+            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"{L["Error_FilterApply"]}{ex.Message}";
+        }
+    }
 
-			// UI-velden bijwerken
-			fromDate = from.Date;
-			fromTime = TimeOnly.FromDateTime(from);
-			toDate = to.Date;
-			toTime = TimeOnly.FromDateTime(to);
+    private async Task ApplyQuickFilter(int daysBack)
+    {
+        errorMessage = null;
+        try
+        {
+            DateTime nu = DateTime.Now;
+            DateTime from;
+            DateTime to;
 
-			bool? isHolidayFilter = null;
-			if (selectedHolidayFilters.Count == 1)
-				isHolidayFilter = selectedHolidayFilters.First();
-			else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
-				isHolidayFilter = null;
+            if (daysBack == 0) // Vandaag
+            {
+                from = nu.Date;
+                to = nu;
+            }
+            else if (daysBack == 1) // Gisteren
+            {
+                from = nu.Date.AddDays(-1);
+                to = nu.Date.AddTicks(-1);
+            }
+            else
+            {
+                from = nu.Date.AddDays(-daysBack);
+                to = nu;
+            }
 
-			results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
-				.OrderByDescending(r => r.Timestamp);
-			StateHasChanged();
+            // UI-velden bijwerken
+            fromDate = from.Date;
+            fromTime = TimeOnly.FromDateTime(from);
+            toDate = to.Date;
+            toTime = TimeOnly.FromDateTime(to);
 
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"{L["Error_QuickFilter"]}{ex.Message}";
-		}
-	}
+            bool? isHolidayFilter = null;
+            if (selectedHolidayFilters.Count == 1)
+                isHolidayFilter = selectedHolidayFilters.First();
+            else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
+                isHolidayFilter = null;
 
-	protected override async Task OnInitializedAsync()
-	{
-		trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
-		await ApplyFilter();
-	}
+            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
+                .OrderByDescending(r => r.Timestamp);
+            StateHasChanged();
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"{L["Error_QuickFilter"]}{ex.Message}";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+        await ApplyFilter();
+    }
 }
 
