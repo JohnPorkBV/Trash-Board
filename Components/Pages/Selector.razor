@@ -30,13 +30,21 @@
 		<div class="filter-row">
 			<div class="mb-3">
 				<label>@L["Label_From"]</label>
-				<DateInput @bind-Value="fromDate" />
-				<TimeInput @bind-Value="fromTime" />
+				<DateInput @bind-Value="fromDate"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
+				<TimeInput @bind-Value="fromTime"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
 			</div>
 			<div class="mb-3">
 				<label>@L["Label_To"]</label>
-				<DateInput @bind-Value="toDate" />
-				<TimeInput @bind-Value="toTime" />
+				<DateInput @bind-Value="toDate"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
+				<TimeInput @bind-Value="toTime"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
 			</div>
 		</div>
 
@@ -104,15 +112,15 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>@L["Table_Timestamp"]Tijdstip</th>
-					<th>@L["Table_Object"]Gedetecteerd object</th>
-					<th>@L["Table_Confidence"]Vertrouwensscore</th>
-					<th>@L["Table_Temperature"]Temperatuur</th>
-					<th>@L["Table_Humidity"]Vochtigheid</th>
-					<th>@L["Table_Precipitation"]Neerslag</th>
-					<th>@L["Table_Windforce"]Windkracht</th>
-					<th>@L["Table_IsHoliday"]Feestdag</th>
-					<th>@L["Table_HolidayName"]Naam feestdag</th>
+					<th>@L["Table_Timestamp"]</th>
+					<th>@L["Table_Object"]</th>
+					<th>@L["Table_Confidence"]</th>
+					<th>@L["Table_Temperature"]</th>
+					<th>@L["Table_Humidity"]</th>
+					<th>@L["Table_Precipitation"]</th>
+					<th>@L["Table_Windforce"]</th>
+					<th>@L["Table_IsHoliday"]</th>
+					<th>@L["Table_HolidayName"]</th>
 				</tr>
 			</thead>
 			<tbody>

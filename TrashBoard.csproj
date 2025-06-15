@@ -29,6 +29,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Selector.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\TrashDetectionsLineChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashDetectionsLineChart.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TrashTypeBarChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashTypeBarChart.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +50,16 @@
     <EmbeddedResource Update="Resources\Selector.en.resx">
       <CustomToolNamespace>TrashBoard</CustomToolNamespace>
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashDetectionsLineChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashDetectionsLineChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashTypeBarChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashTypeBarChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
 

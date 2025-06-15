@@ -1,13 +1,11 @@
-﻿@using Microsoft.AspNetCore.Localization
-@using Microsoft.JSInterop
-@using System.Globalization
+﻿@using System.Globalization
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 <select @onchange="OnLanguageChange" class="form-select w-auto">
     <option value="nl" selected="@IsSelected("nl")">Nederlands</option>
-    <option value="en">English</option>
+    <option value="en" selected="@IsSelected("en")">English</option>
 </select>
 
 @code {
@@ -15,11 +13,14 @@
     {
         var selectedCulture = e.Value?.ToString() ?? "nl";
 
-        // Set the culture cookie
-        var cookieValue = $"c={selectedCulture}|uic={selectedCulture}";
-        await JS.InvokeVoidAsync("document.cookie", $"CookieName=.AspNetCore.Culture; value={cookieValue}; path=/");
+        // Save to localStorage
+        await JS.InvokeVoidAsync("blazorCulture.set", selectedCulture);
 
-        // Reload the page to apply changes
+        // Save to cookie (server requires this!)
+        var cookieValue = $".AspNetCore.Culture=c={selectedCulture}|uic={selectedCulture}";
+        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+
+        // Reload
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
     }
 
