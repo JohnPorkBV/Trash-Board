@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
+var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -39,7 +40,10 @@ builder.Services.AddScoped<UserSessionService>();
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
-builder.Services.AddHttpClient<AiPredictionService>();
+builder.Services.AddHttpClient<AiPredictionService>(client =>
+{
+    client.BaseAddress = new Uri(AiApiEndpoint);
+});
 
 
 // Bootstrap

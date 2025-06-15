@@ -15,7 +15,7 @@ namespace TrashBoard.Services
 
         public async Task<string?> PredictAsync(TrashDetectionInput input)
         {
-            var response = await _http.PostAsJsonAsync("http://localhost:8000/predict", input);
+            var response = await _http.PostAsJsonAsync("/predict", input);
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();

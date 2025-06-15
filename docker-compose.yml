@@ -9,6 +9,7 @@ services:
     restart: unless-stopped
     environment:
       - SqlConnectionStringLocal=${SQL_CONNECTION_STRING}
+      - AiApiEndpoint=${AiApiEndpoint}
 
   ai:
     build: ./AI-model-api
