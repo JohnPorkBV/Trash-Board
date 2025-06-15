@@ -9,15 +9,12 @@ services:
     restart: unless-stopped
     environment:
       - SqlConnectionStringLocal=${SQL_CONNECTION_STRING}
-      - AiApiEndpoint=${AiApiEndpoint}
-
+      - AiApiEndpoint=http://ai:8000
   ai:
     build: ./AI-model-api
     container_name: ai
-    ports:
-      - "${TrashBoard_AI_PORT}:8000"
-    # environment:
-    #   - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING}
+    #ports:
+    #  - "${TrashBoard_AI_PORT}:8000"
     restart: unless-stopped
     environment:
       - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING_AI}
