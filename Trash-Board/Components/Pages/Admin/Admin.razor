@@ -11,7 +11,12 @@
 else
 {
     <h3>Admin Panel</h3>
-    <button class="btn btn-danger" @onclick="Logout">Logout</button>
+
+    <div class="nav-item px-3">
+        <NavLink class="nav-link" href="/admin/holiday-updater">
+            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Holiday Update
+        </NavLink>
+    </div>
 }
 
 @code {

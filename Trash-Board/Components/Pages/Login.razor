@@ -39,7 +39,10 @@ else
         var result = await SessionService.LoginAsync(loginModel.Username, loginModel.Password);
         if (result)
         {
-            Nav.NavigateTo("/admin/admin");
+            if (SessionService.IsAdmin)
+                Nav.NavigateTo("/admin/admin");
+            else
+                Nav.NavigateTo("/");
         }
     }
 

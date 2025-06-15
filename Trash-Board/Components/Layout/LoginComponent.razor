@@ -1,0 +1,44 @@
+﻿@implements IDisposable
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject TrashBoard.Services.UserSessionService SessionService
+
+
+@if (String.IsNullOrEmpty(SessionService.Username))
+{
+    <button class="btn btn-primary" @onclick="Login">Login</button>
+}
+else
+{
+    <button class="btn btn-danger" @onclick="Logout">Logout</button>
+}
+@if (SessionService.IsAdmin)
+{
+    <NavLink class="btn btn-primary" href="admin/admin">Admin
+    </NavLink>
+}
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SessionService.InitializeAsync();
+            SessionService.OnChange += StateHasChanged;
+            StateHasChanged(); // refresh UI after loading session data
+        }
+    }
+    public void Dispose()
+    {
+        SessionService.OnChange -= StateHasChanged;
+    }
+    private async void Logout()
+    {
+        await SessionService.LogoutAsync();
+        NavigationManager.NavigateTo("/");
+    }
+    private async void Login()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}
