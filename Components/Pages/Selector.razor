@@ -30,13 +30,21 @@
 		<div class="filter-row">
 			<div class="mb-3">
 				<label>@L["Label_From"]</label>
-				<DateInput @bind-Value="fromDate" />
-				<TimeInput @bind-Value="fromTime" />
+				<DateInput @bind-Value="fromDate"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
+				<TimeInput @bind-Value="fromTime"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
 			</div>
 			<div class="mb-3">
 				<label>@L["Label_To"]</label>
-				<DateInput @bind-Value="toDate" />
-				<TimeInput @bind-Value="toTime" />
+				<DateInput @bind-Value="toDate"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
+				<TimeInput @bind-Value="toTime"
+						   @onchange="ApplyFilter"
+						   @onblur="ApplyFilter" />
 			</div>
 		</div>
 
