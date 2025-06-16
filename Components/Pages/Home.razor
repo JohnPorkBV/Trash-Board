@@ -1,51 +1,67 @@
-﻿@page "/"
+@page "/"
 @using TrashBoard.Models
 @inject TrashBoard.Services.ITrashDataService DataService
-
-<h3>Trash Detections</h3>
-
-@if (trashDetections == null)
+@inject TrashBoard.Services.UserSessionService SessionService
+@rendermode InteractiveServer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
+@if (!String.IsNullOrEmpty(SessionService.Username))
 {
-    <p><em>Loading...</em></p>
-}
-else if (!trashDetections.Any())
-{
-    <p>No trash detections found.</p>
+    <h3>@L["Header_Detections"]</h3>
+    @if (trashDetections == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (!trashDetections.Any())
+    {
+        <p>No trash detections found.</p>
+    }
+    else
+    {
+        <TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
+        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
+
+        <hr />
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@L["Table_Timestamp"]</th>
+                    <th>@L["Table_Object"]</th>
+                    <th>@L["Table_Confidence"]</th>
+                    <th>@L["Table_Temperature"]</th>
+                    <th>@L["Table_Humidity"]</th>
+                    <th>@L["Table_Precipitation"]</th>
+                    <th>@L["Table_Windforce"]</th>
+                    <th>@L["Table_IsHoliday"]</th>
+                    <th>@L["Table_HolidayName"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in trashDetections)
+                {
+                    <tr>
+                        <td>@item.Timestamp</td>
+                        <td>@item.DetectedObject</td>
+                        <td>@item.ConfidenceScore</td>
+                        <td>@item.Temp</td>
+                        <td>@item.Humidity</td>
+                        <td>@item.Precipitation</td>
+                        <td>@item.Windforce</td>
+                        <td>@item.IsHoliday</td>
+                        <td>@item.HolidayName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Object</th>
-                <th>Confidence</th>
-                <th>Temp (°C)</th>
-                <th>Humidity</th>
-                <th>Precip</th>
-                <th>Wind</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in trashDetections)
-            {
-                <tr>
-                    <td>@item.Timestamp</td>
-                    <td>@item.DetectedObject</td>
-                    <td>@item.ConfidenceScore</td>
-                    <td>@item.Temp</td>
-                    <td>@item.Humidity</td>
-                    <td>@item.Precipitation</td>
-                    <td>@item.Windforce</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <p>@L["Login_Message"]</p>
 }
 
 @code {
     private IEnumerable<TrashDetection>? trashDetections;
-
 
     protected override async Task OnInitializedAsync()
     {

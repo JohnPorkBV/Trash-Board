@@ -10,12 +10,57 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.Bootstrap" Version="3.3.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Selector.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Selector.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TrashDetectionsLineChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashDetectionsLineChart.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TrashTypeBarChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashTypeBarChart.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Selector.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <LastGenOutput>Selector.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Selector.en.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashDetectionsLineChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashDetectionsLineChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashTypeBarChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashTypeBarChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

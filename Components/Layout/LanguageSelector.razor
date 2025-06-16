@@ -1,0 +1,29 @@
+﻿@using System.Globalization
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<select @onchange="OnLanguageChange" class="form-select w-auto">
+    <option value="nl" selected="@IsSelected("nl")">Nederlands</option>
+    <option value="en" selected="@IsSelected("en")">English</option>
+</select>
+
+@code {
+    private async Task OnLanguageChange(ChangeEventArgs e)
+    {
+        var selectedCulture = e.Value?.ToString() ?? "nl";
+
+        // Save to localStorage
+        await JS.InvokeVoidAsync("blazorCulture.set", selectedCulture);
+
+        // Save to cookie (server requires this!)
+        var cookieValue = $".AspNetCore.Culture=c={selectedCulture}|uic={selectedCulture}";
+        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+
+        // Reload
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+
+    private string? IsSelected(string culture) =>
+        CultureInfo.CurrentUICulture.Name.StartsWith(culture) ? "selected" : null;
+}

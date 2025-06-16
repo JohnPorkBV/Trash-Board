@@ -1,0 +1,130 @@
+﻿@using TrashBoard.Models
+@using BlazorBootstrap
+@rendermode InteractiveServer
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashTypeBarChart> L
+@if (GroupedCounts?.Any() == true)
+{
+    <BarChart @ref="barChart" Class="mb-4" />
+}
+else
+{
+    <p>@L["NoData"]</p>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<TrashDetection>? TrashDetections { get; set; }
+
+    private BarChart barChart = default!;
+    private Dictionary<string, int> GroupedCounts = new();
+
+    private bool chartInitialized = false;
+    private bool chartNeedsUpdate = false;
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (TrashDetections is not null)
+        {
+            GroupedCounts = TrashDetections
+                .GroupBy(d => d.DetectedObject ?? "Unknown")
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            chartNeedsUpdate = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (barChart is null || !chartNeedsUpdate || GroupedCounts.Count == 0)
+            return;
+
+        if (!chartInitialized)
+        {
+            await InitializeBarChartAsync();
+            chartInitialized = true;
+        }
+        else
+        {
+            await UpdateBarChartAsync();
+        }
+
+        chartNeedsUpdate = false;
+    }
+
+    private async Task InitializeBarChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await barChart.InitializeAsync(data, options);
+    }
+
+    private async Task UpdateBarChartAsync()
+    {
+        var (data, options) = BuildChartDataAndOptions();
+        await barChart.UpdateAsync(data, options);
+    }
+
+    private (ChartData, BarChartOptions) BuildChartDataAndOptions()
+    {
+        var labels = GroupedCounts.Keys.ToList();
+        var values = GroupedCounts.Values.Select(v => (double?)v).ToList();
+
+        var dataset = new BarChartDataset
+            {
+                Label = L["ChartLabel"],
+                Data = values,
+                BackgroundColor = labels.Select(_ => GetRandomColor()).ToList(),
+                BorderColor = labels.Select(_ => "rgba(0,0,0,0.1)").ToList()
+            };
+
+        var data = new ChartData
+            {
+                Labels = labels,
+                Datasets = new List<IChartDataset> { dataset }
+            };
+
+        var options = new BarChartOptions
+            {
+                Responsive = true,
+                Plugins = new BarChartPlugins
+                {
+                    Title = new ChartPluginsTitle
+                    {
+                        Display = true,
+                        Text = L["ChartTitle"],
+                        Font = new ChartFont { Size = 18 }
+                    }
+                },
+                Scales = new Scales
+                {
+                    Y = new ChartAxes
+                    {
+                        BeginAtZero = true,
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = L["YAxisTitle"],
+                        }
+                    },
+                    X = new ChartAxes
+                    {
+                        Title = new ChartAxesTitle
+                        {
+                            Display = true,
+                            Text = L["XAxisTitle"],
+                        }
+                    }
+                }
+            };
+
+        return (data, options);
+    }
+
+    private static string GetRandomColor()
+    {
+        var rnd = new Random();
+        return $"rgba({rnd.Next(50, 200)}, {rnd.Next(50, 200)}, {rnd.Next(50, 200)}, 0.7)";
+    }
+}

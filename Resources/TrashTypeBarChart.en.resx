@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <data name="NoData" xml:space="preserve">
+    <value>No trash type data to show.</value>
+  </data>
+  <data name="ChartLabel" xml:space="preserve">
+    <value>Trash Count by Type</value>
+  </data>
+  <data name="ChartTitle" xml:space="preserve">
+    <value>Trash by Type</value>
+  </data>
+  <data name="YAxisTitle" xml:space="preserve">
+    <value>Items Detected</value>
+  </data>
+  <data name="XAxisTitle" xml:space="preserve">
+    <value>Trash Type</value>
+  </data>
+</root>
