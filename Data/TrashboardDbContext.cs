@@ -11,6 +11,7 @@ namespace TrashBoard.Data
         }
 
         public DbSet<TrashDetection> TrashDetections { get; set; }
+        public DbSet<BredaEvent> BredaEvents { get; set; }
     }
 
 }
