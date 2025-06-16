@@ -19,6 +19,8 @@ namespace TrashBoard.Models
         public float Windforce { get; set; }
         public bool IsHoliday { get; set; }
         public string? HolidayName { get; set; }
+        public bool IsBredaEvent { get; set; }
+        public string? BredaEventName { get; set; }
 
     }
 

@@ -238,7 +238,7 @@ else
 
         try
         {
-            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
+            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, null); //#TODO# add filter for events
             StateHasChanged();
         }
         catch (Exception ex)
@@ -284,7 +284,7 @@ else
             else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
                 isHolidayFilter = null;
 
-            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
+            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, null)) //#TODO# add filter for events
                 .OrderByDescending(r => r.Timestamp);
             StateHasChanged();
 

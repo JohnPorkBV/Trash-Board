@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using TrashBoard.Models;
 
 namespace TrashBoard.Services
@@ -14,12 +15,11 @@ namespace TrashBoard.Services
             _httpClient = httpClient;
         }
 
-        public async Task<bool> IsHolidayAsync(DateTime date)
+        public async Task<HolidayData?> IsHolidayAsync(DateTime date)
         {
             var holidays = await GetHolidaysForYearAsync(date.Year);
-            return holidays.Any(h => h.Date.Date == date.Date);
+            return holidays.FirstOrDefault(h => h.Date.Date == date.Date);
         }
-
         public async Task<List<HolidayData>> GetHolidaysForYearAsync(int year)
         {
             if (_holidayCache.TryGetValue(year, out var cached))

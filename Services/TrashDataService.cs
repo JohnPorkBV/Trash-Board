@@ -9,12 +9,18 @@ namespace TrashBoard.Services
     {
         private readonly TrashboardDbContext _context;
         private readonly IHolidayService _holidayService;
+        private readonly IBredaEventService _bredaEventService;
 
-        public TrashDataService(TrashboardDbContext context, IHolidayService holidayService)
+        public TrashDataService(
+            TrashboardDbContext context,
+            IHolidayService holidayService,
+            IBredaEventService bredaEventService)
         {
             _context = context;
             _holidayService = holidayService;
+            _bredaEventService = bredaEventService;
         }
+
 
 
         public async Task<IEnumerable<TrashDetection>> GetAllAsync()
@@ -23,10 +29,11 @@ namespace TrashBoard.Services
         }
 
         public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
-    DateTime? from,
-    DateTime? to,
-    List<string>? trashTypes,
-    bool? isHoliday)
+            DateTime? from,
+            DateTime? to,
+            List<string>? trashTypes,
+            bool? isHoliday,
+            bool? isBredaEvent)
         {
             var query = _context.TrashDetections.AsQueryable();
 
@@ -42,6 +49,9 @@ namespace TrashBoard.Services
             if (isHoliday.HasValue)
                 query = query.Where(t => t.IsHoliday == isHoliday.Value);
 
+            if (isBredaEvent.HasValue)
+                query = query.Where(t => t.IsBredaEvent == isBredaEvent.Value);
+
             query = query.OrderByDescending(t => t.Timestamp);
 
             return await query.ToListAsync();
@@ -54,39 +64,22 @@ namespace TrashBoard.Services
 
         public async Task AddAsync(TrashDetection detection)
         {
-            // Check for holiday
-            var holidays = await _holidayService.GetHolidaysForYearAsync(detection.Timestamp.Year);
-            var holiday = holidays.FirstOrDefault(h => h.Date.Date == detection.Timestamp.Date);
-
+            var holiday= await _holidayService.IsHolidayAsync(detection.Timestamp);
             if (holiday != null)
             {
                 detection.IsHoliday = true;
-                detection.HolidayName = holiday.LocalName; // or holiday.Name if you prefer English
+                detection.HolidayName = holiday.LocalName;
             }
-            else
+            var bredaEvent = await _bredaEventService.HasBredaEventAsync(detection.Timestamp);
+            if (bredaEvent != null)
             {
-                detection.IsHoliday = false;
-                detection.HolidayName = null;
+                detection.IsBredaEvent = true;
+                detection.BredaEventName = bredaEvent.Name;
             }
 
             _context.TrashDetections.Add(detection);
             await _context.SaveChangesAsync();
         }
-
-
-        public async Task UpdateWeatherInfoAsync(int id, float temperature, string condition, float humidity, float precipitation, DateTime date)
-        {
-            var detection = await _context.TrashDetections.FindAsync(id);
-            if (detection == null) return;
-
-            detection.Temp = temperature;
-            detection.Humidity = humidity;
-            detection.Precipitation = precipitation;
-            detection.Date = date;
-
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<string>> GetAvailableTrashTypesAsync()
         {
             return await _context.TrashDetections
@@ -98,11 +91,38 @@ namespace TrashBoard.Services
         }
         public async Task<TrashDetection> UpdateHolidayInfoForAsync(TrashDetection detection)
         {
-            var holidays = await _holidayService.GetHolidaysForYearAsync(detection.Timestamp.Year);
-            var holiday = holidays.FirstOrDefault(h => h.Date.Date == detection.Timestamp.Date);
+            var holiday = await _holidayService.IsHolidayAsync(detection.Timestamp);
 
-            detection.IsHoliday = holiday != null;
-            detection.HolidayName = holiday?.LocalName;
+            if (holiday != null)
+            {
+                detection.IsHoliday = true;
+                detection.HolidayName = holiday.LocalName;
+            }
+            else
+            {
+                detection.IsHoliday = false;
+                detection.HolidayName = null;
+            }
+
+            _context.TrashDetections.Update(detection);
+            await _context.SaveChangesAsync();
+
+            return detection;
+        }
+        public async Task<TrashDetection> UpdateBredaEventInfoForAsync(TrashDetection detection)
+        {
+            var bredaEvent = await _bredaEventService.HasBredaEventAsync(detection.Timestamp);
+
+            if (bredaEvent != null)
+            {
+                detection.IsBredaEvent = true;
+                detection.BredaEventName = bredaEvent.Name;
+            }
+            else
+            {
+                detection.IsBredaEvent = false;
+                detection.BredaEventName = null;
+            }
 
             _context.TrashDetections.Update(detection);
             await _context.SaveChangesAsync();
