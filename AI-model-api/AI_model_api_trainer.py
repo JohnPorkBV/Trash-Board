@@ -17,7 +17,7 @@ query = """
 SELECT 
     [DetectedObject], [Humidity],
     [Hour], [Precipitation], [Temp], [Windforce], [IsHoliday]
-FROM [TrashBoard].[dbo].[TrashDetections]
+FROM [dbo].[TrashDetections]
 """
 df = pd.read_sql(query, engine)
 

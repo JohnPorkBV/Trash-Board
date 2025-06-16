@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6be3f781-c159-4d61-84ad-a63f78c82d96</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AI_model_api_trainer.py</StartupFile>
+    <StartupFile>AI_model_api.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -14,8 +14,7 @@
     <InterpreterId>MSBuild|env-ai|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <Environment>SQL_CONNECTION_STRING=mssql+pyodbc://trash:trash-01@192.168.178.133/TrashBoard?driver=ODBC+Driver+17+for+SQL+Server&amp;TrustServerCertificate=yes
-</Environment>
+    <Environment>SQL_CONNECTION_STRING=mssql+pyodbc://trashboard_user:JohnPork--123@149.143.71.166/trashjohnporkdb?driver=ODBC+Driver+17+for+SQL+Server&amp;TrustServerCertificate=yes</Environment>
     <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -31,7 +30,6 @@
     <Compile Include="AI_model_api_trainer.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".env" />
     <Content Include="docker-compose.yml" />
     <Content Include="Dockerfile" />
     <Content Include="model.pkl" />
