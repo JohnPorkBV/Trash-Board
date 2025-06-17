@@ -9,12 +9,15 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
-
+builder.Services.AddSingleton(typeof(CustomLocalizer<>));
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var supportedCultures = new[] { new CultureInfo("nl"), new CultureInfo("en"), new CultureInfo("de") };
+    var supportedCultures = new[] {
+        new CultureInfo("nl"),
+        new CultureInfo("en"),
+        new CultureInfo("de"), };
     options.DefaultRequestCulture = new RequestCulture("nl");
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
@@ -49,6 +52,7 @@ builder.Services.AddHttpClient<AiPredictionService>(client =>
 
 // Bootstrap
 builder.Services.AddBlazorBootstrap();
+
 
 var app = builder.Build();
 

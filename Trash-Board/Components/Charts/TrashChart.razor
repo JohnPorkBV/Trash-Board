@@ -1,6 +1,7 @@
 ﻿@using TrashBoard.Models
 @using BlazorBootstrap
-@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashDetectionsLineChart> L
+@using TrashBoard.Services
+@inject CustomLocalizer<TrashBoard.TrashDetectionsLineChart> L
 @rendermode InteractiveServer
 
 @if (detections != null && detections.Any())

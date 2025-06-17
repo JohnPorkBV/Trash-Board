@@ -1,9 +1,11 @@
 @page "/raw"
 @using TrashBoard.Models
-@inject TrashBoard.Services.ITrashDataService DataService
-@inject TrashBoard.Services.UserSessionService SessionService
+@using TrashBoard.Services
+@inject ITrashDataService DataService
+@inject UserSessionService SessionService
 @rendermode InteractiveServer
-@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
+@inject CustomLocalizer<TrashBoard.Selector> L
+
 @if (!String.IsNullOrEmpty(SessionService.Username))
 {
     <h3>@L["Header_Detections"]</h3>
