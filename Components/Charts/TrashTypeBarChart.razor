@@ -5,7 +5,9 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashTypeBarChart> L
 @if (GroupedCounts?.Any() == true)
 {
-    <BarChart @ref="barChart" Class="mb-4" />
+    <div class="@Class">
+        <BarChart @ref="barChart" Class="mb-4" />
+    </div>
 }
 else
 {
@@ -15,6 +17,9 @@ else
 @code {
     [Parameter]
     public IEnumerable<TrashDetection>? TrashDetections { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
 
     private BarChart barChart = default!;
     private Dictionary<string, int> GroupedCounts = new();

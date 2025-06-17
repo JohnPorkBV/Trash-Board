@@ -126,7 +126,18 @@
     {
         <h4>@L["Header_FilteredResults"]</h4>
         <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
-        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+        <div class="chart-and-ad-container d-flex align-items-stretch">
+            <div class="chart-wrapper flex-grow-1 me-3">
+                <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+            </div>
+            <div class="ad-wrapper">
+                <h1>John Beun B.V.</h1>
+                <p>Proudly brought to you by John Beun B.V., the sister company of John Pork B.V. — both part of the John B.V. family.</p>
+                <p>John Beun B.V. is expected to launch towards the end of 2025.</p>
+				<img src="@adImageUrl" alt="Advertisement" class="ad-image" />
+                <p class="text-muted mb-2">Sponsored by <strong>John Beun B.V.</strong></p>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -202,6 +213,34 @@ else
         await filters.ToggleAsync();
     }
 
+    private string adImageUrl = "";
+
+    private void SelectAdImage()
+    {
+        // External URLs for your images - replace these with your actual hosting URLs
+        var imagesByDay = new Dictionary<DayOfWeek, string>()
+            {
+                [DayOfWeek.Monday] = "https://i.imgur.com/BUH0RWb.jpg",
+                [DayOfWeek.Tuesday] = "https://i.imgur.com/pY4QaCn.jpg",
+                [DayOfWeek.Wednesday] = "https://i.imgur.com/QfTzNDB.jpg",
+                [DayOfWeek.Thursday] = "https://i.imgur.com/LIhgbke.jpg",
+                [DayOfWeek.Friday] = "https://i.imgur.com/RwmL8Vu.jpg",
+                [DayOfWeek.Saturday] = "https://i.imgur.com/wImip3B.jpg",
+                [DayOfWeek.Sunday] = "https://i.imgur.com/gT7DmAv.jpg"
+            };
+
+        string shinyImage = "https://i.imgur.com/eBLrmXK.jpg";
+
+        var rand = new Random();
+        if (rand.Next(100) < 1) // 1% chance
+        {
+            adImageUrl = shinyImage;
+        }
+        else
+        {
+            adImageUrl = imagesByDay[DateTime.Now.DayOfWeek];
+        }
+    }
 
     private async Task ToggleHolidayFilter(bool filter, bool enabled)
     {
@@ -341,6 +380,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+        SelectAdImage();
         await ApplyFilter();
     }
 }
