@@ -254,6 +254,8 @@ else
 		}
 
 		await Db.SaveChangesAsync();
+		await LoadEvents();
+		StateHasChanged(); // force UI update
 
 	}
 

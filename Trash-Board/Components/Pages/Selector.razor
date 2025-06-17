@@ -35,20 +35,20 @@
                 <div class="mb-3">
                     <label>@L["Label_From"]</label>
                     <DateInput @bind-Value="fromDate"
-                    @onchange="ApplyFilter"
-                    @onblur="ApplyFilter" />
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
                     <TimeInput @bind-Value="fromTime"
-                    @onchange="ApplyFilter"
-                    @onblur="ApplyFilter" />
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
                 </div>
                 <div class="mb-3">
                     <label>@L["Label_To"]</label>
                     <DateInput @bind-Value="toDate"
-                    @onchange="ApplyFilter"
-                    @onblur="ApplyFilter" />
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
                     <TimeInput @bind-Value="toTime"
-                    @onchange="ApplyFilter"
-                    @onblur="ApplyFilter" />
+                               @onchange="ApplyFilter"
+                               @onblur="ApplyFilter" />
                 </div>
             </div>
 
@@ -84,13 +84,13 @@
                 <div class="holiday-type-container">
                     <label>
                         <CheckboxInput Label=@L["Checkbox_ShowHolidays"]
-                        Value="@showHolidays"
-                        ValueExpression="() => showHolidays"
-                        ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
+                                       Value="@showHolidays"
+                                       ValueExpression="() => showHolidays"
+                                       ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
                         <CheckboxInput Label=@L["Checkbox_ShowWorkdays"]
-                        Value="@showWorkdays"
-                        ValueExpression="() => showWorkdays"
-                        ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
+                                       Value="@showWorkdays"
+                                       ValueExpression="() => showWorkdays"
+                                       ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
 
                     </label>
                 </div>
@@ -101,13 +101,13 @@
                 <div class="holiday-type-container">
                     <label>
                         <CheckboxInput Label=@L["Checkbox_ShowEvents"]
-                        Value="@showEvents"
-                        ValueExpression="() => showEvents"
-                        ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
+                                       Value="@showEvents"
+                                       ValueExpression="() => showEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
                         <CheckboxInput Label=@L["Checkbox_HideEvents"]
-                        Value="@hideEvents"
-                        ValueExpression="() => hideEvents"
-                        ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
+                                       Value="@hideEvents"
+                                       ValueExpression="() => hideEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
 
                     </label>
                 </div>
@@ -135,43 +135,54 @@
         <h4>@L["Header_FilteredResults"]</h4>
         <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
         <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>@L["Table_Timestamp"]</th>
-                        <th>@L["Table_Object"]</th>
-                        <th>@L["Table_Confidence"]</th>
-                        <th>@L["Table_Temperature"]</th>
-                        <th>@L["Table_Humidity"]</th>
-                        <th>@L["Table_Precipitation"]</th>
-                        <th>@L["Table_Windforce"]</th>
-                        <th>@L["Table_IsHoliday"]</th>
-                        <th>@L["Table_HolidayName"]</th>
-                        <th>@L["Table_IsBredaEvent"]</th>
-                        <th>@L["Table_BredaEventName"]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in results)
-                    {
-                        <tr>
-                            <td>@item.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@item.DetectedObject</td>
-                            <td>@item.ConfidenceScore</td>
-                            <td>@item.Temp</td>
-                            <td>@item.Humidity</td>
-                            <td>@item.Precipitation</td>
-                            <td>@item.Windforce</td>
-                            <td>@item.IsHoliday</td>
-                            <td>@item.HolidayName</td>
-                            <td>@item.IsBredaEvent</td>
-                            <td>@item.BredaEventName</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+
+        <Grid TItem="TrashDetection"
+              Data="results"
+              Class="table table-hover table-bordered table-striped"
+              AllowFiltering="false"
+              AllowPaging="true"
+              PageSize="20"
+              AllowSorting="false"
+              Responsive="false">
+
+
+            <GridColumns>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Timestamp"]" PropertyName="@nameof(TrashDetection.Timestamp)">
+                    @context.Timestamp.ToString("dd/MM/yyyy HH:mm")
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Object"]" PropertyName="@nameof(TrashDetection.DetectedObject)">
+                    @context.DetectedObject
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Confidence"]" PropertyName="@nameof(TrashDetection.ConfidenceScore)">
+                    @context.ConfidenceScore
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Temperature"]" PropertyName="@nameof(TrashDetection.Temp)">
+                    @context.Temp
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Humidity"]" PropertyName="@nameof(TrashDetection.Humidity)">
+                    @context.Humidity
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Precipitation"]" PropertyName="@nameof(TrashDetection.Precipitation)">
+                    @context.Precipitation
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_Windforce"]" PropertyName="@nameof(TrashDetection.Windforce)">
+                    @context.Windforce
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_IsHoliday"]" PropertyName="@nameof(TrashDetection.IsHoliday)">
+                    @context.IsHoliday
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_HolidayName"]" PropertyName="@nameof(TrashDetection.HolidayName)">
+                    @context.HolidayName
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_IsBredaEvent"]" PropertyName="@nameof(TrashDetection.IsBredaEvent)">
+                    @context.IsBredaEvent
+                </GridColumn>
+                <GridColumn TItem="TrashDetection" HeaderText="@L["Table_BredaEventName"]" PropertyName="@nameof(TrashDetection.BredaEventName)">
+                    @context.BredaEventName
+                </GridColumn>
+            </GridColumns>
+        </Grid>
+        
     }
     else
     {
@@ -367,6 +378,7 @@ else
         }
     }
 
+
     protected override async Task OnInitializedAsync()
     {
         if (!String.IsNullOrEmpty(SessionService.Username))
@@ -382,6 +394,11 @@ else
             await SessionService.InitializeAsync();
             SessionService.OnChange += StateHasChanged;
             StateHasChanged(); // refresh UI after loading session data
+            if (!String.IsNullOrEmpty(SessionService.Username))
+            {
+                trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+                await ApplyFilter();
+            }
         }
     }
     public void Dispose()
