@@ -4,15 +4,19 @@ from sqlalchemy import create_engine
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.tree import export_text
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report, accuracy_score
 import joblib
 import pandas as pd
 import os
 import logging
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+from fastapi.responses import FileResponse
 from typing import Optional
 from pydantic import BaseModel
 
 MODEL_PATH = "/app/data/model.pkl"
+PNG_PATH = "/app/data/decision_tree.png"
 DATA_PATH = "/app/data"
 os.makedirs(DATA_PATH, exist_ok=True)
 
@@ -108,7 +112,9 @@ def train_model(params: TrainRequest):
         accuracy = accuracy_score(y_test, y_pred)
         report = classification_report(y_test, y_pred, output_dict=True)
 
-        joblib.dump(model, "model.pkl")
+        joblib.dump(model, MODEL_PATH)
+
+        model = joblib.load(MODEL_PATH)
         logger.info("Model retrained and saved successfully.")
 
         return {
@@ -130,6 +136,38 @@ def get_tree():
         return {"tree": tree_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/decision-tree")
+def get_decision_tree():
+    try:
+        if not model:
+            raise HTTPException(status_code=503, detail="Model not trained yet.")
+        # Load model (if not already loaded globally)
+        #model = joblib.load("data/model.pkl")
+
+        # Use first tree from forest
+        estimator = model.estimators_[0]
+
+        # Create figure
+        plt.figure(figsize=(20, 10))
+        plot_tree(
+            estimator,
+            filled=True,
+            feature_names=["Humidity", "Precipitation", "Temp", "Windforce", "IsHoliday", "IsBredaEvent"],
+            class_names=model.classes_,
+            rounded=True
+        )
+
+        # Save to file
+        plt.savefig(PNG_PATH)
+        plt.close()
+
+        # Serve the image file
+        return FileResponse(PNG_PATH, media_type="image/png")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate decision tree: {e}")
+
+
 
 if __name__ == "__main__":
     import uvicorn
