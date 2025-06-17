@@ -118,18 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Title" xml:space="preserve">
-    <value>About Us</value>
+    <value>About us</value>
   </data>
-  <data name="Intro" xml:space="preserve">
+  <data name="Introduction" xml:space="preserve">
     <value>John B.V. is an initiative started by five students working together to create innovative tech solutions for real-world challenges. </value>
   </data>
-  <data name="FocusIntro" xml:space="preserve">
-    <value>One of our main focus areas is John Pork B.V., where we are currently developing a smart monitoring dashboard for waste detection camera installations.</value>
+  <data name="Initiative" xml:space="preserve">
+    <value>Our first initiative is John Pork B.V. – a project with which we support the municipality of Breda in the fight against litter. Within this project we are developing an advanced monitoring dashboard, linked to waste detection cameras. This technology makes it possible to gain real-time insight into pollution on the street, so that action can be taken faster, more targeted and more efficiently.
+
+By using artificial intelligence (AI) and predictive data analysis, we not only want to record incidents, but also anticipate problem locations and trends. In this way, we make waste management smarter and more preventive.</value>
   </data>
-  <data name="FocusGoal" xml:space="preserve">
-    <value>Our goal is to help the municipality of Breda and other organizations tackle littering more efficiently—through Artificial Intelligence (AI) and Predictions.</value>
+  <data name="Aim" xml:space="preserve">
+    <value>John Pork B.V. is the perfect embodiment of what John B.V. wants to achieve: using innovative technology to tackle a concrete social challenge. The project brings together different disciplines – from image recognition to data visualization and user experience – and gives us the opportunity to apply everything we have learned in a real, meaningful context. For us, it is also an opportunity to grow as developers, as a team and as future makers.
+</value>
   </data>
-  <data name="Belief" xml:space="preserve">
-    <value>We believe in teamwork, technical precision, and creative problem-solving.</value>
+  <data name="ClosingThoughts" xml:space="preserve">
+    <value>At John B.V., collaboration, innovation and social involvement are central.</value>
   </data>
 </root>

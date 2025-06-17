@@ -120,16 +120,18 @@
   <data name="Title" xml:space="preserve">
     <value>Over ons</value>
   </data>
-  <data name="Intro" xml:space="preserve">
-    <value>John B.V. is een initiatief van vijf enthousiaste studenten die samen werken aan innovatieve technologische oplossingen voor échte problemen. Wat begon als een leerproject, is uitgegroeid tot een serieuze samenwerking met praktische toepassingen.</value>
+  <data name="Introduction" xml:space="preserve">
+    <value>John B.V. is een initiatief van vijf studenten die samen werken aan innovatieve technologische oplossingen voor échte problemen. </value>
   </data>
-  <data name="FocusIntro" xml:space="preserve">
-    <value>Een belangrijk onderdeel van onze werkzaamheden is John Pork B.V., waar we ons momenteel op focussen. Binnen dit project ontwikkelen we een slim dashboard voor het monitoren van afval-detectiecamera’s.</value>
+  <data name="Initiative" xml:space="preserve">
+    <value>Ons eerste initiatief is John Pork B.V. – een project waarmee we de gemeente Breda ondersteunen in de strijd tegen zwerfafval. Binnen dit project ontwikkelen we een geavanceerd monitoringdashboard, gekoppeld aan afval-detectiecamera’s. Deze technologie maakt het mogelijk om realtime inzicht te krijgen in vervuiling op straat, zodat er sneller, gerichter en efficiënter gehandeld kan worden.
+
+Door gebruik te maken van kunstmatige intelligentie (AI) en voorspellende data-analyse, willen we niet alleen incidenten vastleggen, maar ook anticiperen op probleemlocaties en trends. Zo maken we het afvalbeheer slimmer en preventiever.</value>
   </data>
-  <data name="FocusGoal" xml:space="preserve">
-    <value>Met deze oplossing willen we gemeente Breda en andere organisaties helpen om afval op straat sneller en efficiënter aan te pakken – met behulp van Kunstmatige intelligentie (AI) en Voorspellingen.</value>
+  <data name="Aim" xml:space="preserve">
+    <value>John Pork B.V. vormt daarmee de perfecte belichaming van wat John B.V. wil bereiken: innovatieve technologie inzetten om een concrete maatschappelijke uitdaging aan te pakken. Het project brengt verschillende disciplines samen – van beeldherkenning tot datavisualisatie en gebruikerservaring – en geeft ons de kans om alles wat we geleerd hebben toe te passen in een echte, betekenisvolle context. Voor ons is het ook een kans om te groeien als ontwikkelaars, als team en als toekomstmakers.</value>
   </data>
-  <data name="Belief" xml:space="preserve">
-    <value>Wij geloven in teamwork, technische precisie en creatieve oplossingen.</value>
+  <data name="ClosingThoughts" xml:space="preserve">
+    <value>Bij John B.V. staan samenwerking, innovatie en maatschappelijke betrokkenheid centraal.</value>
   </data>
 </root>

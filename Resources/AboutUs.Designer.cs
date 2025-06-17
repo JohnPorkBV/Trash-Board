@@ -61,38 +61,40 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wij geloven in teamwork, technische precisie en creatieve oplossingen..
+        ///   Looks up a localized string similar to John Pork B.V. vormt daarmee de perfecte belichaming van wat John B.V. wil bereiken: innovatieve technologie inzetten om een concrete maatschappelijke uitdaging aan te pakken. Het project brengt verschillende disciplines samen – van beeldherkenning tot datavisualisatie en gebruikerservaring – en geeft ons de kans om alles wat we geleerd hebben toe te passen in een echte, betekenisvolle context. Voor ons is het ook een kans om te groeien als ontwikkelaars, als team en als toekomstmakers..
         /// </summary>
-        internal static string Belief {
+        internal static string Aim {
             get {
-                return ResourceManager.GetString("Belief", resourceCulture);
+                return ResourceManager.GetString("Aim", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Met deze oplossing willen we gemeente Breda en andere organisaties helpen om afval op straat sneller en efficiënter aan te pakken – met behulp van Kunstmatige intelligentie (AI) en Voorspellingen..
+        ///   Looks up a localized string similar to Bij John B.V. staan samenwerking, innovatie en maatschappelijke betrokkenheid centraal..
         /// </summary>
-        internal static string FocusGoal {
+        internal static string ClosingThoughts {
             get {
-                return ResourceManager.GetString("FocusGoal", resourceCulture);
+                return ResourceManager.GetString("ClosingThoughts", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Een belangrijk onderdeel van onze werkzaamheden is John Pork B.V., waar we ons momenteel op focussen. Binnen dit project ontwikkelen we een slim dashboard voor het monitoren van afval-detectiecamera’s..
+        ///   Looks up a localized string similar to Ons eerste initiatief is John Pork B.V. – een project waarmee we de gemeente Breda ondersteunen in de strijd tegen zwerfafval. Binnen dit project ontwikkelen we een geavanceerd monitoringdashboard, gekoppeld aan afval-detectiecamera’s. Deze technologie maakt het mogelijk om realtime inzicht te krijgen in vervuiling op straat, zodat er sneller, gerichter en efficiënter gehandeld kan worden.
+        ///
+        ///Door gebruik te maken van kunstmatige intelligentie (AI) en voorspellende data-analyse, willen we niet alleen incide [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string FocusIntro {
+        internal static string Initiative {
             get {
-                return ResourceManager.GetString("FocusIntro", resourceCulture);
+                return ResourceManager.GetString("Initiative", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to John B.V. is een initiatief van vijf enthousiaste studenten die samen werken aan innovatieve technologische oplossingen voor échte problemen. Wat begon als een leerproject, is uitgegroeid tot een serieuze samenwerking met praktische toepassingen..
+        ///   Looks up a localized string similar to John B.V. is een initiatief van vijf studenten die samen werken aan innovatieve technologische oplossingen voor échte problemen. .
         /// </summary>
-        internal static string Intro {
+        internal static string Introduction {
             get {
-                return ResourceManager.GetString("Intro", resourceCulture);
+                return ResourceManager.GetString("Introduction", resourceCulture);
             }
         }
         
