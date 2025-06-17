@@ -114,8 +114,10 @@ def train_model(params: TrainRequest):
 
         joblib.dump(model, MODEL_PATH)
 
-        model = joblib.load(MODEL_PATH)
         logger.info("Model retrained and saved successfully.")
+        load_model()
+        
+
 
         return {
             "message": "Model trained successfully.",

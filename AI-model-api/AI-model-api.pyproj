@@ -28,7 +28,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AI_model_api.py" />
-    <Compile Include="AI_model_api_trainer.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docker-compose.yml" />

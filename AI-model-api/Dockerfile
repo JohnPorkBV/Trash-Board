@@ -20,6 +20,12 @@ COPY . .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+CMD ["bash", "-c", "exec uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"]
+
+
 # Entry point: train and serve API
-CMD ["sh", "-c", "uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"] # without training
-#CMD ["sh", "-c", "python -c 'from AI_model_api import train; train()' && uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"] # with training
+#CMD ["sh", "-c", "python -c uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"] 
+# without training
+
+#CMD ["sh", "-c", "python -c 'from AI_model_api import train; train()' && uvicorn AI_model_api:app --host 0.0.0.0 --port 8000"]
+# with training

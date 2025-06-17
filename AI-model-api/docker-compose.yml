@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - "8000:8000"
-    # environment:
-    #   - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING}
+    environment:
+      - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING_AI}
     env_file:
       - .env
