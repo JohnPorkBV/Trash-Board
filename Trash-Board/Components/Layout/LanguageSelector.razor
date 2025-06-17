@@ -7,6 +7,7 @@
     <option value="nl" selected="@IsSelected("nl")">Nederlands</option>
     <option value="en" selected="@IsSelected("en")">English</option>
     <option value="de" selected="@IsSelected("de")">Deutsch</option>
+    <option value="braille" selected="@IsSelected("braille")">Braille</option>
 </select>
 
 @code {
@@ -20,6 +21,16 @@
         // Save to cookie (server requires this!)
         var cookieValue = $".AspNetCore.Culture=c={selectedCulture}|uic={selectedCulture}";
         await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+
+        // Set Braille font flag in localStorage
+        if (selectedCulture == "braille")
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", "useBrailleFont", "true");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", "useBrailleFont");
+        }
 
         // Reload
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
