@@ -180,6 +180,8 @@ else
     private TimeOnly? fromTime;
     private DateTime? toDate;
     private TimeOnly? toTime;
+    private CancellationTokenSource? debounceCts;
+
     private string? errorMessage;
     private List<string> trashTypes = new();
     private HashSet<string> selectedTrashTypes = new();
@@ -213,7 +215,8 @@ else
         showHolidays = selectedHolidayFilters.Contains(true);
         showWorkdays = selectedHolidayFilters.Contains(false);
 
-        await ApplyFilter();
+        await DebouncedApplyFilter();
+
     }
 
     private async Task ToggleEventFilter(bool filter, bool enabled)
@@ -226,7 +229,8 @@ else
         showEvents = selectedHolidayFilters.Contains(true);
         hideEvents = selectedEventFilters.Contains(false);
 
-        await ApplyFilter();
+        await DebouncedApplyFilter();
+
     }
 
     private async Task ToggleTrashType(string type, bool isSelected)
@@ -236,9 +240,26 @@ else
         else
             selectedTrashTypes.Remove(type);
 
-        await ApplyFilter();
+        await DebouncedApplyFilter();
+
     }
 
+    private async Task DebouncedApplyFilter()
+    {
+        debounceCts?.Cancel();
+        debounceCts = new CancellationTokenSource();
+        var token = debounceCts.Token;
+
+        try
+        {
+            await Task.Delay(300, token); // 300ms debounce window
+            if (!token.IsCancellationRequested)
+            {
+                await ApplyFilter();
+            }
+        }
+        catch (TaskCanceledException) { }
+    }
 
 
 

@@ -28,14 +28,44 @@ namespace TrashBoard.Services
             return await _context.TrashDetections.ToListAsync();
         }
 
+        //public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
+        //    DateTime? from,
+        //    DateTime? to,
+        //    List<string>? trashTypes,
+        //    bool? isHoliday,
+        //    bool? isBredaEvent)
+        //{
+        //    var query = _context.TrashDetections.AsQueryable();
+
+        //    if (from.HasValue)
+        //        query = query.Where(t => t.Timestamp >= from.Value);
+
+        //    if (to.HasValue)
+        //        query = query.Where(t => t.Timestamp <= to.Value);
+
+        //    if (trashTypes != null && trashTypes.Any())
+        //        query = query.Where(t => trashTypes.Contains(t.DetectedObject));
+
+        //    if (isHoliday.HasValue)
+        //        query = query.Where(t => t.IsHoliday == isHoliday.Value);
+
+        //    if (isBredaEvent.HasValue)
+        //        query = query.Where(t => t.IsBredaEvent == isBredaEvent.Value);
+
+        //    query = query.OrderByDescending(t => t.Timestamp);
+
+        //    return await query.ToListAsync();
+        //}
         public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
-            DateTime? from,
-            DateTime? to,
-            List<string>? trashTypes,
-            bool? isHoliday,
-            bool? isBredaEvent)
+    DateTime? from,
+    DateTime? to,
+    List<string>? trashTypes,
+    bool? isHoliday,
+    bool? isBredaEvent)
         {
-            var query = _context.TrashDetections.AsQueryable();
+            var query = _context.TrashDetections
+                .AsNoTracking()
+                .AsQueryable();
 
             if (from.HasValue)
                 query = query.Where(t => t.Timestamp >= from.Value);
@@ -43,7 +73,7 @@ namespace TrashBoard.Services
             if (to.HasValue)
                 query = query.Where(t => t.Timestamp <= to.Value);
 
-            if (trashTypes != null && trashTypes.Any())
+            if (trashTypes is { Count: > 0 })
                 query = query.Where(t => trashTypes.Contains(t.DetectedObject));
 
             if (isHoliday.HasValue)
@@ -52,9 +82,25 @@ namespace TrashBoard.Services
             if (isBredaEvent.HasValue)
                 query = query.Where(t => t.IsBredaEvent == isBredaEvent.Value);
 
-            query = query.OrderByDescending(t => t.Timestamp);
-
-            return await query.ToListAsync();
+            // Only select the fields needed by your Blazor page
+            return await query
+                .OrderByDescending(t => t.Timestamp)
+                .Select(t => new TrashDetection
+                {
+                    Id = t.Id,
+                    Timestamp = t.Timestamp,
+                    DetectedObject = t.DetectedObject,
+                    ConfidenceScore = t.ConfidenceScore,
+                    Temp = t.Temp,
+                    Humidity = t.Humidity,
+                    Precipitation = t.Precipitation,
+                    Windforce = t.Windforce,
+                    IsHoliday = t.IsHoliday,
+                    HolidayName = t.HolidayName,
+                    IsBredaEvent = t.IsBredaEvent,
+                    BredaEventName = t.BredaEventName
+                })
+                .ToListAsync();
         }
 
         public async Task<TrashDetection?> GetByIdAsync(int id)
