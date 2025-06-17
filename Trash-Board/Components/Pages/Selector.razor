@@ -148,7 +148,7 @@
                     @foreach (var item in results)
                     {
                         <tr>
-                            <td>@item.Timestamp</td>
+                            <td>@item.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
                             <td>@item.DetectedObject</td>
                             <td>@item.ConfidenceScore</td>
                             <td>@item.Temp</td>
