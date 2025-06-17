@@ -21,17 +21,17 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          PROJECT_PATH="./Trash-board/${{ secrets.PROJECT_NAME }}.csproj"
           dotnet restore "$PROJECT_PATH"
 
       - name: Build project
         run: |
-          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          PROJECT_PATH="./Trash-board/${{ secrets.PROJECT_NAME }}.csproj"
           dotnet build "$PROJECT_PATH" --no-restore --configuration Release
 
       - name: Run unit tests
         run: |
-          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          PROJECT_PATH="./Trash-board/${{ secrets.PROJECT_NAME }}.csproj"
           dotnet test "$PROJECT_PATH" --no-build --configuration Release --verbosity normal
 
       - name: Setup EF Tools
