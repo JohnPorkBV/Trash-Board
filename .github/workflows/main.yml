@@ -41,7 +41,7 @@ jobs:
 
       - name: Bundle EF Migrations
         run: |
-          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          PROJECT_PATH="./Trash-Board/${{ secrets.PROJECT_NAME }}.csproj"
           dotnet ef migrations bundle -r linux-x64 --project "$PROJECT_PATH" --output ./efbundle
 
       - name: Upload EF Bundle Artifact
