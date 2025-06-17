@@ -2,44 +2,40 @@
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject AiPredictionService AiService
+@rendermode InteractiveServer
 
 <h3>AI Prediction</h3>
 
-<EditForm Model="@input" OnValidSubmit="HandleSubmit" FormName="AI">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div class="form-group">
+    <label>Humidity</label>
+    <input type="number" @bind="input.Humidity" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Confidence Score</label>
+    <input type="number" step="0.01" @bind="input.ConfidenceScore" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Hour</label>
+    <input type="number" @bind="input.Hour" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Precipitation</label>
+    <input type="number" step="0.01" @bind="input.Precipitation" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Temperature</label>
+    <input type="number" step="0.01" @bind="input.Temp" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Windforce</label>
+    <input type="number" step="0.01" @bind="input.Windforce" class="form-control" />
+</div>
+<div class="form-group form-check">
+    <input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
+    <label class="form-check-label">Is Holiday?</label>
+</div>
 
-    <div class="form-group">
-        <label>Humidity</label>
-        <InputNumber @bind-Value="input.Humidity" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Confidence Score</label>
-        <InputNumber @bind-Value="input.ConfidenceScore" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Hour</label>
-        <InputNumber @bind-Value="input.Hour" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Precipitation</label>
-        <InputNumber @bind-Value="input.Precipitation" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Temperature</label>
-        <InputNumber @bind-Value="input.Temp" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label>Windforce</label>
-        <InputNumber @bind-Value="input.Windforce" class="form-control" />
-    </div>
-    <div class="form-group form-check">
-        <InputCheckbox @bind-Value="input.IsHoliday" class="form-check-input" />
-        <label class="form-check-label">Is Holiday?</label>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-2">Predict</button>
-</EditForm>
+<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
 
 @if (result is not null)
 {
@@ -49,11 +45,16 @@
 }
 
 @code {
-    private TrashDetectionInput input = new(); // Default values set in class
+    private TrashDetectionInput input = new();
+
     private string? result;
 
     private async Task HandleSubmit()
     {
+        // Debug: wat zit er in input?
+        Console.WriteLine($"Humidity={input.Humidity}, Temp={input.Temp}, IsHoliday={input.IsHoliday}");
+
         result = await AiService.PredictAsync(input);
+        StateHasChanged();
     }
 }

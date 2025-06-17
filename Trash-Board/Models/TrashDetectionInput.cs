@@ -8,30 +8,30 @@ namespace TrashBoard.Models
     {
         [Required]
         [JsonPropertyName("Humidity")]
-        public float Humidity { get; set; } = 55;
+        public float Humidity { get; set; }
 
         [Required]
         [JsonPropertyName("ConfidenceScore")]
-        public float ConfidenceScore { get; set; } = 0.95f;
+        public float ConfidenceScore { get; set; }
 
         [Required]
         [JsonPropertyName("Hour")]
-        public int Hour { get; set; } = 14;
+        public int Hour { get; set; }
 
         [Required]
         [JsonPropertyName("Precipitation")]
-        public float Precipitation { get; set; } = 0;
+        public float Precipitation { get; set; }
 
         [Required]
         [JsonPropertyName("Temp")]
-        public float Temp { get; set; } = 22;
+        public float Temp { get; set; }
 
         [Required]
         [JsonPropertyName("Windforce")]
-        public float Windforce { get; set; } = 5;
+        public float Windforce { get; set; }
 
         [JsonPropertyName("IsHoliday")]
-        public bool IsHoliday { get; set; } = false;
+        public bool IsHoliday { get; set; }
     }
 
 
