@@ -2,7 +2,7 @@ name: Build and Deploy to Wall-e
 
 on:
   push:
-    branches: [main]
+    branches: [main,Dev]
   workflow_dispatch:
 
 permissions:
