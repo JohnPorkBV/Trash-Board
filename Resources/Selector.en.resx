@@ -154,7 +154,7 @@
     <value>Choose waste types</value>
   </data>
   <data name="Label_FilterOnHoliday" xml:space="preserve">
-    <value>Filter on holiday:</value>
+    <value>Filter on event:</value>
   </data>
   <data name="Checkbox_ShowHolidays" xml:space="preserve">
     <value>Show holidays</value>
@@ -218,5 +218,20 @@
   </data>
   <data name="Login_Message" xml:space="preserve">
     <value>Please Login</value>
+  </data>
+  <data name="Table_IsBredaEvent" xml:space="preserve">
+    <value>IsEvent</value>
+  </data>
+  <data name="Table_BredaEventName" xml:space="preserve">
+    <value>Event Name</value>
+  </data>
+  <data name="Checkbox_HideEvents" xml:space="preserve">
+    <value>Hide events</value>
+  </data>
+  <data name="Checkbox_ShowEvents" xml:space="preserve">
+    <value>Show events</value>
+  </data>
+  <data name="Label_FilterOnEvent" xml:space="preserve">
+    <value>Filter on holiday:</value>
   </data>
 </root>

@@ -39,6 +39,7 @@ builder.Services.AddScoped<UserSessionService>();
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+builder.Services.AddHttpClient<IBredaEventService, BredaEventService>();
 
 // Bootstrap
 builder.Services.AddBlazorBootstrap();

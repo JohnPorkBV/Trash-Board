@@ -219,4 +219,19 @@
   <data name="Login_Message" xml:space="preserve">
     <value>Gelieve in te loggen</value>
   </data>
+  <data name="Table_IsBredaEvent" xml:space="preserve">
+    <value>IsEvenement</value>
+  </data>
+  <data name="Table_BredaEventName" xml:space="preserve">
+    <value>Evenenment Naam</value>
+  </data>
+  <data name="Checkbox_HideEvents" xml:space="preserve">
+    <value>Verberg evenementen</value>
+  </data>
+  <data name="Checkbox_ShowEvents" xml:space="preserve">
+    <value>Toon evenementen</value>
+  </data>
+  <data name="Label_FilterOnEvent" xml:space="preserve">
+    <value>Filter op feestdagen:</value>
+  </data>
 </root>

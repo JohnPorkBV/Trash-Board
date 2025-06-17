@@ -96,6 +96,22 @@
             </div>
 
             <div>
+                <label>@L["Label_FilterOnEvent"]</label>
+                <div class="holiday-type-container">
+                    <label>
+                        <CheckboxInput Label=@L["Checkbox_ShowEvents"]
+                                       Value="@showEvents"
+                                       ValueExpression="() => showEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
+                        <CheckboxInput Label=@L["Checkbox_HideEvents"]
+                                       Value="@hideEvents"
+                                       ValueExpression="() => hideEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
+
+                    </label>
+                </div>
+            </div>
+            <div>
                 <button class="btn btn-primary" @onclick="ApplyFilter">@L["Button_ApplyFilter"]</button>
             </div>
         </Collapse>
@@ -124,21 +140,25 @@
                         <th>@L["Table_Windforce"]</th>
                         <th>@L["Table_IsHoliday"]</th>
                         <th>@L["Table_HolidayName"]</th>
+                        <th>@L["Table_IsBredaEvent"]</th>
+                        <th>@L["Table_BredaEventName"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in results)
                     {
                         <tr>
-                            <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@item.Timestamp</td>
                             <td>@item.DetectedObject</td>
                             <td>@item.ConfidenceScore</td>
                             <td>@item.Temp</td>
                             <td>@item.Humidity</td>
                             <td>@item.Precipitation</td>
                             <td>@item.Windforce</td>
-                            <td>@(item.IsHoliday ? @L["Text_Yes"] : @L["Text_No"])</td>
+                            <td>@item.IsHoliday</td>
                             <td>@item.HolidayName</td>
+                            <td>@item.IsBredaEvent</td>
+                            <td>@item.BredaEventName</td>
                         </tr>
                     }
                 </tbody>
@@ -164,10 +184,14 @@ else
     private List<string> trashTypes = new();
     private HashSet<string> selectedTrashTypes = new();
     private HashSet<bool> selectedHolidayFilters = new();
+    private HashSet<bool> selectedEventFilters = new();
     private IEnumerable<TrashDetection>? results;
 
     private bool showHolidays;
     private bool showWorkdays;
+
+    private bool hideEvents;
+    private bool showEvents;
 
     private Collapse filters = default;
     private bool filtersVisible = false;
@@ -188,6 +212,19 @@ else
 
         showHolidays = selectedHolidayFilters.Contains(true);
         showWorkdays = selectedHolidayFilters.Contains(false);
+
+        await ApplyFilter();
+    }
+
+    private async Task ToggleEventFilter(bool filter, bool enabled)
+    {
+        if (enabled)
+            selectedEventFilters.Add(filter);
+        else
+            selectedEventFilters.Remove(filter);
+
+        showEvents = selectedHolidayFilters.Contains(true);
+        hideEvents = selectedEventFilters.Contains(false);
 
         await ApplyFilter();
     }
@@ -236,9 +273,15 @@ else
         else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
             isHolidayFilter = null;
 
+        bool? isEventFilter = null;
+        if (selectedEventFilters.Count == 1)
+            isEventFilter = selectedEventFilters.First();
+        else if (selectedEventFilters.Count == 0 || selectedEventFilters.Count == 2)
+            isEventFilter = null;
+
         try
         {
-            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
+            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, isEventFilter); //#TODO# add filter for events
             StateHasChanged();
         }
         catch (Exception ex)
@@ -284,7 +327,7 @@ else
             else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
                 isHolidayFilter = null;
 
-            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
+            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, null)) //#TODO# add filter for events
                 .OrderByDescending(r => r.Timestamp);
             StateHasChanged();
 

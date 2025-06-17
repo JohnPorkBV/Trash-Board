@@ -13,16 +13,14 @@ namespace TrashBoard.Services
             DateTime? from,
             DateTime? to,
             List<string>? trashTypes,
-            bool? isHoliday);  // <-- nieuwe parameter
+            bool? isHoliday, bool? isBredaEvent);
 
         Task<TrashDetection?> GetByIdAsync(int id);
 
         Task AddAsync(TrashDetection detection);
-
-        Task UpdateWeatherInfoAsync(int id, float temperature, string condition, float humidity, float precipitation, DateTime date);
-
         Task<IEnumerable<string>> GetAvailableTrashTypesAsync();
 
         Task<TrashDetection> UpdateHolidayInfoForAsync(TrashDetection detection);
+        Task<TrashDetection> UpdateBredaEventInfoForAsync(TrashDetection detection);
     }
 }
