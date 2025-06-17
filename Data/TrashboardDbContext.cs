@@ -12,6 +12,20 @@ namespace TrashBoard.Data
 
         public DbSet<TrashDetection> TrashDetections { get; set; }
         public DbSet<BredaEvent> BredaEvents { get; set; }
-    }
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<BredaEvent>())
+            {
+                if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
+                {
+                    if (!entry.Entity.EndDate.HasValue)
+                    {
+                        entry.Entity.EndDate = entry.Entity.StartDate;
+                    }
+                }
+            }
 
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

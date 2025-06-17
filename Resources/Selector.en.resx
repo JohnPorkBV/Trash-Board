@@ -219,4 +219,10 @@
   <data name="Login_Message" xml:space="preserve">
     <value>Please Login</value>
   </data>
+  <data name="Table_IsBredaEvent" xml:space="preserve">
+    <value>IsEvent</value>
+  </data>
+  <data name="Table_BredaEventName" xml:space="preserve">
+    <value>Event Name</value>
+  </data>
 </root>

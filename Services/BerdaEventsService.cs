@@ -9,8 +9,6 @@ namespace TrashBoard.Services
     {
         private readonly TrashboardDbContext _context;
         private readonly HttpClient _httpClient;
-        private readonly Dictionary<int, List<BredaEvent>> _holidayCache = new();
-        private const string CountryCode = "NL";
 
         public BredaEventService(TrashboardDbContext context, HttpClient httpClient)
         {
@@ -21,10 +19,15 @@ namespace TrashBoard.Services
         public async Task<BredaEvent?> HasBredaEventAsync(DateTime date)
         {
             return await _context.BredaEvents
-            .FirstOrDefaultAsync(e =>
-                e.StartDate.Date <= date.Date &&
-                (e.EndDate == null || e.EndDate.Value.Date >= date.Date));
+                .FirstOrDefaultAsync(e =>
+                    e.StartDate.Date <= date.Date &&
+                    (
+                        (e.EndDate != null && e.EndDate.Value.Date >= date.Date) || // multi-day event
+                        (e.EndDate == null && e.StartDate.Date == date.Date)        // single-day event
+                    )
+                );
         }
+
 
 
 

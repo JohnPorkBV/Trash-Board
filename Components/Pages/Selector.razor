@@ -124,21 +124,25 @@
                         <th>@L["Table_Windforce"]</th>
                         <th>@L["Table_IsHoliday"]</th>
                         <th>@L["Table_HolidayName"]</th>
+                        <th>@L["Table_IsBredaEvent"]</th>
+                        <th>@L["Table_BredaEventName"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in results)
                     {
                         <tr>
-                            <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@item.Timestamp</td>
                             <td>@item.DetectedObject</td>
                             <td>@item.ConfidenceScore</td>
                             <td>@item.Temp</td>
                             <td>@item.Humidity</td>
                             <td>@item.Precipitation</td>
                             <td>@item.Windforce</td>
-                            <td>@(item.IsHoliday ? @L["Text_Yes"] : @L["Text_No"])</td>
+                            <td>@item.IsHoliday</td>
                             <td>@item.HolidayName</td>
+                            <td>@item.IsBredaEvent</td>
+                            <td>@item.BredaEventName</td>
                         </tr>
                     }
                 </tbody>

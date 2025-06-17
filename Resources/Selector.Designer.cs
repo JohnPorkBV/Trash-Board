@@ -268,6 +268,15 @@ namespace TrashBoard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Evenenment Naam.
+        /// </summary>
+        public static string Table_BredaEventName {
+            get {
+                return ResourceManager.GetString("Table_BredaEventName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vertrouwensscore.
         /// </summary>
         public static string Table_Confidence {
@@ -291,6 +300,15 @@ namespace TrashBoard {
         public static string Table_Humidity {
             get {
                 return ResourceManager.GetString("Table_Humidity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IsEvenement.
+        /// </summary>
+        public static string Table_IsBredaEvent {
+            get {
+                return ResourceManager.GetString("Table_IsBredaEvent", resourceCulture);
             }
         }
         
