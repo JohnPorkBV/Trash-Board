@@ -13,7 +13,7 @@
     }
     else if (!trashDetections.Any())
     {
-        <p>No trash detections found.</p>
+        <p>@L["Message_NoResults"]</p>
     }
     else
     {
@@ -69,14 +69,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        trashDetections = await DataService.GetAllAsync();
+        if (!String.IsNullOrEmpty(SessionService.Username))
+        {
+            trashDetections = await DataService.GetAllAsync();
+        }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await SessionService.InitializeAsync();
+            SessionService.OnChange += StateHasChanged;
             StateHasChanged(); // refresh UI after loading session data
         }
+    }
+    public void Dispose()
+    {
+        SessionService.OnChange -= StateHasChanged;
     }
 }

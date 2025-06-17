@@ -1,3 +1,4 @@
+@implements IDisposable
 @page "/"
 @inject TrashBoard.Services.ITrashDataService TrashDataService
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
@@ -34,20 +35,20 @@
                 <div class="mb-3">
                     <label>@L["Label_From"]</label>
                     <DateInput @bind-Value="fromDate"
-                               @onchange="ApplyFilter"
-                               @onblur="ApplyFilter" />
+                    @onchange="ApplyFilter"
+                    @onblur="ApplyFilter" />
                     <TimeInput @bind-Value="fromTime"
-                               @onchange="ApplyFilter"
-                               @onblur="ApplyFilter" />
+                    @onchange="ApplyFilter"
+                    @onblur="ApplyFilter" />
                 </div>
                 <div class="mb-3">
                     <label>@L["Label_To"]</label>
                     <DateInput @bind-Value="toDate"
-                               @onchange="ApplyFilter"
-                               @onblur="ApplyFilter" />
+                    @onchange="ApplyFilter"
+                    @onblur="ApplyFilter" />
                     <TimeInput @bind-Value="toTime"
-                               @onchange="ApplyFilter"
-                               @onblur="ApplyFilter" />
+                    @onchange="ApplyFilter"
+                    @onblur="ApplyFilter" />
                 </div>
             </div>
 
@@ -83,13 +84,13 @@
                 <div class="holiday-type-container">
                     <label>
                         <CheckboxInput Label=@L["Checkbox_ShowHolidays"]
-                                       Value="@showHolidays"
-                                       ValueExpression="() => showHolidays"
-                                       ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
+                        Value="@showHolidays"
+                        ValueExpression="() => showHolidays"
+                        ValueChanged="async (value) => await ToggleHolidayFilter(true, value)" />
                         <CheckboxInput Label=@L["Checkbox_ShowWorkdays"]
-                                       Value="@showWorkdays"
-                                       ValueExpression="() => showWorkdays"
-                                       ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
+                        Value="@showWorkdays"
+                        ValueExpression="() => showWorkdays"
+                        ValueChanged="async (value) => await ToggleHolidayFilter(false, value)" />
 
                     </label>
                 </div>
@@ -100,13 +101,13 @@
                 <div class="holiday-type-container">
                     <label>
                         <CheckboxInput Label=@L["Checkbox_ShowEvents"]
-                                       Value="@showEvents"
-                                       ValueExpression="() => showEvents"
-                                       ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
+                        Value="@showEvents"
+                        ValueExpression="() => showEvents"
+                        ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
                         <CheckboxInput Label=@L["Checkbox_HideEvents"]
-                                       Value="@hideEvents"
-                                       ValueExpression="() => hideEvents"
-                                       ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
+                        Value="@hideEvents"
+                        ValueExpression="() => hideEvents"
+                        ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
 
                     </label>
                 </div>
@@ -121,8 +122,15 @@
     {
         <p style="color: red;"><strong>@errorMessage</strong></p>
     }
-
-    @if (results != null && results.Any())
+    @if (results == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (!results.Any())
+    {
+        <p>@L["Message_NoResults"]</p>
+    }
+    else if (results != null && results.Any())
     {
         <h4>@L["Header_FilteredResults"]</h4>
         <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
@@ -361,8 +369,24 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
-        await ApplyFilter();
+        if (!String.IsNullOrEmpty(SessionService.Username))
+        {
+            trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+            await ApplyFilter();
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SessionService.InitializeAsync();
+            SessionService.OnChange += StateHasChanged;
+            StateHasChanged(); // refresh UI after loading session data
+        }
+    }
+    public void Dispose()
+    {
+        SessionService.OnChange -= StateHasChanged;
     }
 }
 
