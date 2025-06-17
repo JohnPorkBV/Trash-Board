@@ -35,11 +35,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Random Forest model instellen
 model = RandomForestClassifier(
-    n_estimators=200,          # Aantal bomen in het bos (meer bomen = stabielere resultaten)
+    n_estimators=100,          # Aantal bomen in het bos (meer bomen = stabielere resultaten)
     criterion="entropy",       # Gebruik information gain (i.p.v. gini)
-    max_depth=20,              # Beperk boomdiepte om overfitting te verminderen
-    min_samples_split=2,       # Minimaal aantal samples nodig om een knoop te splitsen
-    min_samples_leaf=2,        # Minimaal aantal samples per blad (blad = eindknoop)
+    max_depth=15,              # Beperk boomdiepte om overfitting te verminderen
+    min_samples_split=5,       # Minimaal aantal samples nodig om een knoop te splitsen
+    min_samples_leaf=3,        # Minimaal aantal samples per blad (blad = eindknoop)
     max_features="sqrt",       # Aantal features om te overwegen bij splitsing (wortel van totaal)
     random_state=42,           # Voor reproduceerbaarheid
     n_jobs=-1                  # Gebruik alle beschikbare CPU cores om te versnellen
