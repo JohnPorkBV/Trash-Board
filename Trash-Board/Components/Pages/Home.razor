@@ -71,4 +71,12 @@ else
     {
         trashDetections = await DataService.GetAllAsync();
     }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SessionService.InitializeAsync();
+            StateHasChanged(); // refresh UI after loading session data
+        }
+    }
 }

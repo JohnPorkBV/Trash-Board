@@ -2,59 +2,70 @@
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject AiPredictionService AiService
+@inject UserSessionService SessionService
 @rendermode InteractiveServer
-
-<h3>AI Prediction</h3>
-
-<div class="form-group">
-    <label>Humidity</label>
-    <input type="number" @bind="input.Humidity" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Confidence Score</label>
-    <input type="number" step="0.01" @bind="input.ConfidenceScore" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Hour</label>
-    <input type="number" @bind="input.Hour" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Precipitation</label>
-    <input type="number" step="0.01" @bind="input.Precipitation" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Temperature</label>
-    <input type="number" step="0.01" @bind="input.Temp" class="form-control" />
-</div>
-<div class="form-group">
-    <label>Windforce</label>
-    <input type="number" step="0.01" @bind="input.Windforce" class="form-control" />
-</div>
-<div class="form-group form-check">
-    <input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
-    <label class="form-check-label">Is Holiday?</label>
-</div>
-
-<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
-
-@if (result is not null)
+@if (!String.IsNullOrEmpty(SessionService.Username))
 {
-    <div class="alert alert-info mt-3">
-        <strong>Prediction:</strong> @result
-    </div>
+	<h3>AI Prediction</h3>
+
+	<div class="form-group">
+		<label>Humidity</label>
+		<input type="number" @bind="input.Humidity" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label>Confidence Score</label>
+		<input type="number" step="0.01" @bind="input.ConfidenceScore" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label>Hour</label>
+		<input type="number" @bind="input.Hour" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label>Precipitation</label>
+		<input type="number" step="0.01" @bind="input.Precipitation" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label>Temperature</label>
+		<input type="number" step="0.01" @bind="input.Temp" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label>Windforce</label>
+		<input type="number" step="0.01" @bind="input.Windforce" class="form-control" />
+	</div>
+	<div class="form-group form-check">
+		<input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
+		<label class="form-check-label">Is Holiday?</label>
+	</div>
+
+	<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
+
+	@if (result is not null)
+	{
+		<div class="alert alert-info mt-3">
+			<strong>Prediction:</strong> @result
+		</div>
+	}
 }
 
 @code {
-    private TrashDetectionInput input = new();
+	private TrashDetectionInput input = new();
 
-    private string? result;
+	private string? result;
 
-    private async Task HandleSubmit()
-    {
-        // Debug: wat zit er in input?
-        Console.WriteLine($"Humidity={input.Humidity}, Temp={input.Temp}, IsHoliday={input.IsHoliday}");
+	private async Task HandleSubmit()
+	{
+		// Debug: wat zit er in input?
+		Console.WriteLine($"Humidity={input.Humidity}, Temp={input.Temp}, IsHoliday={input.IsHoliday}");
 
-        result = await AiService.PredictAsync(input);
-        StateHasChanged();
-    }
+		result = await AiService.PredictAsync(input);
+		StateHasChanged();
+	}
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await SessionService.InitializeAsync();
+			StateHasChanged(); // refresh UI after loading session data
+		}
+	}
 }
