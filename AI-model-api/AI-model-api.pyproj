@@ -28,7 +28,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AI_model_api.py" />
-    <Compile Include="AI_model_api_trainer.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docker-compose.yml" />
@@ -39,8 +38,8 @@
   <ItemGroup>
     <Interpreter Include="env-ai\">
       <Id>env-ai</Id>
-      <Version>3.11</Version>
-      <Description>env-ai (Python 3.11 (64-bit))</Description>
+      <Version>3.13</Version>
+      <Description>env-ai (Python 3.13)</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>

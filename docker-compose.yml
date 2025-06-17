@@ -1,20 +1,26 @@
 version: "3.9"
 
+volumes:
+  model_data:
+
 services:
   dashboard:
     build: ./Trash-Board
     container_name: dashboard
     ports:
-      - ${TrashBoard_PORT}:8080
+      - "${TrashBoard_PORT}:8080"
     restart: unless-stopped
     environment:
       - SqlConnectionStringLocal=${SQL_CONNECTION_STRING}
       - AiApiEndpoint=http://ai:8000
+
   ai:
     build: ./AI-model-api
     container_name: ai
-    #ports:
-    #  - "${TrashBoard_AI_PORT}:8000"
     restart: unless-stopped
+    ports:
+      - 8000:8000
     environment:
       - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING_AI}
+    volumes:
+      - model_data:/app/data
