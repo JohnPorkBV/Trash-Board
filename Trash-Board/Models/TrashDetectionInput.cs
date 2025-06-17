@@ -11,14 +11,6 @@ namespace TrashBoard.Models
         public float Humidity { get; set; }
 
         [Required]
-        [JsonPropertyName("ConfidenceScore")]
-        public float ConfidenceScore { get; set; }
-
-        [Required]
-        [JsonPropertyName("Hour")]
-        public int Hour { get; set; }
-
-        [Required]
         [JsonPropertyName("Precipitation")]
         public float Precipitation { get; set; }
 
@@ -32,6 +24,9 @@ namespace TrashBoard.Models
 
         [JsonPropertyName("IsHoliday")]
         public bool IsHoliday { get; set; }
+
+        [JsonPropertyName("IsBredaEvent")]
+        public bool isBredaEvent { get; set; }
     }
 
 

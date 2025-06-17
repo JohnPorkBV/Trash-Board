@@ -16,8 +16,7 @@ engine = create_engine(conn_str)
 
 query = """
 SELECT 
-    [DetectedObject], [Humidity],
-    [Hour], [Precipitation], [Temp], [Windforce], [IsHoliday]
+    [DetectedObject], [Humidity], [Precipitation], [Temp], [Windforce], [IsHoliday], [IsBredaEvent]
 FROM [dbo].[TrashDetections]
 """
 df = pd.read_sql(query, engine)
