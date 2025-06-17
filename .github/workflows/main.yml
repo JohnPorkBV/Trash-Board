@@ -20,13 +20,19 @@ jobs:
           dotnet-version: '8.0'
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          dotnet restore "$PROJECT_PATH"
 
       - name: Build project
-        run: dotnet build --no-restore --configuration Release
+        run: |
+          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          dotnet build "$PROJECT_PATH" --no-restore --configuration Release
 
       - name: Run unit tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: |
+          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          dotnet test "$PROJECT_PATH" --no-build --configuration Release --verbosity normal
 
       - name: Setup EF Tools
         run: |
@@ -34,7 +40,9 @@ jobs:
           dotnet tool restore
 
       - name: Bundle EF Migrations
-        run: dotnet ef migrations bundle -r linux-x64
+        run: |
+          PROJECT_PATH="./Trashboard/${{ secrets.PROJECT_NAME }}.csproj"
+          dotnet ef migrations bundle -r linux-x64 --project "$PROJECT_PATH" --output ./efbundle
 
       - name: Upload EF Bundle Artifact
         uses: actions/upload-artifact@v4
