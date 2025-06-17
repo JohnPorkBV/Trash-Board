@@ -88,6 +88,24 @@ namespace TrashBoard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Verberg evenementen.
+        /// </summary>
+        public static string Checkbox_HideEvents {
+            get {
+                return ResourceManager.GetString("Checkbox_HideEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toon evenementen.
+        /// </summary>
+        public static string Checkbox_ShowEvents {
+            get {
+                return ResourceManager.GetString("Checkbox_ShowEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toon feestdagen.
         /// </summary>
         public static string Checkbox_ShowHolidays {
@@ -165,6 +183,15 @@ namespace TrashBoard {
         public static string Intro_FilterInstructions {
             get {
                 return ResourceManager.GetString("Intro_FilterInstructions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter op feestdagen:.
+        /// </summary>
+        public static string Label_FilterOnEvent {
+            get {
+                return ResourceManager.GetString("Label_FilterOnEvent", resourceCulture);
             }
         }
         
