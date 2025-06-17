@@ -11,11 +11,12 @@
     <OutputPath>.</OutputPath>
     <Name>AI-model-api</Name>
     <RootNamespace>AI-model-api</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env-ai|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
     <Environment>SQL_CONNECTION_STRING=mssql+pyodbc://trashboard_user:JohnPork--123@149.143.71.166/trashjohnporkdb?driver=ODBC+Driver+17+for+SQL+Server&amp;TrustServerCertificate=yes</Environment>
     <IsWindowsApplication>False</IsWindowsApplication>
+    <SuppressEnvironmentCreationPrompt>True</SuppressEnvironmentCreationPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,10 +37,10 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="env\">
-      <Id>env</Id>
+    <Interpreter Include="env-ai\">
+      <Id>env-ai</Id>
       <Version>3.11</Version>
-      <Description>env (Python 3.11 (64-bit))</Description>
+      <Description>env-ai (Python 3.11 (64-bit))</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>

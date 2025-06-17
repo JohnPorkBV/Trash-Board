@@ -9,7 +9,7 @@ from sklearn.metrics import classification_report, accuracy_score
 # Lees de SQL-verbinding uit een omgevingsvariabele
 conn_str = os.getenv("SQL_CONNECTION_STRING")
 if not conn_str:
-    raise ValueError("❌ Missing SQL_CONNECTION_STRING environment variable")
+    raise ValueError(" Missing SQL_CONNECTION_STRING environment variable")
 
 # Verbind met database
 engine = create_engine(conn_str)
@@ -25,7 +25,7 @@ df = pd.read_sql(query, engine)
 
 # Check of dataframe niet leeg is
 if df.empty:
-    raise ValueError("❌ Geen data opgehaald uit database.")
+    raise ValueError("Geen data opgehaald uit database.")
 
 # Splits data in features en label
 X = df.drop("DetectedObject", axis=1)
