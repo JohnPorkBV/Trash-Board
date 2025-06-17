@@ -1,15 +1,23 @@
 @page "/about"
 @rendermode InteractiveServer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<AboutUs> L
+<div>
+    <div>
+        <h1>@L["Title"]</h1>
 
-<h1>@L["Title"]</h1>
+        <p>@L["Intro"]</p>
 
-<p>@L["Intro"]</p>
+        <p>@L["FocusIntro"]</p>
 
-<p>@L["FocusIntro"]</p>
+        <p>@L["FocusGoal"]</p>
 
-<p>@L["FocusGoal"]</p>
-
-<p>@L["Belief"]</p>
-
-<img src="./Branding3.png" alt="John Pork" />
+        <p>@L["Belief"]</p>
+    </div>
+    <div>
+        <img src="./Branding3.png" class="rounded" alt="John Pork" width="300" height="300">
+        <img src="./JohnBeun.png" class="rounded" alt="John Beun" width="300" height="300">
+    </div>
+    
+    <br />
+    
+</div>
