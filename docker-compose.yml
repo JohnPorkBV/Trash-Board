@@ -18,8 +18,8 @@ services:
     build: ./AI-model-api
     container_name: ai
     restart: unless-stopped
-    ports:
-      - 8000:8000
+    #ports:
+    #  - 8000:8000
     environment:
       - SQL_CONNECTION_STRING=${SQL_CONNECTION_STRING_AI}
     volumes:
