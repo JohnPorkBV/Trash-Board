@@ -44,6 +44,7 @@ class TrainRequest(BaseModel):
     min_samples_split: Optional[int] = 5
     min_samples_leaf: Optional[int] = 3
     max_features: Optional[str] = "sqrt"
+    random_state: Optional[int] = 42
 
 class PredictionRequest(BaseModel):
     Humidity: float
@@ -111,7 +112,7 @@ def train_model(params: TrainRequest):
             min_samples_split=params.min_samples_split,
             min_samples_leaf=params.min_samples_leaf,
             max_features=params.max_features,
-            random_state=42,
+            random_state=params.random_state,
             n_jobs=-1
         )
 
@@ -123,8 +124,8 @@ def train_model(params: TrainRequest):
 
         joblib.dump(tree_model, TREE_MODEL_PATH)
 
-        logger.info("Model retrained and saved successfully.")
-        load_model()
+
+        
 
         query = """
         SELECT 
@@ -166,7 +167,7 @@ def train_model(params: TrainRequest):
             min_samples_split=params.min_samples_split,
             min_samples_leaf=params.min_samples_leaf,
             max_features=params.max_features,
-            random_state=42,
+            random_state=params.random_state,
             n_jobs=-1
         )
         multi_model = MultiOutputRegressor(base_model)
@@ -176,7 +177,8 @@ def train_model(params: TrainRequest):
         joblib.dump(multi_model, MULTI_MODEL_PATH)
         joblib.dump(target_cols, os.path.join(DATA_PATH, "target_columns.joblib"))
 
-        load_model();
+        logger.info("Both models retrained and saved successfully.")
+        load_model()
 
         return {
             
@@ -278,7 +280,7 @@ def predict_single_object(input: PredictionRequest):
         prediction = multi_model.predict(features)[0]
 
         return {
-            "predicted_object": str(prediction)  # ensure it's a native string
+            "predicted_object": str(prediction)
         }
 
     except Exception as e:

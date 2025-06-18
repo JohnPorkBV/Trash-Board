@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TrashBoard.Models;
@@ -13,20 +15,6 @@ namespace TrashBoard.Services
         public AiPredictionService(HttpClient http)
         {
             _http = http;
-        }
-
-        public async Task<string?> PredictAsync(TrashDetectionInput input)
-        {
-            var response = await _http.PostAsJsonAsync("/predict", input);
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error {response.StatusCode}: {error}");
-                return null;
-            }
-
-            var json = await response.Content.ReadFromJsonAsync<PredictionResult>();
-            return json?.Prediction;
         }
 
         public async Task<TrainingResult?> RetrainModelAsync(TrainingParameters parameters)
@@ -71,23 +59,42 @@ namespace TrashBoard.Services
 
             return await response.Content.ReadAsStreamAsync();
         }
-
-        public async Task<List<TrashForecastResult>> GetForecastAsync()
+        public async Task<string?> PredictAsync(TrashDetectionInput input)
         {
-            var response = await _http.GetAsync("predict-7days");
-            response.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<TrashForecastWrapper>(json, new JsonSerializerOptions
+            var response = await _http.PostAsJsonAsync("/predict", input);
+            if (!response.IsSuccessStatusCode)
             {
-                PropertyNameCaseInsensitive = true
-            });
-            return result?.Forecast ?? new();
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error {response.StatusCode}: {error}");
+                return null;
+            }
+
+            var json = await response.Content.ReadFromJsonAsync<PredictionResult>();
+            return json?.Prediction;
         }
 
-        private class TrashForecastWrapper
+        public async Task<PredictionAmountResult?> GetForecastOfDayAsync(TrashDetectionInput input)
         {
-            public List<TrashForecastResult>? Forecast { get; set; }
+            try
+            {
+                var response = await _http.PostAsJsonAsync("predict-day", input);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error {response.StatusCode}: {error}");
+                    return null;
+                }
+                return await response.Content.ReadFromJsonAsync<PredictionAmountResult>();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error fetching prediction for tomorrow: " + ex.Message);
+            }
+            return null;
         }
+
     }
 
     public class TrainingResult
@@ -110,7 +117,45 @@ namespace TrashBoard.Services
         [JsonPropertyName("Prediction")]
         public string? Prediction { get; set; }
     }
+    public class PredictionAmountResult
+    {
+        [JsonPropertyName("date")]
+        public DateTime? Date { get; set; }
 
+        [JsonPropertyName("predicted_total_trash_count")]
+        public double? TotalCount { get; set; }
+
+        [JsonPropertyName("predicted_trash_counts")]
+        public Dictionary<string, double>? Trash { get; set; }
+    }
+
+    public class TrashDetectionInput
+    {
+        [JsonPropertyName("date")]
+        public DateTime? Date { get; set; }
+
+        [Required]
+        [JsonPropertyName("Humidity")]
+        public float Humidity { get; set; }
+
+        [Required]
+        [JsonPropertyName("Precipitation")]
+        public float Precipitation { get; set; }
+
+        [Required]
+        [JsonPropertyName("Temp")]
+        public float Temp { get; set; }
+
+        [Required]
+        [JsonPropertyName("Windforce")]
+        public float Windforce { get; set; }
+
+        [JsonPropertyName("IsHoliday")]
+        public bool IsHoliday { get; set; }
+
+        [JsonPropertyName("IsBredaEvent")]
+        public bool isBredaEvent { get; set; }
+    }
     public class TrainingParameters
     {
         [JsonPropertyName("n_estimators")]
@@ -130,7 +175,9 @@ namespace TrashBoard.Services
 
         [JsonPropertyName("max_features")]
         public string MaxFeatures { get; set; } = "sqrt";
+        [JsonPropertyName("random_state")]
+        public int RandomState { get; set; } = 42;
     }
 
-   
+
 }

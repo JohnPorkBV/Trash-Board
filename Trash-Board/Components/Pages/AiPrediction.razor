@@ -1,6 +1,7 @@
 ﻿@page "/ai-predict"
 @using TrashBoard.Models
 @using TrashBoard.Services
+@using BlazorBootstrap
 @inject AiPredictionService AiService
 @inject UserSessionService SessionService
 @rendermode InteractiveServer
@@ -42,30 +43,24 @@
 		</div>
 	}
 	<hr />
-	<h4>7-Daagse Afvalvoorspelling</h4>
-	<button class="btn btn-secondary" @onclick="Load7DayPrediction">Voorspel 7 dagen</button>
+	<div class="mb-3">
+                    <label>Datum</label>
+                    <DateInput @bind-Value="input.Date" />
+                </div>
+	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel Morgen (Gedetailleerd)</button>
 
 	@if (forecastResults is not null)
 	{
-		<table class="table table-striped mt-3">
-			<thead>
-				<tr>
-					<th>Datum</th>
-					<th>Voorspelde Hoeveelheid</th>
-					<th>Afvaltype</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var item in forecastResults)
+		<div class="alert alert-warning mt-3">
+			<h5>Voorspelling voor @forecastResults.Date?.ToShortDateString()</h5>
+			<p><strong>Totaal:</strong> @forecastResults.TotalCount</p>
+			<ul>
+				@foreach (var kvp in forecastResults.Trash)
 				{
-					<tr>
-						<td>@item.date</td>
-						<td>@item.predicted_trash_count</td>
-						<td>@item.predicted_object</td>
-					</tr>
+					<li><strong>@kvp.Key:</strong> @kvp.Value</li>
 				}
-			</tbody>
-		</table>
+			</ul>
+		</div>
 	}
 
 }
@@ -89,14 +84,14 @@
 			StateHasChanged(); // refresh UI after loading session data
 		}
 	}
-	private List<TrashBoard.Models.TrashForecastResult>? forecastResults;
+	private PredictionAmountResult? forecastResults;
 
 
-	private async Task Load7DayPrediction()
+	private async Task PredictTomorrow()
 	{
 		try
 		{
-			forecastResults = await AiService.GetForecastAsync();
+			forecastResults = await AiService.GetForecastOfDayAsync(input);
 			StateHasChanged();
 		}
 		catch (Exception ex)
