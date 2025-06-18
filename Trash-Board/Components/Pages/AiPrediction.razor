@@ -3,6 +3,7 @@
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject IAiPredictionService AiService
+@inject IWeatherService WeatherService
 @inject UserSessionService SessionService
 @rendermode InteractiveServer
 @if (!String.IsNullOrEmpty(SessionService.Username))
@@ -44,10 +45,14 @@
 	}
 	<hr />
 	<div class="mb-3">
-                    <label>Datum</label>
-                    <DateInput @bind-Value="input.Date" />
-                </div>
-	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel Morgen (Gedetailleerd)</button>
+		<label>Datum</label>
+		<DateInput @bind-Value="input.Date" />
+		<button class="btn btn-primary mt-2" @onclick="RefreshWeather">Refresh Weather</button>
+
+	</div>
+
+
+	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel (Gedetailleerd)</button>
 
 	@if (forecastResults is not null)
 	{
@@ -86,11 +91,53 @@
 	}
 	private PredictionAmountResult? forecastResults;
 
+	private async Task RefreshWeather()
+	{
+		try
+		{
+			// Get weather data for the input date
+			WeatherData? weatherData = await WeatherService.GetWeatherForTimestampAsync(input.Date);
 
+			if (weatherData != null)
+			{
+				// Populate the input fields with weather values
+				input.Temp = weatherData.Temp;
+				input.Humidity = weatherData.Humidity;
+				input.Precipitation = weatherData.Precipitation;
+				input.Windforce = weatherData.Windforce;
+			}
+			else
+			{
+				Console.WriteLine("No weather data found for the selected date.");
+			}
+			StateHasChanged();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine("Error getting forecast: " + ex.Message);
+		}
+	}
 	private async Task PredictTomorrow()
 	{
 		try
 		{
+			// Get weather data for the input date
+			WeatherData? weatherData = await WeatherService.GetWeatherForTimestampAsync(input.Date);
+
+			if (weatherData != null)
+			{
+				// Populate the input fields with weather values
+				input.Temp = weatherData.Temp;
+				input.Humidity = weatherData.Humidity;
+				input.Precipitation = weatherData.Precipitation;
+				input.Windforce = weatherData.Windforce;
+			}
+			else
+			{
+				Console.WriteLine("No weather data found for the selected date.");
+			}
+
+			// Call the AI prediction
 			forecastResults = await AiService.GetForecastOfDayAsync(input);
 			StateHasChanged();
 		}
@@ -99,6 +146,7 @@
 			Console.WriteLine("Error getting forecast: " + ex.Message);
 		}
 	}
+
 
 	
 
