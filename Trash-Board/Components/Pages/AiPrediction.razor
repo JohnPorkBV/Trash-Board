@@ -5,60 +5,61 @@
 @inject IAiPredictionService AiService
 @inject IWeatherService WeatherService
 @inject UserSessionService SessionService
+@inject CustomLocalizer<TrashBoard.AiPrediction> L
 @rendermode InteractiveServer
 @if (!String.IsNullOrEmpty(SessionService.Username))
 {
-	<h3>AI Prediction</h3>
+	<h3>@L["Title"]</h3>
 
 	<div class="form-group">
-		<label>Humidity</label>
+		<label>@L["Table_Humidity"]</label>
 		<input type="number" @bind="input.Humidity" class="form-control" />
 	</div>
 	<div class="form-group">
-		<label>Precipitation</label>
+		<label>@L["Table_Precipitation"]</label>
 		<input type="number" step="0.1" @bind="input.Precipitation" class="form-control" />
 	</div>
 	<div class="form-group">
-		<label>Temperature</label>
+		<label>@L["Table_Temperature"]</label>
 		<input type="number" step="0.1" @bind="input.Temp" class="form-control" />
 	</div>
 	<div class="form-group">
-		<label>Windforce</label>
+		<label>@L["Table_Windforce"]</label>
 		<input type="number" step="0.1" @bind="input.Windforce" class="form-control" />
 	</div>
 	<div class="form-group form-check">
 		<input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
-		<label class="form-check-label">Is Holiday?</label>
+		<label class="form-check-label">@L["Table_IsHoliday"]</label>
 	</div>
 	<div class="form-group form-check">
 		<input type="checkbox" @bind="input.isBredaEvent" class="form-check-input" />
-		<label class="form-check-label">Is BredaEvent?</label>
+		<label class="form-check-label">@L["Table_IsBredaEvent"]</label>
 	</div>
 
-	<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
+	<button class="btn btn-primary mt-2" @onclick="HandleSubmit">@L["Label_Predict"]</button>
 
 	@if (result is not null)
 	{
 		<div class="alert alert-info mt-3">
-			<strong>Prediction:</strong> @result
+			<strong>@L["Label_Prediction"]:</strong> @result
 		</div>
 	}
 	<hr />
 	<div class="mb-3">
-		<label>Datum</label>
+		<label>@L["Label_Date"]</label>
 		<DateInput @bind-Value="input.Date" />
-		<button class="btn btn-primary mt-2" @onclick="RefreshWeather">Refresh Weather</button>
+		<button class="btn btn-primary mt-2" @onclick="RefreshWeather">@L["Label_Refresh"]</button>
 
 	</div>
 
 
-	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel (Gedetailleerd)</button>
+	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">@L["Label_Prediction_Detail"]</button>
 
 	@if (forecastResults is not null)
 	{
 		<div class="alert alert-warning mt-3">
-			<h5>Voorspelling voor @forecastResults.Date?.ToShortDateString()</h5>
-			<p><strong>Totaal:</strong> @forecastResults.TotalCount</p>
+			<h5>@L["Label_Prediction_For"] @forecastResults.Date?.ToShortDateString()</h5>
+			<p><strong>@L["Label_Total"]</strong> @forecastResults.TotalCount</p>
 			<ul>
 				@foreach (var kvp in forecastResults.Trash)
 				{
