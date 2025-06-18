@@ -1,6 +1,10 @@
 @page "/about"
+@using System.Globalization
+@using TrashBoard.Services
 @rendermode InteractiveServer
-@inject Microsoft.Extensions.Localization.IStringLocalizer<AboutUs> L
+@* @inject Microsoft.Extensions.Localization.IStringLocalizer<AboutUs> L *@
+@inject CustomLocalizer<TrashBoard.AboutUs> L
+
 <div>
     <div>
         <h1>@L["Title"]</h1>
@@ -10,7 +14,7 @@
         <p>@L["Initiative"]</p>
 
         <p> @L["Aim"]</p>
-        
+
         <p> @L["ClosingThoughts"]</p>
 
     </div>
@@ -21,7 +25,9 @@
         <img src="./Branding3.png" class="rounded" alt="John Pork" width="300" height="300">
         <img src="./JohnBeun.png" class="rounded" alt="John Beun" width="300" height="300">
     </div>
-    
+
     <br />
-    
+
 </div>
+
+

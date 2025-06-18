@@ -1,6 +1,11 @@
 ﻿@using System.Globalization
+@using TrashBoard.Services
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
+@inject TrashBoard.Services.CustomLocalizer<TrashDetectionsLineChart> LineChart
+@inject TrashBoard.Services.CustomLocalizer<TrashTypeBarChart> BarChart
+@inject TrashBoard.Services.CustomLocalizer<Selector> Selector
+@inject TrashBoard.Services.CustomLocalizer<AboutUs> About
 @rendermode InteractiveServer
 
 <select @onchange="OnLanguageChange" class="form-select w-auto">
@@ -8,34 +13,63 @@
     <option value="en" selected="@IsSelected("en")">English</option>
     <option value="de" selected="@IsSelected("de")">Deutsch</option>
     <option value="braille" selected="@IsSelected("braille")">Braille</option>
+    <option value="emoji" selected="@IsSelected("emoji")">Emoji</option>
+    <option value="morse" selected="@IsSelected("morse")">Morse</option>
 </select>
 
 @code {
     private async Task OnLanguageChange(ChangeEventArgs e)
     {
-        var selectedCulture = e.Value?.ToString() ?? "nl";
+        var selected = e.Value?.ToString() ?? "nl";
 
-        // Save to localStorage
-        await JS.InvokeVoidAsync("blazorCulture.set", selectedCulture);
-
-        // Save to cookie (server requires this!)
-        var cookieValue = $".AspNetCore.Culture=c={selectedCulture}|uic={selectedCulture}";
-        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
-
-        // Set Braille font flag in localStorage
-        if (selectedCulture == "braille")
+        if (selected == "braille")
         {
-            await JS.InvokeVoidAsync("localStorage.setItem", "useBrailleFont", "true");
+            SetAllLocalizer(LanguageMode.Braille);
+        }
+        else if (selected == "emoji")
+        {
+            SetAllLocalizer(LanguageMode.Emoji);
+        }
+        else if (selected == "morse")
+        {
+            SetAllLocalizer(LanguageMode.Morse);
         }
         else
         {
-            await JS.InvokeVoidAsync("localStorage.removeItem", "useBrailleFont");
+            // Normal culture change: set cookie and reload page
+            SetAllLocalizer(LanguageMode.CultureBased);
+
+            // Save to cookie (server culture)
+            var cookieValue = $".AspNetCore.Culture=c={selected}|uic={selected}";
+            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+
         }
 
-        // Reload
+        // Reload page to apply culture
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        StateHasChanged();
     }
 
-    private string? IsSelected(string culture) =>
-        CultureInfo.CurrentUICulture.Name.StartsWith(culture) ? "selected" : null;
+    private string? IsSelected(string culture)
+    {
+        if (culture == "braille" && Selector.CurrentMode == LanguageMode.Braille) return "selected";
+        if (culture == "emoji" && Selector.CurrentMode == LanguageMode.Emoji) return "selected";
+        if (culture == "morse" && Selector.CurrentMode == LanguageMode.Morse) return "selected";
+
+        var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+        return currentCulture == culture ? "selected" : null;
+    }
+
+    private async void SetAllLocalizer(LanguageMode mode)
+    {
+        if (mode != LanguageMode.CultureBased)
+        {
+            var cookieValue = $".AspNetCore.Culture=c=nl|uic=nl";
+            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+        }
+        LineChart.SetMode(mode);
+        BarChart.SetMode(mode);
+        Selector.SetMode(mode);
+        About.SetMode(mode);
+    }
 }

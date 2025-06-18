@@ -1,8 +1,9 @@
 ﻿@using TrashBoard.Models
 @using BlazorBootstrap
+@using TrashBoard.Services
 @rendermode InteractiveServer
 
-@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.TrashTypeBarChart> L
+@inject CustomLocalizer<TrashBoard.TrashTypeBarChart> L
 @if (GroupedCounts?.Any() == true)
 {
     <BarChart @ref="barChart" Class="mb-4" />

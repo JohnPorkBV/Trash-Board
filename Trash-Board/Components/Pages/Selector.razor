@@ -1,11 +1,14 @@
 @implements IDisposable
 @page "/"
-@inject TrashBoard.Services.ITrashDataService TrashDataService
-@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
+@inject CustomLocalizer<TrashBoard.Selector> L
 @using TrashBoard.Models
 @using BlazorBootstrap
+@using TrashBoard.Services
 @rendermode InteractiveServer
-@inject TrashBoard.Services.UserSessionService SessionService
+@inject ITrashDataService TrashDataService
+@inject UserSessionService SessionService
+
+
 
 @if (!String.IsNullOrEmpty(SessionService.Username))
 {
