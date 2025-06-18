@@ -1,7 +1,8 @@
-﻿@implements IDisposable
+﻿@using TrashBoard.Services
+@implements IDisposable
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
-@inject TrashBoard.Services.UserSessionService SessionService
+@inject UserSessionService SessionService
 
 
 @if (String.IsNullOrEmpty(SessionService.Username))

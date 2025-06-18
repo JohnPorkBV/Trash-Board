@@ -1,9 +1,9 @@
 ﻿@page "/admin/ai-trainer"
-@inject AiPredictionService AiService
+@inject IAiPredictionService AiService
 @using TrashBoard.Services
 @rendermode InteractiveServer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
-@inject TrashBoard.Services.UserSessionService SessionService
+@inject UserSessionService SessionService
 @if (!String.IsNullOrEmpty(SessionService.Username))
 {
     <h3>AI Trainer</h3>

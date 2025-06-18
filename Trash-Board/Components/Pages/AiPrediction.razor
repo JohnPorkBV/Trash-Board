@@ -1,8 +1,8 @@
 ﻿@page "/ai-predict"
+@using BlazorBootstrap
 @using TrashBoard.Models
 @using TrashBoard.Services
-@using BlazorBootstrap
-@inject AiPredictionService AiService
+@inject IAiPredictionService AiService
 @inject UserSessionService SessionService
 @rendermode InteractiveServer
 @if (!String.IsNullOrEmpty(SessionService.Username))

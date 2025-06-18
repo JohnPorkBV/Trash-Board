@@ -8,7 +8,7 @@ using TrashBoard.Models;
 
 namespace TrashBoard.Services
 {
-    public class AiPredictionService
+    public class AiPredictionService : IAiPredictionService
     {
         private readonly HttpClient _http;
 

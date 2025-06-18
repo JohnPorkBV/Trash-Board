@@ -2,10 +2,10 @@
 @using TrashBoard.Services
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
-@inject TrashBoard.Services.CustomLocalizer<TrashDetectionsLineChart> LineChart
-@inject TrashBoard.Services.CustomLocalizer<TrashTypeBarChart> BarChart
-@inject TrashBoard.Services.CustomLocalizer<Selector> Selector
-@inject TrashBoard.Services.CustomLocalizer<AboutUs> About
+@inject CustomLocalizer<TrashDetectionsLineChart> LineChart
+@inject CustomLocalizer<TrashTypeBarChart> BarChart
+@inject CustomLocalizer<Selector> Selector
+@inject CustomLocalizer<AboutUs> About
 @rendermode InteractiveServer
 
 <select @onchange="OnLanguageChange" class="form-select w-auto">

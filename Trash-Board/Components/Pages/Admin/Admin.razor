@@ -1,6 +1,7 @@
 ﻿@page "/admin/admin"
 @using TrashBoard.Services
 @inject UserSessionService SessionService
+@inject ITrashDataService TrashDataService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
@@ -19,14 +20,34 @@ else
         <NavLink class="list-group-item list-group-item-action" href="/admin/events">
             🎪 Events Update
         </NavLink>
+        <NavLink class="list-group-item list-group-item-action" href="/admin/weather">
+            Weather Update
+        </NavLink>
         <NavLink class="list-group-item list-group-item-action" href="/admin/ai-trainer">
             AI Train
         </NavLink>
     </div>
+    <button class="btn btn-danger" @onclick="ResetData">Reset Detection Data</button>
 
+    @if (resetLog != null)
+    {
+        <p class="text-danger">@resetLog</p>
+    }
 }
 
 @code {
+    private string? resetLog;
+
+    private async Task ResetData()
+    {
+        resetLog = "Resetting detection data...";
+        StateHasChanged();
+
+        var changes = await TrashDataService.ResetDetectionDataAsync();
+        resetLog = $"Reset complete. {changes} entries updated.";
+
+        StateHasChanged();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

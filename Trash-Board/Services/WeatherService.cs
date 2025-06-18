@@ -14,6 +14,60 @@ namespace TrashBoard.Services
         {
             _httpClient = httpClient;
         }
+        public async Task<Dictionary<string, WeatherData>> GetWeatherDataForRangeAsync(DateTime start, DateTime end)
+        {
+            var startDate = start.Date.ToString("yyyy-MM-dd");
+            var endDate = end.Date.ToString("yyyy-MM-dd");
+
+            var url = $"https://archive-api.open-meteo.com/v1/archive?latitude=51.5719&longitude=4.7683" +
+                      $"&start_date={startDate}&end_date={endDate}" +
+                      $"&hourly=temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m" +
+                      $"&timezone=Europe/Amsterdam";
+
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return new Dictionary<string, WeatherData>();
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+
+            if (!doc.RootElement.TryGetProperty("hourly", out var hourly))
+                return new Dictionary<string, WeatherData>();
+
+            var times = hourly.GetProperty("time").EnumerateArray().ToList();
+            var temps = hourly.GetProperty("temperature_2m").EnumerateArray().ToList();
+            var precs = hourly.GetProperty("precipitation").EnumerateArray().ToList();
+            var winds = hourly.GetProperty("wind_speed_10m").EnumerateArray().ToList();
+            var hums = hourly.GetProperty("relative_humidity_2m").EnumerateArray().ToList();
+
+            var weatherByHour = new Dictionary<string, WeatherData>();
+
+            for (int i = 0; i < times.Count; i++)
+            {
+                var isoHour = times[i].GetString();
+                if (isoHour == null || i >= temps.Count || i >= precs.Count || i >= winds.Count || i >= hums.Count)
+                    continue;
+
+                float? temp = temps[i].GetSingle();
+                float? prec = precs[i].GetSingle();
+                float? wind = winds[i].GetSingle();
+                int? hum = hums[i].GetInt32();
+
+                if (temp == null || prec == null || wind == null || hum == null)
+                    continue;
+
+                weatherByHour[isoHour] = new WeatherData
+                {
+                    Timestamp = DateTime.Parse(isoHour),
+                    Temp = temp.Value,
+                    Precipitation = prec.Value,
+                    Windforce = wind.Value,
+                    Humidity = hum.Value
+                };
+            }
+
+            return weatherByHour;
+        }
 
         public async Task<WeatherData?> GetWeatherForTimestampAsync(DateTime timestamp)
         {
