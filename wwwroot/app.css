@@ -87,12 +87,12 @@ h1:focus {
 
 .chart-wrapper {
     flex: 1 1 auto;
-    max-width: 75%;
 }
 
 .ad-wrapper {
-    width: 600px;
-    display: flex;
+    /* width: auto; */
+    max-width: 300px;
+    /* display: flex; */
     flex-direction: column;
     justify-content: flex-start;
     height: 100%;
