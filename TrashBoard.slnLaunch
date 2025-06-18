@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "Run All",
+    "Projects": [
+      {
+        "Path": "AI-model-api\\AI-model-api.pyproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Trash-Board\\TrashBoard.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]
