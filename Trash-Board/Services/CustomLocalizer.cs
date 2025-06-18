@@ -8,7 +8,8 @@ namespace TrashBoard.Services
         CultureBased,    // e.g. en-US, fr-FR
         Emoji,
         Morse,
-        Braille
+        Braille,
+        Minecraft
     }
 
     public class CustomLocalizer<T>
@@ -45,6 +46,7 @@ namespace TrashBoard.Services
                     LanguageMode.Emoji => ToEmoji(value),
                     LanguageMode.Morse => ToMorse(value),
                     LanguageMode.Braille => ToBraille(value),
+                    LanguageMode.Minecraft => value,
                     _ => value
                 };
             }
@@ -125,5 +127,6 @@ namespace TrashBoard.Services
 
             return string.Concat(text.ToUpper().Select(c => brailleMap.GetValueOrDefault(c, c.ToString())));
         }
+
     }
 }
