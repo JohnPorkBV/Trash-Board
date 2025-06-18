@@ -42,16 +42,21 @@ builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<UserSessionService>();
 
 // ASP.NET AUTH
-
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
 })
-.AddUserStore<TrashboardDbContext>()
+.AddEntityFrameworkStores<TrashboardDbContext>()
+
 .AddDefaultTokenProviders();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login";      // Redirect here if not logged in
+    options.AccessDeniedPath = "/login";  // Or a separate "Access Denied" page
+});
 
 
 builder.Services.AddAuthentication();

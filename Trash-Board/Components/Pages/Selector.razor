@@ -1,17 +1,15 @@
-@implements IDisposable
+@attribute [Authorize]
 @page "/"
 @inject CustomLocalizer<TrashBoard.Selector> L
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Models
 @using BlazorBootstrap
 @using TrashBoard.Services
 @rendermode InteractiveServer
 @inject ITrashDataService TrashDataService
-@inject UserSessionService SessionService
 
 
 
-@if (!String.IsNullOrEmpty(SessionService.Username))
-{
     <section class="filter-panel">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h3>@L["Header_FilterSection"]</h3>
@@ -384,29 +382,18 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (!String.IsNullOrEmpty(SessionService.Username))
-        {
             trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
             await ApplyFilter();
-        }
+        
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await SessionService.InitializeAsync();
-            SessionService.OnChange += StateHasChanged;
-            StateHasChanged(); // refresh UI after loading session data
-            if (!String.IsNullOrEmpty(SessionService.Username))
-            {
                 trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
                 await ApplyFilter();
-            }
+            
         }
-    }
-    public void Dispose()
-    {
-        SessionService.OnChange -= StateHasChanged;
     }
 }
 

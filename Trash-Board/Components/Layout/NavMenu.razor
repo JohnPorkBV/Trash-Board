@@ -1,8 +1,6 @@
-﻿@implements IDisposable
-@using Microsoft.EntityFrameworkCore;
+﻿@using Microsoft.EntityFrameworkCore;
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
-@inject TrashBoard.Services.UserSessionService SessionService
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">TrashBoard</a>
@@ -24,35 +22,10 @@
                 <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Raw
             </NavLink>
         </div>
-        @if (!String.IsNullOrEmpty(SessionService.Username))
-        {
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="/ai-predict">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> AI Predict
-                </NavLink>
-            </div>
-
-        }
-
-        @code {
-
-            protected override async Task OnInitializedAsync()
-            {
-
-            }
-            protected override async Task OnAfterRenderAsync(bool firstRender)
-            {
-                if (firstRender)
-                {
-                    await SessionService.InitializeAsync();
-                    SessionService.OnChange += StateHasChanged;
-                    StateHasChanged(); // refresh UI after loading session data
-                }
-            }
-            public void Dispose()
-            {
-                SessionService.OnChange -= StateHasChanged;
-            }
-        }
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/ai-predict">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> AI Predict
+            </NavLink>
+        </div>
     </nav>
 </div>

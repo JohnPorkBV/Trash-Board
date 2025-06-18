@@ -1,75 +1,60 @@
-﻿@page "/admin/holidays"
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/holidays"
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject ITrashDataService TrashDataService
-@inject UserSessionService SessionService
 @rendermode InteractiveServer
 
-@if (SessionService.IsAdmin)
-{
-    <h3 class="text-xl font-bold mb-4">Update Trash Records with Holiday Info</h3>
+<h3 class="text-xl font-bold mb-4">Update Trash Records with Holiday Info</h3>
 
-    <button class="btn btn-primary mb-4" @onclick="StartUpdate" disabled="@IsRunning">
-        @if (IsRunning)
-        {
-            <span>Updating... Please wait</span>
-        }
-        else
-        {
-            <span>Start Holiday Update</span>
-        }
-    </button>
-
+<button class="btn btn-primary mb-4" @onclick="StartUpdate" disabled="@IsRunning">
     @if (IsRunning)
     {
-        <p class="text-warning">Updating... (@ProgressCount / @TotalCount)</p>
+        <span>Updating... Please wait</span>
     }
-
-    @if (UpdatedItems?.Count > 0)
+    else
     {
-        <h4 class="text-lg mt-4">Updated Records</h4>
-        <table class="table table-striped table-sm">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Timestamp</th>
-                    <th>Detected Object</th>
-                    <th>Holiday</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in UpdatedItems)
-                {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>@item.Timestamp</td>
-                        <td>@item.DetectedObject</td>
-                        <td>@(item.IsHoliday ? item.HolidayName : "-")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <span>Start Holiday Update</span>
     }
-}
-else
+</button>
+
+@if (IsRunning)
 {
-    <p>Access denied.</p>
+    <p class="text-warning">Updating... (@ProgressCount / @TotalCount)</p>
 }
 
+@if (UpdatedItems?.Count > 0)
+{
+    <h4 class="text-lg mt-4">Updated Records</h4>
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Detected Object</th>
+                <th>Holiday</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in UpdatedItems)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Timestamp</td>
+                    <td>@item.DetectedObject</td>
+                    <td>@(item.IsHoliday ? item.HolidayName : "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
     private bool IsRunning = false;
     private int ProgressCount = 0;
     private int TotalCount = 0;
     private List<TrashDetection> UpdatedItems = new();
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await SessionService.InitializeAsync();
-            StateHasChanged(); // refresh UI after loading session data
-        }
-    }
     private async Task StartUpdate()
     {
         IsRunning = true;

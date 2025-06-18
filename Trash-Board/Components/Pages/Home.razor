@@ -1,13 +1,12 @@
+@attribute [Authorize]
 @page "/raw"
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Models
 @using TrashBoard.Services
 @inject ITrashDataService DataService
-@inject UserSessionService SessionService
 @rendermode InteractiveServer
 @inject CustomLocalizer<TrashBoard.Selector> L
 
-@if (!String.IsNullOrEmpty(SessionService.Username))
-{
     <h3>@L["Header_Detections"]</h3>
     @if (trashDetections == null)
     {
@@ -68,25 +67,4 @@ else
 
 @code {
     private IEnumerable<TrashDetection>? trashDetections;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!String.IsNullOrEmpty(SessionService.Username))
-        {
-            trashDetections = await DataService.GetAllAsync();
-        }
-    }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await SessionService.InitializeAsync();
-            SessionService.OnChange += StateHasChanged;
-            StateHasChanged(); // refresh UI after loading session data
-        }
-    }
-    public void Dispose()
-    {
-        SessionService.OnChange -= StateHasChanged;
-    }
 }

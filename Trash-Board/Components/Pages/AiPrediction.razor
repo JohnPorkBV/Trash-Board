@@ -1,105 +1,95 @@
+@attribute [Authorize]
 @page "/ai-predict"
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Models
 @using TrashBoard.Services
 @using BlazorBootstrap
 @inject AiPredictionService AiService
-@inject UserSessionService SessionService
 @rendermode InteractiveServer
-@if (!String.IsNullOrEmpty(SessionService.Username))
-{
-	<h3>AI Prediction</h3>
+<h3>AI Prediction</h3>
 
-	<div class="form-group">
-		<label>Humidity</label>
-		<input type="number" @bind="input.Humidity" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Precipitation</label>
-		<input type="number" step="0.1" @bind="input.Precipitation" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Temperature</label>
-		<input type="number" step="0.1" @bind="input.Temp" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Windforce</label>
-		<input type="number" step="0.1" @bind="input.Windforce" class="form-control" />
-	</div>
-	<div class="form-group form-check">
-		<input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
-		<label class="form-check-label">Is Holiday?</label>
-	</div>
-	<div class="form-group form-check">
-		<input type="checkbox" @bind="input.isBredaEvent" class="form-check-input" />
-		<label class="form-check-label">Is BredaEvent?</label>
-	</div>
+<div class="form-group">
+    <label>Humidity</label>
+    <input type="number" @bind="input.Humidity" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Precipitation</label>
+    <input type="number" step="0.1" @bind="input.Precipitation" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Temperature</label>
+    <input type="number" step="0.1" @bind="input.Temp" class="form-control" />
+</div>
+<div class="form-group">
+    <label>Windforce</label>
+    <input type="number" step="0.1" @bind="input.Windforce" class="form-control" />
+</div>
+<div class="form-group form-check">
+    <input type="checkbox" @bind="input.IsHoliday" class="form-check-input" />
+    <label class="form-check-label">Is Holiday?</label>
+</div>
+<div class="form-group form-check">
+    <input type="checkbox" @bind="input.isBredaEvent" class="form-check-input" />
+    <label class="form-check-label">Is BredaEvent?</label>
+</div>
 
-	<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
+<button class="btn btn-primary mt-2" @onclick="HandleSubmit">Predict</button>
 
 	@if (result is not null)
-	{
-		<div class="alert alert-info mt-3">
-			<strong>Prediction:</strong> @result
-		</div>
-	}
-	<hr />
-	<div class="mb-3">
-                    <label>Datum</label>
-                    <DateInput @bind-Value="input.Date" />
-                </div>
-	<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel Morgen (Gedetailleerd)</button>
+{
+    <div class="alert alert-info mt-3">
+        <strong>Prediction:</strong> @result
+    </div>
+}
+<hr />
+<div class="mb-3">
+    <label>Datum</label>
+    <DateInput @bind-Value="input.Date" />
+</div>
+<button class="btn btn-warning mt-2" @onclick="PredictTomorrow">Voorspel Morgen (Gedetailleerd)</button>
 
-	@if (forecastResults is not null)
-	{
-		<div class="alert alert-warning mt-3">
-			<h5>Voorspelling voor @forecastResults.Date?.ToShortDateString()</h5>
-			<p><strong>Totaal:</strong> @forecastResults.TotalCount</p>
-			<ul>
-				@foreach (var kvp in forecastResults.Trash)
-				{
-					<li><strong>@kvp.Key:</strong> @kvp.Value</li>
-				}
-			</ul>
-		</div>
-	}
+@if (forecastResults is not null)
+{
+    <div class="alert alert-warning mt-3">
+        <h5>Voorspelling voor @forecastResults.Date?.ToShortDateString()</h5>
+        <p><strong>Totaal:</strong> @forecastResults.TotalCount</p>
+        <ul>
+            @foreach (var kvp in forecastResults.Trash)
+            {
+                <li><strong>@kvp.Key:</strong> @kvp.Value</li>
+            }
+        </ul>
+    </div>
+}
 
 }
 
 @code {
-	private TrashDetectionInput input = new();
+    private PredictionAmountResult? forecastResults;
+    private TrashDetectionInput input = new();
 
-	private string? result;
+    private string? result;
 
-	private async Task HandleSubmit()
-	{
-
-		result = await AiService.PredictAsync(input);
-		StateHasChanged();
-	}
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			await SessionService.InitializeAsync();
-			StateHasChanged(); // refresh UI after loading session data
-		}
-	}
-	private PredictionAmountResult? forecastResults;
+    private async Task HandleSubmit()
+    {
+        result = await AiService.PredictAsync(input);
+        StateHasChanged();
+    }
 
 
-	private async Task PredictTomorrow()
-	{
-		try
-		{
-			forecastResults = await AiService.GetForecastOfDayAsync(input);
-			StateHasChanged();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine("Error getting forecast: " + ex.Message);
-		}
-	}
+    private async Task PredictTomorrow()
+    {
+        try
+        {
+            forecastResults = await AiService.GetForecastOfDayAsync(input);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting forecast: " + ex.Message);
+        }
+    }
 
-	
+
 
 }

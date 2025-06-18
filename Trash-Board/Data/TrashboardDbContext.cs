@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using TrashBoard.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace TrashBoard.Data
 {
-    public class TrashboardDbContext : DbContext
+
+    public class TrashboardDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
+
         public TrashboardDbContext(DbContextOptions<TrashboardDbContext> options) : base(options)
         {
         }
