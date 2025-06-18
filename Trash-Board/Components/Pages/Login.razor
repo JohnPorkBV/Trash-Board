@@ -1,62 +1,52 @@
 ﻿@page "/login"
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager Navigation
+@inject ILogger<Login> Logger
 
-@using TrashBoard.Services
-@inject UserSessionService SessionService
-@inject NavigationManager Nav
-@rendermode InteractiveServer
+<h3>Login</h3>
 
-<h3>Admin Login</h3>
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-@if (!loginFailed)
-{
-    <p>Please enter your credentials.</p>
-}
-else
-{
-    <p class="text-danger">Invalid login. Try again.</p>
-}
-
-<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin" FormName="Login">
-    <InputText @bind-Value="loginModel.Username" class="form-control" placeholder="Username" />
-    <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Password" />
-    <button type="submit" class="btn btn-primary mt-2">Login</button>
+    <InputText @bind-Value="loginModel.Username" placeholder="Email" class="form-control" />
+    <InputText @bind-Value="loginModel.Password" placeholder="Password" type="password" class="form-control mt-2" />
+    <button class="btn btn-primary mt-2" type="submit">Login</button>
 </EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
 
 @code {
     private LoginModel loginModel = new();
+    private string? errorMessage;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task HandleLogin()
     {
-        if (firstRender)
+        var result = await SignInManager.PasswordSignInAsync(
+            loginModel.Username, loginModel.Password, isPersistent: false, lockoutOnFailure: false);
+
+        if (result.Succeeded)
         {
-            await SessionService.InitializeAsync();
-            StateHasChanged(); // refresh UI after loading session data
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            Logger.LogWarning("Login failed for user {Email}", loginModel.Username);
+            errorMessage = "Invalid login attempt.";
         }
     }
-
-    private async void HandleLogin()
-    {
-        var result = await SessionService.LoginAsync(loginModel.Username, loginModel.Password);
-        if (result)
-        {
-            if (SessionService.IsAdmin)
-                Nav.NavigateTo("/admin/admin");
-            else
-                Nav.NavigateTo("/");
-        }
-    }
-
-    private async void Logout()
-    {
-        await SessionService.LogoutAsync();
-        Nav.NavigateTo("/");
-    }
-
-    private bool loginFailed = false;
 
     public class LoginModel
     {
+        [Required]
         public string Username { get; set; } = "";
+
+        [Required]
         public string Password { get; set; } = "";
     }
 }

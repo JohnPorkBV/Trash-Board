@@ -5,6 +5,8 @@ using TrashBoard.Components;
 using TrashBoard.Data;
 using TrashBoard.Services;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
@@ -36,8 +38,25 @@ builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 // User Service
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession();
-builder.Services.AddScoped<UserSessionService>();
+//builder.Services.AddSession();
+//builder.Services.AddScoped<UserSessionService>();
+
+// ASP.NET AUTH
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+})
+.AddUserStore<TrashboardDbContext>()
+.AddDefaultTokenProviders();
+
+
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
 
 
 // Api Services
@@ -59,7 +78,9 @@ var app = builder.Build();
 var localizationOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value;
 app.UseRequestLocalization(localizationOptions);
 
-app.UseSession();
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
