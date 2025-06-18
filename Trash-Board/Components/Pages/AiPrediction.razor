@@ -41,6 +41,33 @@
 			<strong>Prediction:</strong> @result
 		</div>
 	}
+	<hr />
+	<h4>7-Daagse Afvalvoorspelling</h4>
+	<button class="btn btn-secondary" @onclick="Load7DayPrediction">Voorspel 7 dagen</button>
+
+	@if (forecastResults is not null)
+	{
+		<table class="table table-striped mt-3">
+			<thead>
+				<tr>
+					<th>Datum</th>
+					<th>Voorspelde Hoeveelheid</th>
+					<th>Afvaltype</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in forecastResults)
+				{
+					<tr>
+						<td>@item.date</td>
+						<td>@item.predicted_trash_count</td>
+						<td>@item.predicted_object</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+
 }
 
 @code {
@@ -62,4 +89,22 @@
 			StateHasChanged(); // refresh UI after loading session data
 		}
 	}
+	private List<TrashBoard.Models.TrashForecastResult>? forecastResults;
+
+
+	private async Task Load7DayPrediction()
+	{
+		try
+		{
+			forecastResults = await AiService.GetForecastAsync();
+			StateHasChanged();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine("Error getting forecast: " + ex.Message);
+		}
+	}
+
+	
+
 }
