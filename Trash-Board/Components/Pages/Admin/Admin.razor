@@ -1,4 +1,4 @@
-﻿@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize(Roles = "Admin")]
 @page "/admin/admin"
 @using Microsoft.AspNetCore.Authorization
 @inject NavigationManager Nav
@@ -7,15 +7,77 @@
 
     <h3>Admin Panel</h3>
 
-    <div class="list-group">
+    <div class="list-group mb-4">
         <NavLink class="list-group-item list-group-item-action" href="/admin/holidays">
             📅 Holiday Update
         </NavLink>
         <NavLink class="list-group-item list-group-item-action" href="/admin/events">
             🎪 Events Update
         </NavLink>
+        <NavLink class="list-group-item list-group-item-action" href="/admin/weather">
+            🌤 Weather Update
+        </NavLink>
         <NavLink class="list-group-item list-group-item-action" href="/admin/ai-trainer">
-            AI Train
+            🧠 AI Train
         </NavLink>
     </div>
 
+    <div class="mb-3">
+        <h5 class="text-warning">⚠ Reset Detection Data</h5>
+        <p>Type <strong>reset</strong> below to confirm:</p>
+        <InputText @bind-Value="resetConfirmation" class="form-control mb-2" />
+        <button class="btn btn-warning" @onclick="ResetData" disabled="@(!CanReset)">Reset Detection Data</button>
+    </div>
+
+    <div class="mb-3">
+        <h5 class="text-danger">❌ Delete All Detection Data</h5>
+        <p>Type <strong>delete</strong> below to confirm:</p>
+        <InputText @bind-Value="deleteConfirmation" class="form-control mb-2" />
+        <button class="btn btn-danger" @onclick="DeleteAllData" disabled="@(!CanDelete)">Delete All Detection Data</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(actionLog))
+    {
+        <p class="text-info">@actionLog</p>
+    }
+}
+
+@code {
+    private string? resetConfirmation;
+    private string? deleteConfirmation;
+    private string? actionLog;
+
+    private bool CanReset => resetConfirmation?.Trim().ToLower() == "reset";
+    private bool CanDelete => deleteConfirmation?.Trim().ToLower() == "delete";
+
+    private async Task ResetData()
+    {
+        actionLog = "Resetting detection data...";
+        StateHasChanged();
+
+        var changes = await TrashDataService.ResetDetectionDataAsync();
+        actionLog = $"Reset complete. {changes} entries updated.";
+        resetConfirmation = string.Empty;
+
+        StateHasChanged();
+    }
+
+    private async Task DeleteAllData()
+    {
+        actionLog = "Deleting all detection data...";
+        StateHasChanged();
+
+        var changes = await TrashDataService.DeleteAllDetectionsAsync();
+        actionLog = $"Deleted {changes} detection entries.";
+        deleteConfirmation = string.Empty;
+
+        StateHasChanged();
+    }
+
+
+    private async void Logout()
+    {
+        await SessionService.LogoutAsync();
+        Nav.NavigateTo("/");
+    }
+}

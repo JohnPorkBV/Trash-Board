@@ -8,7 +8,7 @@ using TrashBoard.Models;
 
 namespace TrashBoard.Services
 {
-    public class AiPredictionService
+    public class AiPredictionService : IAiPredictionService
     {
         private readonly HttpClient _http;
 
@@ -132,7 +132,7 @@ namespace TrashBoard.Services
     public class TrashDetectionInput
     {
         [JsonPropertyName("date")]
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         [JsonPropertyName("Humidity")]

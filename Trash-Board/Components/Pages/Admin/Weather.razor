@@ -1,7 +1,4 @@
-@attribute [Authorize(Roles = "Admin")]
-@page "/admin/holidays"
-@using Microsoft.AspNetCore.Authorization
-@using TrashBoard.Models
+﻿@page "/admin/weather"
 @using TrashBoard.Services
 @inject ITrashDataService TrashDataService
 @rendermode InteractiveServer
@@ -9,12 +6,11 @@
 
 @if (!isRunning)
 {
-    <button class="btn btn-primary" @onclick="StartUpdate">Start Holiday Update</button>
+    <button class="btn btn-primary" @onclick="StartUpdate">Start Weather Update</button>
 }
-
-@if (UpdatedItems?.Count > 0)
+else
 {
-    <p><strong>Updating Holiday data...</strong></p>
+    <p><strong>Updating weather data...</strong></p>
     <div class="progress mb-2">
         <div class="progress-bar" role="progressbar" style="width:@progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
             @progress%
@@ -43,12 +39,12 @@
 
         var count = 0;
 
-        await foreach (var log in TrashDataService.UpdateAllHolidayWithProgressAsync())
+        await foreach (var log in TrashDataService.UpdateAllWeatherInfoWithProgressAsync())
         {
             logLines.Add(log);
             count++;
 
-            progress = Math.Min(100, count * 100 / (await TrashDataService.GetCount()/ 25));
+            progress = Math.Min(100, count * 100 / (await TrashDataService.GetCount() / 25));
             StateHasChanged();
         }
 

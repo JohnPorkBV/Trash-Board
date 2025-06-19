@@ -7,6 +7,7 @@ namespace TrashBoard.Services
 {
     public interface ITrashDataService
     {
+        Task<int> GetCount();
         Task<IEnumerable<TrashDetection>> GetAllAsync();
 
         Task<IEnumerable<TrashDetection>> GetFilteredAsync(
@@ -19,8 +20,10 @@ namespace TrashBoard.Services
 
         Task AddAsync(TrashDetection detection);
         Task<IEnumerable<string>> GetAvailableTrashTypesAsync();
-
-        Task<TrashDetection> UpdateHolidayInfoForAsync(TrashDetection detection);
-        Task<TrashDetection> UpdateBredaEventInfoForAsync(TrashDetection detection);
+        IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync();
+        IAsyncEnumerable<string> UpdateAllBredaEventWithProgressAsync();
+        IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync();
+        Task<int> ResetDetectionDataAsync();
+        Task<int> DeleteAllDetectionsAsync();
     }
 }

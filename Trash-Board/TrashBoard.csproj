@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -37,6 +37,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Login.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\AiPrediction.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AiPrediction.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Selector.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -64,6 +69,11 @@
       <CustomToolNamespace>TrashBoard</CustomToolNamespace>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Login.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\AiPrediction.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AiPrediction.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Selector.resx">
       <Generator>ResXFileCodeGenerator</Generator>

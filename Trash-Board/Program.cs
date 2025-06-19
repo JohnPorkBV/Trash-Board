@@ -69,7 +69,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 builder.Services.AddHttpClient<IBredaEventService, BredaEventService>();
-builder.Services.AddHttpClient<AiPredictionService>(client =>
+builder.Services.AddHttpClient<IAiPredictionService,AiPredictionService>(client =>
 {
     client.BaseAddress = new Uri(AiApiEndpoint);
 });
