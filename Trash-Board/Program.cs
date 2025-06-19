@@ -105,6 +105,17 @@ app.MapPost("/login-handler", async (
 .AllowAnonymous()
 .DisableAntiforgery();
 
+app.MapPost("/logout-handler", async (
+    HttpContext http,
+    SignInManager<IdentityUser> signInManager,
+    UserManager<IdentityUser> userManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Redirect("/");
+
+})
+.AllowAnonymous()
+.DisableAntiforgery();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -12,7 +12,7 @@
 else if (authState.User.Identity?.IsAuthenticated == true)
 {
     var user = authState.User;
-    <span>@user.Identity?.Name!</span>
+    <span>@user.Identity?.Name</span>
 
     @if (user.IsInRole("Admin"))
     {
@@ -23,13 +23,14 @@ else if (authState.User.Identity?.IsAuthenticated == true)
     {
         <span class="badge bg-info ms-2">@L["Role_Viewer"]</span>
     }
-
-    <a class="btn btn-primary ms-2" @onclick="Logout">@L["Title_Logout"]</a>
+    <form method="post" action="/logout-handler">
+        <button class="btn btn-primary mt-2" type="submit">@L["Title_Logout"]</button>
+    </form>
 }
 else
 {
     <a class="btn btn-primary" href="/login">@L["Title_Login"]</a>
-    <a class="btn btn-primary" href="/register">@L["Title_Register"]</a>
+    @* <a class="btn btn-primary" href="/register">@L["Title_Register"]</a> *@
 }
 
 @code {

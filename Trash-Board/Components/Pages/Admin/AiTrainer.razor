@@ -1,5 +1,7 @@
+@attribute [Authorize(Roles = "Admin")]
 @page "/admin/ai-trainer"
 @inject IAiPredictionService AiService
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Services
 @rendermode InteractiveServer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L

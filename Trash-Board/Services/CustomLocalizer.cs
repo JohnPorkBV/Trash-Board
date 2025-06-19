@@ -33,7 +33,7 @@ namespace TrashBoard.Services
         {
             CurrentMode = mode;
         }
-
+        
 
         public string this[string key]
         {
@@ -53,8 +53,23 @@ namespace TrashBoard.Services
         }
 
         // Sample conversions:
-        private string ToEmoji(string text) =>
-            string.Concat(text.Select(c => char.IsLetter(c) ? $"{char.ToUpper(c)}️⃣" : c.ToString()));
+        private static readonly List<string> MemeEmojis = new()
+        {
+            "😂", "😎", "🔥", "💀", "🤡", "👻", "🍕", "🐸", "💩", "🦄",
+            "🚀", "🥶", "🥵", "😱", "😈", "🫠", "🥸", "🗿", "🦍", "👽",
+            "🧠", "👀", "😵", "🤯", "🫥", "😹"
+        };
+
+        private static readonly Random Random = new();
+
+        private string ToEmoji(string text)
+        {
+            return string.Concat(text.Select(c =>
+                char.IsLetter(c)
+                    ? MemeEmojis[Random.Next(MemeEmojis.Count)]
+                    : c.ToString()
+            ));
+        }
 
         private string ToMorse(string text)
         {

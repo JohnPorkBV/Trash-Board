@@ -1,4 +1,6 @@
-﻿@page "/admin/weather"
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/weather"
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Services
 @inject ITrashDataService TrashDataService
 @rendermode InteractiveServer

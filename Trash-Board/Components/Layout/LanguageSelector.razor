@@ -5,6 +5,8 @@
 @inject CustomLocalizer<TrashDetectionsLineChart> LineChart
 @inject CustomLocalizer<TrashTypeBarChart> BarChart
 @inject CustomLocalizer<Selector> Selector
+@inject CustomLocalizer<Layout> Layout
+@inject CustomLocalizer<Login> Login
 @inject CustomLocalizer<AboutUs> About
 @inject CustomLocalizer<AiPrediction> AiPrediction
 @rendermode InteractiveServer
@@ -79,5 +81,7 @@
         Selector.SetMode(mode);
         About.SetMode(mode);
         AiPrediction.SetMode(mode);
+        Layout.SetMode(mode);
+        Login.SetMode(mode);
     }
 }
