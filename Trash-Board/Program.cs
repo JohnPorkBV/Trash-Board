@@ -6,6 +6,7 @@ using TrashBoard.Data;
 using TrashBoard.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,6 +87,25 @@ app.UseRequestLocalization(localizationOptions);
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapPost("/login-handler", async (
+    HttpContext http,
+    SignInManager<IdentityUser> signInManager,
+    UserManager<IdentityUser> userManager,
+    [FromForm] string username,
+    [FromForm] string password) =>
+{
+    var result = await signInManager.PasswordSignInAsync(username, password, false, false);
+    if (result.Succeeded)
+    {
+        return Results.Redirect("/");
+    }
+
+    return Results.Redirect("/login?error=1");
+})
+.AllowAnonymous()
+.DisableAntiforgery();
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -106,5 +126,7 @@ var culture = new CultureInfo("nl");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
+await SeedData.EnsureSeededAsync(app.Services);
 
 app.Run();
+

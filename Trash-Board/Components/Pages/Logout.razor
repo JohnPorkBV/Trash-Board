@@ -1,9 +1,11 @@
 ﻿@page "/logout"
 @using Microsoft.AspNetCore.Identity
+@using TrashBoard.Services
 @inject SignInManager<IdentityUser> SignInManager
 @inject NavigationManager Navigation
+@inject CustomLocalizer<TrashBoard.Login> L
 
-<h3>Logging out...</h3>
+<h3>@L["Logout_Message"]</h3>
 
 @code {
     protected override async Task OnInitializedAsync()

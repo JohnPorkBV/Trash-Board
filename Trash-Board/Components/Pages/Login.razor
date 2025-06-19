@@ -1,52 +1,23 @@
 ﻿@page "/login"
 @using Microsoft.AspNetCore.Identity
 @using System.ComponentModel.DataAnnotations
+@using TrashBoard.Services
 @inject SignInManager<IdentityUser> SignInManager
 @inject NavigationManager Navigation
 @inject ILogger<Login> Logger
+@inject CustomLocalizer<TrashBoard.Login> L
+@rendermode InteractiveServer
 
-<h3>Login</h3>
+<h3>@L["Title_Login"]</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<form method="post" action="/login-handler">
+    <input name="username" placeholder=@L["Lable_Username"] class="form-control" />
+    <input name="password" type="password" placeholder=@L["Lable_Password"] class="form-control mt-2" />
+    <button class="btn btn-primary mt-2" type="submit">@L["Title_Login"]</button>
+</form>
 
-    <InputText @bind-Value="loginModel.Username" placeholder="Email" class="form-control" />
-    <InputText @bind-Value="loginModel.Password" placeholder="Password" type="password" class="form-control mt-2" />
-    <button class="btn btn-primary mt-2" type="submit">Login</button>
-</EditForm>
-
-@if (!string.IsNullOrEmpty(errorMessage))
+@if (Navigation.Uri.Contains("error=1"))
 {
-    <div class="alert alert-danger mt-3">@errorMessage</div>
+    <div class="alert alert-danger">@L["Error_Password_Invalid"]</div>
 }
 
-@code {
-    private LoginModel loginModel = new();
-    private string? errorMessage;
-
-    private async Task HandleLogin()
-    {
-        var result = await SignInManager.PasswordSignInAsync(
-            loginModel.Username, loginModel.Password, isPersistent: false, lockoutOnFailure: false);
-
-        if (result.Succeeded)
-        {
-            Navigation.NavigateTo("/");
-        }
-        else
-        {
-            Logger.LogWarning("Login failed for user {Email}", loginModel.Username);
-            errorMessage = "Invalid login attempt.";
-        }
-    }
-
-    public class LoginModel
-    {
-        [Required]
-        public string Username { get; set; } = "";
-
-        [Required]
-        public string Password { get; set; } = "";
-    }
-}

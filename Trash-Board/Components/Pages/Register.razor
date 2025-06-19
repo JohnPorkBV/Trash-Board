@@ -1,20 +1,22 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
+@using TrashBoard.Services
 @inject UserManager<IdentityUser> UserManager
 @inject SignInManager<IdentityUser> SignInManager
 @inject NavigationManager Navigation
+@inject CustomLocalizer<TrashBoard.Login> L
+@rendermode InteractiveServer
 
-<h3>Register</h3>
+<h3>@L["Title_Register"]</h3>
 
-<EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+<EditForm Model="@registerModel" OnValidSubmit="HandleRegister" FormName="Register">
     <DataAnnotationsValidator />
     <ValidationSummary />
-
-    <InputText @bind-Value="registerModel.Email" placeholder="Email" class="form-control" />
-    <InputText @bind-Value="registerModel.Password" placeholder="Password" type="password" class="form-control mt-2" />
-    <InputText @bind-Value="registerModel.ConfirmPassword" placeholder="Confirm Password" type="password" class="form-control mt-2" />
-    <button class="btn btn-success mt-2" type="submit">Register</button>
+    <InputText @bind-Value="registerModel.Username" placeholder=@L["Lable_Username"] class="form-control" />
+    <InputText @bind-Value="registerModel.Password" placeholder=@L["Lable_Password"] type="password" class="form-control mt-2" />
+    <InputText @bind-Value="registerModel.ConfirmPassword" placeholder=@L["Lable_Confirm_Password"] type="password" class="form-control mt-2" />
+    <button class="btn btn-success mt-2" type="submit">@L["Title_Register"]</button>
 </EditForm>
 
 @if (!string.IsNullOrEmpty(errorMessage))
@@ -30,11 +32,11 @@
     {
         if (registerModel.Password != registerModel.ConfirmPassword)
         {
-            errorMessage = "Passwords do not match.";
+            errorMessage = L["Error_Password_NoMatch"];
             return;
         }
 
-        var user = new IdentityUser { UserName = registerModel.Email, Email = registerModel.Email };
+        var user = new IdentityUser { UserName = registerModel.Username, Email = registerModel.Username };
         var result = await UserManager.CreateAsync(user, registerModel.Password);
 
         if (result.Succeeded)
@@ -51,7 +53,7 @@
     public class RegisterModel
     {
         [Required]
-        public string Email { get; set; } = "";
+        public string Username { get; set; } = "";
 
         [Required]
         [MinLength(6)]

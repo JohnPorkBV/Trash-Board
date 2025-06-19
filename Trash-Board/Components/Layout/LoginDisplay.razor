@@ -1,18 +1,47 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using TrashBoard.Services
 @inject AuthenticationStateProvider AuthStateProvider
+@inject CustomLocalizer<TrashBoard.Login> L
 @inject NavigationManager Nav
 
-<AuthorizeView>
-    <Authorized>
-        <span>Hello, @context.User.Identity?.Name!</span>
-        <a class="btn btn-link ms-2" @onclick="Logout">Logout</a>
-    </Authorized>
-    <NotAuthorized>
-        <a class="btn btn-link" href="/login">Login</a>
-        <a class="btn btn-link" href="/register">Register</a>
-    </NotAuthorized>
-</AuthorizeView>
+@if (authState is null)
+{
+    <p>Loading...</p>
+}
+else if (authState.User.Identity?.IsAuthenticated == true)
+{
+    var user = authState.User;
+    <span>@user.Identity?.Name!</span>
+
+    @if (user.IsInRole("Admin"))
+    {
+        <span class="badge bg-danger ms-2">@L["Role_Admin"]</span>
+        <a class="btn btn-danger" href="/admin/admin">@L["Role_Admin"]</a>
+    }
+    else if (user.IsInRole("Viewer"))
+    {
+        <span class="badge bg-info ms-2">@L["Role_Viewer"]</span>
+    }
+
+    <a class="btn btn-primary ms-2" @onclick="Logout">@L["Title_Logout"]</a>
+}
+else
+{
+    <a class="btn btn-primary" href="/login">@L["Title_Login"]</a>
+    <a class="btn btn-primary" href="/register">@L["Title_Register"]</a>
+}
 
 @code {
-    private void Logout() => Nav.NavigateTo("/logout");
+    private AuthenticationState? authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
+    private void Logout()
+    {
+        Nav.NavigateTo("/logout");
+    }
 }

@@ -32,6 +32,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AboutUs.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Login.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Login.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Selector.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -55,8 +60,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AboutUs.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Login.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Login.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Selector.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
+      <Generator>ResXFileCodeGenerator</Generator>
       <CustomToolNamespace>TrashBoard</CustomToolNamespace>
       <LastGenOutput>Selector.Designer.cs</LastGenOutput>
     </EmbeddedResource>

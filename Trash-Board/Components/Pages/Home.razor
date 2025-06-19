@@ -7,62 +7,57 @@
 @rendermode InteractiveServer
 @inject CustomLocalizer<TrashBoard.Selector> L
 
-    <h3>@L["Header_Detections"]</h3>
+<h3>@L["Header_Detections"]</h3>
     @if (trashDetections == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else if (!trashDetections.Any())
-    {
-        <p>@L["Message_NoResults"]</p>
-    }
-    else
-    {
-        <TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
-        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
-
-        <hr />
-
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>@L["Table_Timestamp"]</th>
-                    <th>@L["Table_Object"]</th>
-                    <th>@L["Table_Confidence"]</th>
-                    <th>@L["Table_Temperature"]</th>
-                    <th>@L["Table_Humidity"]</th>
-                    <th>@L["Table_Precipitation"]</th>
-                    <th>@L["Table_Windforce"]</th>
-                    <th>@L["Table_IsHoliday"]</th>
-                    <th>@L["Table_HolidayName"]</th>
-                    <th>@L["Table_IsBredaEvent"]</th>
-                    <th>@L["Table_BredaEventName"]</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in trashDetections)
-                {
-                    <tr>
-                        <td>@item.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@item.DetectedObject</td>
-                        <td>@item.ConfidenceScore</td>
-                        <td>@item.Temp</td>
-                        <td>@item.Humidity</td>
-                        <td>@item.Precipitation</td>
-                        <td>@item.Windforce</td>
-                        <td>@item.IsHoliday</td>
-                        <td>@item.HolidayName</td>
-                        <td>@item.IsBredaEvent</td>
-                        <td>@item.BredaEventName</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+{
+    <p><em>Loading...</em></p>
+}
+else if (!trashDetections.Any())
+{
+    <p>@L["Message_NoResults"]</p>
 }
 else
 {
-    <p>@L["Login_Message"]</p>
+    <TrashBoard.Components.Charts.TrashChart TrashDetections="trashDetections" />
+    <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="trashDetections" />
+
+    <hr />
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@L["Table_Timestamp"]</th>
+                <th>@L["Table_Object"]</th>
+                <th>@L["Table_Confidence"]</th>
+                <th>@L["Table_Temperature"]</th>
+                <th>@L["Table_Humidity"]</th>
+                <th>@L["Table_Precipitation"]</th>
+                <th>@L["Table_Windforce"]</th>
+                <th>@L["Table_IsHoliday"]</th>
+                <th>@L["Table_HolidayName"]</th>
+                <th>@L["Table_IsBredaEvent"]</th>
+                <th>@L["Table_BredaEventName"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in trashDetections)
+            {
+                <tr>
+                    <td>@item.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.DetectedObject</td>
+                    <td>@item.ConfidenceScore</td>
+                    <td>@item.Temp</td>
+                    <td>@item.Humidity</td>
+                    <td>@item.Precipitation</td>
+                    <td>@item.Windforce</td>
+                    <td>@item.IsHoliday</td>
+                    <td>@item.HolidayName</td>
+                    <td>@item.IsBredaEvent</td>
+                    <td>@item.BredaEventName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
