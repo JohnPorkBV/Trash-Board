@@ -120,4 +120,37 @@
   <data name="Login_Message" xml:space="preserve">
     <value>Bitte melden Sie sich an</value>
   </data>
+  <data name="Logout_Message" xml:space="preserve">
+    <value>Auswahl aus ...</value>
+  </data>
+  <data name="Title_Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Title_Register" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="Lable_Username" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="Lable_Password" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Lable_Confirm_Password" xml:space="preserve">
+    <value>Passwort bestätigen</value>
+  </data>
+  <data name="Error_Password_NoMatch" xml:space="preserve">
+    <value>Passwörter stimmen nicht überein.</value>
+  </data>
+  <data name="Error_Password_Invalid" xml:space="preserve">
+    <value>Ungültiger Anmeldeversuch.</value>
+  </data>
+  <data name="Title_Logout" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="Role_Viewer" xml:space="preserve">
+    <value>Zuschauer</value>
+  </data>
+  <data name="Role_Admin" xml:space="preserve">
+    <value>Administrator</value>
+  </data>
 </root>

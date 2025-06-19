@@ -61,7 +61,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Ongeldige inlogpoging..
         /// </summary>
         internal static string Error_Password_Invalid {
             get {
@@ -70,7 +70,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Wachtwoorden komen niet overeen..
         /// </summary>
         internal static string Error_Password_NoMatch {
             get {
@@ -79,7 +79,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Bevestig het wachtwoord.
         /// </summary>
         internal static string Lable_Confirm_Password {
             get {
@@ -88,7 +88,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Wachtwoord.
         /// </summary>
         internal static string Lable_Password {
             get {
@@ -97,7 +97,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Gebruikersnaam.
         /// </summary>
         internal static string Lable_Username {
             get {
@@ -115,7 +115,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Uitloggen ....
         /// </summary>
         internal static string Logout_Message {
             get {
@@ -124,7 +124,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Beheersing.
         /// </summary>
         internal static string Role_Admin {
             get {
@@ -133,7 +133,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Kijker.
         /// </summary>
         internal static string Role_Viewer {
             get {
@@ -142,7 +142,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Login.
         /// </summary>
         internal static string Title_Login {
             get {
@@ -151,7 +151,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Uitloggen.
         /// </summary>
         internal static string Title_Logout {
             get {
@@ -160,7 +160,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Register.
         /// </summary>
         internal static string Title_Register {
             get {
