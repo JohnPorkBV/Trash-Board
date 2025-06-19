@@ -202,7 +202,7 @@
     <value>Vakantie</value>
   </data>
   <data name="Table_HolidayName" xml:space="preserve">
-    <value>Noem Feestdag</value>
+    <value>Naam Feestdag</value>
   </data>
   <data name="Text_Yes" xml:space="preserve">
     <value>Ja</value>
@@ -230,5 +230,14 @@
   </data>
   <data name="Label_FilterOnEvent" xml:space="preserve">
     <value>Filter op feestdagen:</value>
+  </data>
+  <data name="Title_John" xml:space="preserve">
+    <value>John Beun B.V.</value>
+  </data>
+  <data name="Label_John" xml:space="preserve">
+    <value>Trots aan u aangeboden door John Beun B.V., de zusterbedrijf van John Pork B.V. Beide deel uit van de familie John B.V. John Beun B.V. zal naar verwachting tegen het einde van 2025 lanceren.</value>
+  </data>
+  <data name="Label_Sponsor" xml:space="preserve">
+    <value>Gesponsord door</value>
   </data>
 </root>

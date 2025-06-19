@@ -104,15 +104,15 @@
     <value>Onbewerkte gegevens</value>
   </data>
   <data name="Label_AiPredict" xml:space="preserve">
-    <value>AI voorspellen</value>
+    <value>AI voorspeling</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Prullenbak</value>
+    <value>TrashBoard</value>
   </data>
   <data name="Title_Navigation" xml:space="preserve">
     <value>Navigatiemenu</value>
   </data>
   <data name="Label_About" xml:space="preserve">
-    <value>Over</value>
+    <value>Over ons</value>
   </data>
 </root>

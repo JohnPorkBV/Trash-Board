@@ -61,7 +61,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Over.
+        ///   Looks up a localized string similar to Over ons.
         /// </summary>
         internal static string Label_About {
             get {
@@ -70,7 +70,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AI voorspellen.
+        ///   Looks up a localized string similar to AI voorspeling.
         /// </summary>
         internal static string Label_AiPredict {
             get {
@@ -97,7 +97,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prullenbak.
+        ///   Looks up a localized string similar to TrashBoard.
         /// </summary>
         internal static string Title {
             get {

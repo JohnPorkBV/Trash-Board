@@ -214,6 +214,24 @@ namespace TrashBoard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trots aan u aangeboden door John Beun B.V., de zusterbedrijf van John Pork B.V. Beide deel uit van de familie John B.V. John Beun B.V. zal naar verwachting tegen het einde van 2025 lanceren..
+        /// </summary>
+        internal static string Label_John {
+            get {
+                return ResourceManager.GetString("Label_John", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gesponsord door.
+        /// </summary>
+        internal static string Label_Sponsor {
+            get {
+                return ResourceManager.GetString("Label_Sponsor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tot:.
         /// </summary>
         internal static string Label_To {
@@ -304,7 +322,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Noem Feestdag.
+        ///   Looks up a localized string similar to Naam Feestdag.
         /// </summary>
         internal static string Table_HolidayName {
             get {
@@ -399,6 +417,15 @@ namespace TrashBoard {
         internal static string Text_Yes {
             get {
                 return ResourceManager.GetString("Text_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to John Beun B.V..
+        /// </summary>
+        internal static string Title_John {
+            get {
+                return ResourceManager.GetString("Title_John", resourceCulture);
             }
         }
     }

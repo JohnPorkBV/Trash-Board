@@ -202,7 +202,7 @@
     <value>Holiday</value>
   </data>
   <data name="Table_HolidayName" xml:space="preserve">
-    <value>Name Feast Day</value>
+    <value>Name Holiday</value>
   </data>
   <data name="Text_Yes" xml:space="preserve">
     <value>Yes</value>
@@ -230,5 +230,14 @@
   </data>
   <data name="Label_FilterOnEvent" xml:space="preserve">
     <value>Filter on holiday:</value>
+  </data>
+  <data name="Title_John" xml:space="preserve">
+    <value>John Beun B.V.</value>
+  </data>
+  <data name="Label_John" xml:space="preserve">
+    <value>Proudly brought to you by John Beun B.V., the sister company of John Pork B.V. both part of the John B.V. family. John Beun B.V. is expected to launch towards the end of 2025.</value>
+  </data>
+  <data name="Label_Sponsor" xml:space="preserve">
+    <value>Sponsored by</value>
   </data>
 </root>

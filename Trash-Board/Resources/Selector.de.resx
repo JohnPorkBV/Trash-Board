@@ -231,4 +231,13 @@
   <data name="Label_FilterOnEvent" xml:space="preserve">
     <value>Filter in Feiertagen:</value>
   </data>
+  <data name="Title_John" xml:space="preserve">
+    <value>John Beun B.V.</value>
+  </data>
+  <data name="Label_John" xml:space="preserve">
+    <value>Stolz zu Ihnen von John Beun B.V., der Schwesterfirma von John Pork B.V., beide Teil der Familie John B.V. John Beun B.V. wird voraussichtlich gegen Ende 2025 starten.</value>
+  </data>
+  <data name="Label_Sponsor" xml:space="preserve">
+    <value>Gesponsert von</value>
+  </data>
 </root>
