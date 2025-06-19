@@ -1,6 +1,8 @@
 @attribute [Authorize(Roles = "Admin")]
 @page "/admin/admin"
 @using Microsoft.AspNetCore.Authorization
+@using TrashBoard.Services
+@inject ITrashDataService TrashDataService
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
@@ -74,10 +76,4 @@
         StateHasChanged();
     }
 
-
-    private async void Logout()
-    {
-        await SessionService.LogoutAsync();
-        Nav.NavigateTo("/");
-    }
 }

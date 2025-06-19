@@ -12,7 +12,7 @@
     <button class="btn btn-primary" @onclick="StartUpdate">Start Holiday Update</button>
 }
 
-@if (UpdatedItems?.Count > 0)
+@if (progress > 0)
 {
     <p><strong>Updating Holiday data...</strong></p>
     <div class="progress mb-2">
