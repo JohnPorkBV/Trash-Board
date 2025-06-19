@@ -1,62 +1,23 @@
 ﻿@page "/login"
-
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
 @using TrashBoard.Services
-@inject UserSessionService SessionService
-@inject NavigationManager Nav
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager Navigation
+@inject ILogger<Login> Logger
+@inject CustomLocalizer<TrashBoard.Login> L
 @rendermode InteractiveServer
 
-<h3>Admin Login</h3>
+<h3>@L["Title_Login"]</h3>
 
-@if (!loginFailed)
+<form method="post" action="/login-handler">
+    <input name="username" placeholder=@L["Lable_Username"] class="form-control" />
+    <input name="password" type="password" placeholder=@L["Lable_Password"] class="form-control mt-2" />
+    <button class="btn btn-primary mt-2" type="submit">@L["Title_Login"]</button>
+</form>
+
+@if (Navigation.Uri.Contains("error=1"))
 {
-    <p>Please enter your credentials.</p>
-}
-else
-{
-    <p class="text-danger">Invalid login. Try again.</p>
+    <div class="alert alert-danger">@L["Error_Password_Invalid"]</div>
 }
 
-<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin" FormName="Login">
-    <InputText @bind-Value="loginModel.Username" class="form-control" placeholder="Username" />
-    <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="Password" />
-    <button type="submit" class="btn btn-primary mt-2">Login</button>
-</EditForm>
-
-@code {
-    private LoginModel loginModel = new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await SessionService.InitializeAsync();
-            StateHasChanged(); // refresh UI after loading session data
-        }
-    }
-
-    private async void HandleLogin()
-    {
-        var result = await SessionService.LoginAsync(loginModel.Username, loginModel.Password);
-        if (result)
-        {
-            if (SessionService.IsAdmin)
-                Nav.NavigateTo("/admin/admin");
-            else
-                Nav.NavigateTo("/");
-        }
-    }
-
-    private async void Logout()
-    {
-        await SessionService.LogoutAsync();
-        Nav.NavigateTo("/");
-    }
-
-    private bool loginFailed = false;
-
-    public class LoginModel
-    {
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
-    }
-}

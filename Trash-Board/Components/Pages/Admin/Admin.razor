@@ -1,15 +1,10 @@
-﻿@page "/admin/admin"
-@using TrashBoard.Services
-@inject UserSessionService SessionService
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/admin"
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager Nav
 @rendermode InteractiveServer
 
-@if (!SessionService.IsAdmin)
-{
-    <p>You must <a href="/admin/login">log in</a> as an admin to access this page.</p>
-}
-else
-{
+
     <h3>Admin Panel</h3>
 
     <div class="list-group">
@@ -24,20 +19,3 @@ else
         </NavLink>
     </div>
 
-}
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await SessionService.InitializeAsync();
-            StateHasChanged(); // refresh UI after loading session data
-        }
-    }
-    private async void Logout()
-    {
-        await SessionService.LogoutAsync();
-        Nav.NavigateTo("/");
-    }
-}

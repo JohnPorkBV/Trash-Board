@@ -216,9 +216,6 @@
   <data name="Header_Detections" xml:space="preserve">
     <value>Afval detecties</value>
   </data>
-  <data name="Login_Message" xml:space="preserve">
-    <value>Gelieve in te loggen</value>
-  </data>
   <data name="Table_IsBredaEvent" xml:space="preserve">
     <value>IsEvenement</value>
   </data>
