@@ -15,6 +15,7 @@
     <option value="braille" selected="@IsSelected("braille")">Braille</option>
     <option value="emoji" selected="@IsSelected("emoji")">Emoji</option>
     <option value="morse" selected="@IsSelected("morse")">Morse</option>
+    <option value="minecraft" selected="@IsSelected("minecraft")">Minecraft</option>
 </select>
 
 @code {
@@ -33,6 +34,10 @@
         else if (selected == "morse")
         {
             SetAllLocalizer(LanguageMode.Morse);
+        }
+        else if (selected == "minecraft")
+        {
+            SetAllLocalizer(LanguageMode.Minecraft);
         }
         else
         {
@@ -55,6 +60,7 @@
         if (culture == "braille" && Selector.CurrentMode == LanguageMode.Braille) return "selected";
         if (culture == "emoji" && Selector.CurrentMode == LanguageMode.Emoji) return "selected";
         if (culture == "morse" && Selector.CurrentMode == LanguageMode.Morse) return "selected";
+        if (culture == "minecraft" && Selector.CurrentMode == LanguageMode.Minecraft) return "selected";
 
         var currentCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         return currentCulture == culture ? "selected" : null;
