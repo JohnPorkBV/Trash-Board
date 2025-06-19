@@ -24,5 +24,6 @@ namespace TrashBoard.Services
         IAsyncEnumerable<string> UpdateAllBredaEventWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync();
         Task<int> ResetDetectionDataAsync();
+        Task<int> DeleteAllDetectionsAsync();
     }
 }

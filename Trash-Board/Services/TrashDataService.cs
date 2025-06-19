@@ -328,6 +328,13 @@ namespace TrashBoard.Services
             var changes = await context.SaveChangesAsync();
             return changes;
         }
+        public async Task<int> DeleteAllDetectionsAsync()
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var detections = await context.TrashDetections.ToListAsync();
+            context.TrashDetections.RemoveRange(detections);
+            return await context.SaveChangesAsync();
+        }
 
 
     }
