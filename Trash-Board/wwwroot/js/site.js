@@ -5,4 +5,5 @@
     } else {
         document.body.classList.add('default-mode');
     }
+    console.log("🌍 Language mode set to:", mode);
 };

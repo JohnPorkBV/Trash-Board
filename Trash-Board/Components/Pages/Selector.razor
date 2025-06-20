@@ -424,12 +424,12 @@ else
 		trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
 		await ApplyFilter();
 		SelectAdImage();
-		await L.InitializeAsync();
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
+			await L.InitializeAsync();
 			trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
 			await ApplyFilter();
 			SelectAdImage();

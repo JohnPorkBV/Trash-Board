@@ -62,7 +62,6 @@ namespace TrashBoard.Services
                 else
                 {
                     await _js.InvokeVoidAsync("localStorage.setItem", "customLanguageMode", mode.ToString().ToLowerInvariant());
-                    await _js.InvokeVoidAsync("setBodyLanguageMode", CurrentMode.ToString().ToLowerInvariant());
 
                 }
             }

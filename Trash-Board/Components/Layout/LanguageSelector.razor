@@ -33,33 +33,29 @@
     private async Task OnLanguageChange(ChangeEventArgs e)
     {
         var selected = e.Value?.ToString() ?? "nl";
+        LanguageMode mode = selected switch
+        {
+            "braille" => LanguageMode.Braille,
+            "emoji" => LanguageMode.Emoji,
+            "morse" => LanguageMode.Morse,
+            "minecraft" => LanguageMode.Minecraft,
+            _ => LanguageMode.CultureBased
+        };
 
-        if (selected == "braille")
+        SetAllLocalizer(mode);
+        if (mode == LanguageMode.Minecraft)
         {
-            SetAllLocalizer(LanguageMode.Braille);
+            // Only Minecraft skips reload
+            await JS.InvokeVoidAsync("setBodyLanguageMode", "minecraft");
+            var cookieValue2 = $".AspNetCore.Culture=c=nl|uic=nl";
+            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue2}; path=/'");
+            return;
         }
-        else if (selected == "emoji")
-        {
-            SetAllLocalizer(LanguageMode.Emoji);
-        }
-        else if (selected == "morse")
-        {
-            SetAllLocalizer(LanguageMode.Morse);
-        }
-        else if (selected == "minecraft")
-        {
-            SetAllLocalizer(LanguageMode.Minecraft);
-        }
-        else
-        {
-            // Normal culture change: set cookie and reload page
-            SetAllLocalizer(LanguageMode.CultureBased);
 
-            // Save to cookie (server culture)
-            var cookieValue = $".AspNetCore.Culture=c={selected}|uic={selected}";
-            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
 
-        }
+        // Save to cookie (server culture)
+        var cookieValue = $".AspNetCore.Culture=c={selected}|uic={selected}";
+        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
 
         // Reload page to apply culture
         Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
