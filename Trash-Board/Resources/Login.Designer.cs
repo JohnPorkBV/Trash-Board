@@ -124,7 +124,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Beheersing.
+        ///   Looks up a localized string similar to Administrator.
         /// </summary>
         internal static string Role_Admin {
             get {

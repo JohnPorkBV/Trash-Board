@@ -21,3 +21,9 @@
     <div class="alert alert-danger">@L["Error_Password_Invalid"]</div>
 }
 
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
+}

@@ -131,6 +131,6 @@
     <value>Kijker</value>
   </data>
   <data name="Role_Admin" xml:space="preserve">
-    <value>Beheersing</value>
+    <value>Administrator</value>
   </data>
 </root>

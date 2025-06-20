@@ -8,6 +8,9 @@
 @rendermode InteractiveServer
 @inject ITrashDataService TrashDataService
 
+<div class="content minecraft-mode">
+    <h1>This should be Minecraft font</h1>
+</div>
 
 
 <section class="filter-panel">
@@ -146,8 +149,6 @@ else if (results != null && results.Any())
 			<p class="text-muted mb-2">@L["Label_Sponsor"]<strong>@L["Title_John"]</strong></p>
 		</div>
 	</div>
-
-	<TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
 
 	<Grid TItem="TrashDetection"
 	Data="results"
@@ -423,12 +424,12 @@ else
 		trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
 		await ApplyFilter();
 		SelectAdImage();
-
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
+			await L.InitializeAsync();
 			trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
 			await ApplyFilter();
 			SelectAdImage();

@@ -76,7 +76,10 @@
     private TrashDetectionInput input = new();
 
     private string? result;
-
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
     private async Task HandleSubmit()
     {
         result = await AiService.PredictAsync(input);

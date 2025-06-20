@@ -17,8 +17,14 @@ body.minecraft-mode,
 .content.minecraft-mode {
     font-family: 'MinecraftSGA', sans-serif;
 }
+.content.minecraft-mode {
+    font-family: 'MinecraftSGA', sans-serif;
+}
 
-/* Alternate approach using nesting under .content */
+.content.default-mode {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 .content {
     padding-top: 1.1rem;
 }
