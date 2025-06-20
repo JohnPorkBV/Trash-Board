@@ -39,3 +39,9 @@
         </div>
     </nav>
 </div>
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
+}

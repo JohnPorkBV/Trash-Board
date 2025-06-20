@@ -3,6 +3,7 @@
 @using TrashBoard.Services
 @inject AuthenticationStateProvider AuthStateProvider
 @inject CustomLocalizer<TrashBoard.Login> L
+@rendermode InteractiveServer
 @inject NavigationManager Nav
 
 @if (authState is null)
@@ -38,9 +39,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await L.InitializeAsync();
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    }
 
+    }
     private void Logout()
     {
         Nav.NavigateTo("/logout");

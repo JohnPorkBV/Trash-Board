@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using System.Globalization;
 
 namespace TrashBoard.Services
@@ -15,7 +16,8 @@ namespace TrashBoard.Services
     public class CustomLocalizer<T>
     {
 
-
+        private readonly IJSRuntime _js;
+        private bool _initialized;
         private readonly IStringLocalizer<T> _localizer;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -23,17 +25,54 @@ namespace TrashBoard.Services
 
         public LanguageMode CurrentMode { get; set; } = LanguageMode.CultureBased;
 
-        public CustomLocalizer(IStringLocalizer<T> localizer, IHttpContextAccessor httpContextAccessor)
+        public CustomLocalizer(IStringLocalizer<T> localizer, IJSRuntime js)
         {
             _localizer = localizer;
-            _httpContextAccessor = httpContextAccessor;
-
+            _js = js;
         }
-        public void SetMode(LanguageMode mode)
+        public async Task InitializeAsync()
+        {
+            if (_initialized) return;
+            _initialized = true;
+
+            try
+            {
+                var modeStr = await _js.InvokeAsync<string>("localStorage.getItem", "customLanguageMode");
+                if (Enum.TryParse<LanguageMode>(modeStr, true, out var mode))
+                {
+                    CurrentMode = mode;
+                }
+            }
+            catch
+            {
+                // Fail silently if interop not available (e.g. during prerender)
+            }
+        }
+
+        public async void SetMode(LanguageMode mode)
         {
             CurrentMode = mode;
+
+            try
+            {
+                if (mode == LanguageMode.CultureBased)
+                {
+                    await _js.InvokeVoidAsync("localStorage.removeItem", "customLanguageMode");
+                }
+                else
+                {
+                    await _js.InvokeVoidAsync("localStorage.setItem", "customLanguageMode", mode.ToString().ToLowerInvariant());
+                    await _js.InvokeVoidAsync("setBodyLanguageMode", CurrentMode.ToString().ToLowerInvariant());
+
+                }
+            }
+            catch
+            {
+                // Ignore interop failures (e.g. server-side)
+            }
         }
-        
+
+
 
         public string this[string key]
         {

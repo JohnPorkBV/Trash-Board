@@ -7,14 +7,16 @@ using TrashBoard.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TrashBoard.Components.Layout;
 
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
-builder.Services.AddSingleton(typeof(CustomLocalizer<>));
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
+// Language Services
+builder.Services.AddScoped(typeof(CustomLocalizer<>));
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var supportedCultures = new[] {
@@ -29,6 +31,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 builder.Services.AddRazorComponents()
 .AddInteractiveServerComponents();
 
+
 // DB context
 builder.Services.AddDbContextFactory<TrashboardDbContext>(options =>
     options.UseSqlServer(sqlConnectionString));
@@ -39,8 +42,6 @@ builder.Services.AddScoped<ITrashDataService, TrashDataService>();
 // User Service
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
-//builder.Services.AddSession();
-//builder.Services.AddScoped<UserSessionService>();
 
 // ASP.NET AUTH
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>

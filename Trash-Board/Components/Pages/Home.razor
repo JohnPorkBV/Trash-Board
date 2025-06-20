@@ -62,4 +62,8 @@ else
 
 @code {
     private IEnumerable<TrashDetection>? trashDetections;
-}
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
+    }

@@ -10,6 +10,7 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
+        await L.InitializeAsync();
         await SignInManager.SignOutAsync();
         Navigation.NavigateTo("/");
     }

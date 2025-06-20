@@ -1,5 +1,7 @@
-﻿@page "/register"
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/register"
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @using TrashBoard.Services
 @inject UserManager<IdentityUser> UserManager
@@ -27,7 +29,10 @@
 @code {
     private RegisterModel registerModel = new();
     private string? errorMessage;
-
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
     private async Task HandleRegister()
     {
         if (registerModel.Password != registerModel.ConfirmPassword)
