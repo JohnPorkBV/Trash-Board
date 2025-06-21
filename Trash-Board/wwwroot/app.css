@@ -143,8 +143,18 @@ h1:focus {
 }
 
 .chart-wrapper {
-    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    height: 100%;
+    min-height: 300px; /* optional minimum height */
 }
+
+    .chart-wrapper > * {
+        flex-grow: 1;
+        height: 100%;
+    }
+
 
 .ad-wrapper {
     /* width: auto; */
