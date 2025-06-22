@@ -13,6 +13,8 @@ using TrashBoard.Components.Layout;
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+var apiKey = builder.Configuration["X-API-KEY"];
 
 // Language Services
 builder.Services.AddScoped(typeof(CustomLocalizer<>));
@@ -73,6 +75,11 @@ builder.Services.AddHttpClient<IBredaEventService, BredaEventService>();
 builder.Services.AddHttpClient<IAiPredictionService,AiPredictionService>(client =>
 {
     client.BaseAddress = new Uri(AiApiEndpoint);
+});
+builder.Services.AddHttpClient<ITrashDataService, ApiTrashDataService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl!);
+    client.DefaultRequestHeaders.Add("X-API-KEY", apiKey!);
 });
 
 
