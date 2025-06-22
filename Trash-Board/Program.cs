@@ -76,7 +76,7 @@ builder.Services.AddHttpClient<IAiPredictionService,AiPredictionService>(client 
 {
     client.BaseAddress = new Uri(AiApiEndpoint);
 });
-builder.Services.AddHttpClient<ITrashDataService, ApiTrashDataService>(client =>
+builder.Services.AddHttpClient<IApiTrashDataService, ApiTrashDataService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl!);
     client.DefaultRequestHeaders.Add("X-API-KEY", apiKey!);
