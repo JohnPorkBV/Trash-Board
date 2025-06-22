@@ -1,0 +1,45 @@
+name: Build and Deploy to Wall-e
+
+on:
+  push:
+    branches: [main,Dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REPO_OWNER: ${{ github.repository_owner }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set lowercase repo owner
+        id: vars
+        run: echo "repo_owner_lower=$(echo $REPO_OWNER | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push dashboard
+        run: |
+          docker build -t ghcr.io/${{ steps.vars.outputs.repo_owner_lower }}/dashboard:latest ./Trash-Board
+          docker push ghcr.io/${{ steps.vars.outputs.repo_owner_lower }}/dashboard:latest
+
+      - name: Build and push AI API
+        run: |
+          docker build -t ghcr.io/${{ steps.vars.outputs.repo_owner_lower }}/ai:latest ./AI-model-api
+          docker push ghcr.io/${{ steps.vars.outputs.repo_owner_lower }}/ai:latest
+
+      - name: Trigger Portainer Stack Webhook
+        run: |
+          curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL_STORM }}

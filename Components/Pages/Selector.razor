@@ -96,6 +96,22 @@
             </div>
 
             <div>
+                <label>@L["Label_FilterOnEvent"]</label>
+                <div class="holiday-type-container">
+                    <label>
+                        <CheckboxInput Label=@L["Checkbox_ShowEvents"]
+                                       Value="@showEvents"
+                                       ValueExpression="() => showEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(true, value)" />
+                        <CheckboxInput Label=@L["Checkbox_HideEvents"]
+                                       Value="@hideEvents"
+                                       ValueExpression="() => hideEvents"
+                                       ValueChanged="async (value) => await ToggleEventFilter(false, value)" />
+
+                    </label>
+                </div>
+            </div>
+            <div>
                 <button class="btn btn-primary" @onclick="ApplyFilter">@L["Button_ApplyFilter"]</button>
             </div>
         </Collapse>
@@ -110,7 +126,18 @@
     {
         <h4>@L["Header_FilteredResults"]</h4>
         <TrashBoard.Components.Charts.TrashChart TrashDetections="results" />
-        <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+        <div class="chart-and-ad-container d-flex align-items-stretch">
+            <div class="chart-wrapper flex-grow-1 me-3">
+                <TrashBoard.Components.Charts.TrashTypeBarChart TrashDetections="results" />
+            </div>
+            <div class="ad-wrapper">
+                <h1>John Beun B.V.</h1>
+                <p>Proudly brought to you by John Beun B.V., the sister company of John Pork B.V. both part of the John B.V. family.</p>
+                <p>John Beun B.V. is expected to launch towards the end of 2025.</p>
+				<img src="@adImageUrl" alt="Advertisement" class="ad-image" />
+                <p class="text-muted mb-2">Sponsored by <strong>John Beun B.V.</strong></p>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -124,21 +151,25 @@
                         <th>@L["Table_Windforce"]</th>
                         <th>@L["Table_IsHoliday"]</th>
                         <th>@L["Table_HolidayName"]</th>
+                        <th>@L["Table_IsBredaEvent"]</th>
+                        <th>@L["Table_BredaEventName"]</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in results)
                     {
                         <tr>
-                            <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@item.Timestamp</td>
                             <td>@item.DetectedObject</td>
                             <td>@item.ConfidenceScore</td>
                             <td>@item.Temp</td>
                             <td>@item.Humidity</td>
                             <td>@item.Precipitation</td>
                             <td>@item.Windforce</td>
-                            <td>@(item.IsHoliday ? @L["Text_Yes"] : @L["Text_No"])</td>
+                            <td>@item.IsHoliday</td>
                             <td>@item.HolidayName</td>
+                            <td>@item.IsBredaEvent</td>
+                            <td>@item.BredaEventName</td>
                         </tr>
                     }
                 </tbody>
@@ -164,10 +195,14 @@ else
     private List<string> trashTypes = new();
     private HashSet<string> selectedTrashTypes = new();
     private HashSet<bool> selectedHolidayFilters = new();
+    private HashSet<bool> selectedEventFilters = new();
     private IEnumerable<TrashDetection>? results;
 
     private bool showHolidays;
     private bool showWorkdays;
+
+    private bool hideEvents;
+    private bool showEvents;
 
     private Collapse filters = default;
     private bool filtersVisible = false;
@@ -178,6 +213,34 @@ else
         await filters.ToggleAsync();
     }
 
+    private string adImageUrl = "";
+
+    private void SelectAdImage()
+    {
+        // External URLs for your images - replace these with your actual hosting URLs
+        var imagesByDay = new Dictionary<DayOfWeek, string>()
+            {
+                [DayOfWeek.Monday] = "https://i.imgur.com/BUH0RWb.jpg",
+                [DayOfWeek.Tuesday] = "https://i.imgur.com/pY4QaCn.jpg",
+                [DayOfWeek.Wednesday] = "https://i.imgur.com/QfTzNDB.jpg",
+                [DayOfWeek.Thursday] = "https://i.imgur.com/LIhgbke.jpg",
+                [DayOfWeek.Friday] = "https://i.imgur.com/RwmL8Vu.jpg",
+                [DayOfWeek.Saturday] = "https://i.imgur.com/wImip3B.jpg",
+                [DayOfWeek.Sunday] = "https://i.imgur.com/gT7DmAv.jpg"
+            };
+
+        string shinyImage = "https://i.imgur.com/eBLrmXK.jpg";
+
+        var rand = new Random();
+        if (rand.Next(100) < 1) // 1% chance
+        {
+            adImageUrl = shinyImage;
+        }
+        else
+        {
+            adImageUrl = imagesByDay[DateTime.Now.DayOfWeek];
+        }
+    }
 
     private async Task ToggleHolidayFilter(bool filter, bool enabled)
     {
@@ -188,6 +251,19 @@ else
 
         showHolidays = selectedHolidayFilters.Contains(true);
         showWorkdays = selectedHolidayFilters.Contains(false);
+
+        await ApplyFilter();
+    }
+
+    private async Task ToggleEventFilter(bool filter, bool enabled)
+    {
+        if (enabled)
+            selectedEventFilters.Add(filter);
+        else
+            selectedEventFilters.Remove(filter);
+
+        showEvents = selectedHolidayFilters.Contains(true);
+        hideEvents = selectedEventFilters.Contains(false);
 
         await ApplyFilter();
     }
@@ -236,9 +312,15 @@ else
         else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
             isHolidayFilter = null;
 
+        bool? isEventFilter = null;
+        if (selectedEventFilters.Count == 1)
+            isEventFilter = selectedEventFilters.First();
+        else if (selectedEventFilters.Count == 0 || selectedEventFilters.Count == 2)
+            isEventFilter = null;
+
         try
         {
-            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter);
+            results = await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, isEventFilter); //#TODO# add filter for events
             StateHasChanged();
         }
         catch (Exception ex)
@@ -284,7 +366,7 @@ else
             else if (selectedHolidayFilters.Count == 0 || selectedHolidayFilters.Count == 2)
                 isHolidayFilter = null;
 
-            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter))
+            results = (await TrashDataService.GetFilteredAsync(from, to, selectedTrashTypes.ToList(), isHolidayFilter, null)) //#TODO# add filter for events
                 .OrderByDescending(r => r.Timestamp);
             StateHasChanged();
 
@@ -298,6 +380,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         trashTypes = (await TrashDataService.GetAvailableTrashTypesAsync()).ToList();
+        SelectAdImage();
         await ApplyFilter();
     }
 }

@@ -1,0 +1,109 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TrashBoard</RootNamespace>
+    <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <UserSecretsId>afa0bd1d-9685-448e-a6a1-650cf40b4c3a</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Branding1.png" />
+    <None Include="wwwroot\Branding2.png" />
+    <None Include="wwwroot\Branding3.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazor.Bootstrap" Version="3.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\AboutUs.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AboutUs.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Layout.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Layout.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Login.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Login.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\AiPrediction.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AiPrediction.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Selector.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Selector.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TrashDetectionsLineChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashDetectionsLineChart.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\TrashTypeBarChart.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TrashTypeBarChart.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\AboutUs.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AboutUs.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Layout.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Layout.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Login.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Login.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\AiPrediction.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AiPrediction.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Selector.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <LastGenOutput>Selector.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Selector.en.resx">
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashDetectionsLineChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashDetectionsLineChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\TrashTypeBarChart.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TrashTypeBarChart.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>TrashBoard</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

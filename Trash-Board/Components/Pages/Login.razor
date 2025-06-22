@@ -1,0 +1,29 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+@using TrashBoard.Services
+@inject SignInManager<IdentityUser> SignInManager
+@inject NavigationManager Navigation
+@inject ILogger<Login> Logger
+@inject CustomLocalizer<TrashBoard.Login> L
+@rendermode InteractiveServer
+
+<h3>@L["Title_Login"]</h3>
+
+<form method="post" action="/login-handler">
+    <input name="username" placeholder=@L["Lable_Username"] class="form-control" />
+    <input name="password" type="password" placeholder=@L["Lable_Password"] class="form-control mt-2" />
+    <button class="btn btn-primary mt-2" type="submit">@L["Title_Login"]</button>
+</form>
+
+@if (Navigation.Uri.Contains("error=1"))
+{
+    <div class="alert alert-danger">@L["Error_Password_Invalid"]</div>
+}
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
+}

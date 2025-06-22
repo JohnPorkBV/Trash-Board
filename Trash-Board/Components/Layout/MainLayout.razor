@@ -1,0 +1,56 @@
+@using TrashBoard.Services
+@inherits LayoutComponentBase
+@inject IJSRuntime JS
+@inject CustomLocalizer<TrashBoard.Layout> L
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex justify-content-end align-items-center gap-3">
+            <LoginDisplay />
+
+            <LanguageSelector />
+        </div>
+
+
+        @* <article class="@GetBodyClass() content px-4"> *@
+        @* <article class="content minecraft-mode px-4"> *@
+        @* <article class="content px-4 @GetBodyClass()"> *@
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+@code {
+    private string GetBodyClass()
+    {
+        return L.CurrentMode switch
+        {
+            LanguageMode.Minecraft => "minecraft-mode",
+            _ => "default-mode"
+        };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await L.InitializeAsync();
+            var mode = L.CurrentMode == LanguageMode.CultureBased ? "default" : L.CurrentMode.ToString().ToLowerInvariant();
+            await JS.InvokeVoidAsync("setBodyLanguageMode", mode);
+        }
+    }
+}
+
+<script>
+    // document.body.classList.add('minecraft-mode');
+</script>

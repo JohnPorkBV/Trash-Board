@@ -1,0 +1,232 @@
+@attribute [Authorize(Roles = "Admin")]
+@page "/admin/events"
+@inject TrashboardDbContext Db
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using TrashBoard.Data
+@using TrashBoard.Models
+@using TrashBoard.Services
+@inject ITrashDataService TrashDataService
+@rendermode InteractiveServer
+
+
+<h3>Breda Events</h3>
+
+	@if (events == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h5>Import Events from CSV</h5>
+    <InputFile OnChange="HandleFileSelected" accept=".csv" />
+    @if (importError != null)
+    {
+        <p class="text-danger">@importError</p>
+    }
+    <EditForm Model="newEvent" OnValidSubmit="AddEvent" FormName="EventAdd">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Start Date:</label>
+            <InputDate @bind-Value="newEvent.StartDate" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>End Date (optional):</label>
+            <InputDate @bind-Value="newEvent.EndDate" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Name:</label>
+            <InputText @bind-Value="newEvent.Name" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Location:</label>
+            <InputText @bind-Value="newEvent.Location" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Description:</label>
+            <InputText @bind-Value="newEvent.Description" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Event</button>
+    </EditForm>
+
+    <hr />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Start</th>
+                <th>End</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ev in events)
+            {
+                <tr>
+                    <td>@ev.StartDate.ToShortDateString()</td>
+                    <td>@(ev.EndDate?.ToShortDateString() ?? "-")</td>
+                    <td>@ev.Name</td>
+                    <td>@ev.Location</td>
+                    <td>@ev.Description</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="@(() => DeleteEvent(ev.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h3 class="text-xl font-bold mb-4">Update Trash Records with Event Info</h3>
+
+		@if (!isRunning)
+		{
+			<button class="btn btn-primary" @onclick="StartUpdate">Start Weather Update</button>
+		}
+		else
+		{
+			<p><strong>Updating weather data...</strong></p>
+			<div class="progress mb-2">
+				<div class="progress-bar" role="progressbar" style="width:@progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+					@progress%
+				</div>
+			</div>
+		}
+
+		<ul class="list-unstyled">
+			@foreach (var line in logLines)
+			{
+				<li>@line</li>
+			}
+		</ul>
+	}
+}
+
+
+@code {
+	private List<BredaEvent>? events;
+	private BredaEvent newEvent = new();
+	private bool isRunning = false;
+	private int progress = 0;
+	private int TotalCount = 0;
+	private List<string> logLines = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEvents();
+    }
+
+	private async Task StartUpdate()
+	{
+		isRunning = true;
+		logLines.Clear();
+		progress = 0;
+		StateHasChanged();
+
+		var count = 0;
+
+		await foreach (var log in TrashDataService.UpdateAllBredaEventWithProgressAsync())
+		{
+			logLines.Add(log);
+			count++;
+
+			progress = Math.Min(100, count * 100 / (await TrashDataService.GetCount() / 25));
+			StateHasChanged();
+		}
+
+		isRunning = false;
+		progress = 100;
+		StateHasChanged();
+	}
+
+    private async Task LoadEvents()
+    {
+        events = await Db.BredaEvents.OrderBy(e => e.StartDate).ToListAsync();
+    }
+
+    private async Task AddEvent()
+    {
+        try
+        {
+            Db.BredaEvents.Add(newEvent);
+            await Db.SaveChangesAsync();
+            newEvent = new();
+            await LoadEvents();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error adding event: " + ex.Message);
+        }
+    }
+
+    private async Task DeleteEvent(int id)
+    {
+        var ev = await Db.BredaEvents.FindAsync(id);
+        if (ev != null)
+        {
+            Db.BredaEvents.Remove(ev);
+            await Db.SaveChangesAsync();
+            await LoadEvents();
+        }
+    }
+
+    private string? importError;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+        using var reader = new StreamReader(stream);
+
+        bool isFirstLine = true;
+        string? line;
+
+        while ((line = await reader.ReadLineAsync()) != null)
+        {
+            if (isFirstLine)
+            {
+                isFirstLine = false;
+                continue; // Skip header
+            }
+
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            try
+            {
+                var parts = CSVParser.ParseCsvLine(line);
+                var (start, end) = CSVParser.ParseDutchDateRange(parts[0].Trim());
+
+                var newEvent = new BredaEvent
+                    {
+                        Name = parts[1],
+                        Location = parts[2],
+                        Description = parts[3],
+                        StartDate = start,
+                        EndDate = end
+                    };
+
+                Db.BredaEvents.Add(newEvent);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error importing line: {line} - {ex.Message}");
+            }
+        }
+
+        await Db.SaveChangesAsync();
+        await LoadEvents();
+        StateHasChanged(); // force UI update
+
+    }
+
+
+}

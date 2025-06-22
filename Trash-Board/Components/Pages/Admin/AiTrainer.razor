@@ -1,0 +1,175 @@
+@attribute [Authorize(Roles = "Admin")]
+@page "/admin/ai-trainer"
+@inject IAiPredictionService AiService
+@using Microsoft.AspNetCore.Authorization
+@using TrashBoard.Services
+@rendermode InteractiveServer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<TrashBoard.Selector> L
+<h3>AI Trainer</h3>
+
+<div class="mb-3">
+    <label>Estimators:</label>
+    <InputNumber @bind-Value="trainParams.NEstimators" class="form-control" />
+</div>
+<div class="mb-3">
+    <label>Max Depth:</label>
+    <InputNumber @bind-Value="trainParams.MaxDepth" class="form-control" />
+</div>
+<div class="mb-3">
+    <label>Min Samples Split:</label>
+    <InputNumber @bind-Value="trainParams.MinSamplesSplit" class="form-control" />
+</div>
+<div class="mb-3">
+    <label>Min Samples Leaf:</label>
+    <InputNumber @bind-Value="trainParams.MinSamplesLeaf" class="form-control" />
+</div>
+<div class="mb-3">
+    <label>Criterion:</label>
+    <InputSelect @bind-Value="trainParams.Criterion" class="form-control">
+        <option value="gini">Gini</option>
+        <option value="entropy">Entropy</option>
+    </InputSelect>
+</div>
+<div class="mb-3">
+    <label>Max Features:</label>
+    <InputSelect @bind-Value="trainParams.MaxFeatures" class="form-control">
+        <option value="sqrt">Sqrt</option>
+        <option value="log2">Log2</option>
+        <option value="None">None</option>
+    </InputSelect>
+</div>
+
+<button class="btn btn-primary" @onclick="RetrainModel" disabled="@isTraining">Retrain Model</button>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="alert @statusAlertClass mt-3">@statusMessage</div>
+}
+
+<hr />
+@if (lastTrainingResult is not null)
+{
+    <h5 class="mt-4">Training Accuracy</h5>
+    <p><strong>@(lastTrainingResult.Accuracy.ToString("P2"))</strong></p>
+
+    <h5>Classification Report</h5>
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Label</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1 Score</th>
+                <th>Support</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (label, metrics) in lastTrainingResult.Report)
+            {
+                <tr>
+                    <td>@label</td>
+                    <td>@metrics.Precision.ToString("P2")</td>
+                    <td>@metrics.Recall.ToString("P2")</td>
+                    <td>@metrics.F1Score.ToString("P2")</td>
+                    <td>@metrics.Support</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h4>Decision Tree</h4>
+@if (pngUrl != null)
+{
+    <img src="@pngUrl" class="img-fluid" />
+}
+else if (pngError)
+{
+    <div class="alert alert-danger">Could not load decision tree. The AI service might be unavailable or untrained.</div>
+}
+else
+{
+    <p><em>Loading tree...</em></p>
+}
+
+@code {
+    private TrainingParameters trainParams = new()
+        {
+            NEstimators = 100,
+            MaxDepth = 10,
+            MinSamplesSplit = 2,
+            MinSamplesLeaf = 1,
+            Criterion = "gini",
+            MaxFeatures = "sqrt"
+        };
+
+    private string? pngUrl;
+    private bool pngError = false;
+    private string? statusMessage;
+    private string statusAlertClass = "alert-info";
+    private bool isTraining = false;
+    private TrainingResult? lastTrainingResult;
+
+
+    private async Task LoadDecisionTreeImage()
+    {
+        pngError = false;
+        try
+        {
+            var stream = await AiService.GetDecisionTreePngAsync();
+            if (stream is null)
+            {
+                pngError = true;
+                return;
+            }
+
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var base64 = Convert.ToBase64String(ms.ToArray());
+            pngUrl = $"data:image/png;base64,{base64}";
+        }
+        catch (Exception ex)
+        {
+            pngError = true;
+            Console.WriteLine($"Error loading decision tree PNG: {ex.Message}");
+        }
+    }
+
+    private async Task RetrainModel()
+    {
+        isTraining = true;
+        statusMessage = null;
+
+        try
+        {
+            var result = await AiService.RetrainModelAsync(trainParams);
+            if (result is not null)
+            {
+                lastTrainingResult = result;
+                statusMessage = result.Message;
+                statusAlertClass = "alert-success";
+                await LoadDecisionTreeImage();
+            }
+            else
+            {
+                statusMessage = "Training failed or no response.";
+                statusAlertClass = "alert-warning";
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            statusMessage = $"AI service is unreachable: {httpEx.Message}";
+            statusAlertClass = "alert-danger";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Unexpected error during training: {ex.Message}";
+            statusAlertClass = "alert-danger";
+        }
+        finally
+        {
+            isTraining = false;
+        }
+    }
+
+}

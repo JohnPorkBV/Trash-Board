@@ -1,0 +1,98 @@
+﻿@using System.Globalization
+@using TrashBoard.Services
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject CustomLocalizer<TrashDetectionsLineChart> LineChart
+@inject CustomLocalizer<TrashTypeBarChart> BarChart
+@inject CustomLocalizer<Selector> Selector
+@inject CustomLocalizer<Layout> Layout
+@inject CustomLocalizer<Login> Login
+@inject CustomLocalizer<AboutUs> About
+@inject CustomLocalizer<AiPrediction> AiPrediction
+@rendermode InteractiveServer
+
+<select @onchange="OnLanguageChange" class="form-select w-auto">
+    <option value="nl" selected="@IsSelected("nl")">Nederlands</option>
+    <option value="en" selected="@IsSelected("en")">English</option>
+    <option value="de" selected="@IsSelected("de")">Deutsch</option>
+    <option value="braille" selected="@IsSelected("braille")">Braille</option>
+    <option value="emoji" selected="@IsSelected("emoji")">Emoji</option>
+    <option value="morse" selected="@IsSelected("morse")">Morse</option>
+    @* <option value="minecraft" selected="@IsSelected("minecraft")">Minecraft</option> *@
+</select>
+
+@code {
+    private bool initialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Selector.InitializeAsync();
+        initialized = true;
+        StateHasChanged();
+    }
+    private async Task OnLanguageChange(ChangeEventArgs e)
+    {
+        var selected = e.Value?.ToString() ?? "nl";
+        LanguageMode mode = selected switch
+        {
+            "braille" => LanguageMode.Braille,
+            "emoji" => LanguageMode.Emoji,
+            "morse" => LanguageMode.Morse,
+            "minecraft" => LanguageMode.Minecraft,
+            _ => LanguageMode.CultureBased
+        };
+
+        SetAllLocalizer(mode);
+        if (mode == LanguageMode.Minecraft)
+        {
+            // Only Minecraft skips reload
+            await JS.InvokeVoidAsync("setBodyLanguageMode", "minecraft");
+            var cookieValue2 = $".AspNetCore.Culture=c=nl|uic=nl";
+            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue2}; path=/'");
+            return;
+        }
+
+
+        // Save to cookie (server culture)
+        var cookieValue = $".AspNetCore.Culture=c={selected}|uic={selected}";
+        await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+
+        // Reload page to apply culture
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        StateHasChanged();
+    }
+
+    private string? IsSelected(string value)
+    {
+        if (!initialized) return null;
+
+        return value switch
+        {
+            "braille" => Selector.CurrentMode == LanguageMode.Braille ? "selected" : null,
+            "emoji" => Selector.CurrentMode == LanguageMode.Emoji ? "selected" : null,
+            "morse" => Selector.CurrentMode == LanguageMode.Morse ? "selected" : null,
+            "minecraft" => Selector.CurrentMode == LanguageMode.Minecraft ? "selected" : null,
+            _ => (Selector.CurrentMode == LanguageMode.CultureBased && CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == value)
+                 ? "selected"
+                 : null
+        };
+    }
+
+    private async void SetAllLocalizer(LanguageMode mode)
+    {
+        if (mode != LanguageMode.CultureBased)
+        {
+            var cookieValue = $".AspNetCore.Culture=c=nl|uic=nl";
+            await JS.InvokeVoidAsync("eval", $"document.cookie = '{cookieValue}; path=/'");
+        }
+        LineChart.SetMode(mode);
+        BarChart.SetMode(mode);
+        Selector.SetMode(mode);
+        About.SetMode(mode);
+        AiPrediction.SetMode(mode);
+        Layout.SetMode(mode);
+        Login.SetMode(mode);
+        var bodyMode = mode == LanguageMode.CultureBased ? "default" : mode.ToString().ToLowerInvariant();
+        await JS.InvokeVoidAsync("setBodyLanguageMode", bodyMode);
+    }
+}

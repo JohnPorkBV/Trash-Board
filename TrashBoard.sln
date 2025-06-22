@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrashBoard", "TrashBoard.csproj", "{0C3820ED-4ABC-4AD9-ACAA-147B938238A9}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AI-model-api", "AI-model-api\AI-model-api.pyproj", "{6BE3F781-C159-4D61-84AD-A63F78C82D96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrashBoard", "Trash-Board\TrashBoard.csproj", "{22599FC2-AC4E-4E34-0587-F4581492EEB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0C3820ED-4ABC-4AD9-ACAA-147B938238A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C3820ED-4ABC-4AD9-ACAA-147B938238A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C3820ED-4ABC-4AD9-ACAA-147B938238A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C3820ED-4ABC-4AD9-ACAA-147B938238A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BE3F781-C159-4D61-84AD-A63F78C82D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BE3F781-C159-4D61-84AD-A63F78C82D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

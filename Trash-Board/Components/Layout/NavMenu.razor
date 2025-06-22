@@ -1,0 +1,47 @@
+@using Microsoft.EntityFrameworkCore;
+@using TrashBoard.Services
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject CustomLocalizer<TrashBoard.Layout> L
+
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">@L["Title"]</a>
+    </div>
+</div>
+
+<input type="checkbox" title=@L["Title_Navigation"] class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> @L["Label_Home"]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="raw">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> @L["Label_Raw"]
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/ai-predict">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @L["Label_AiPredict"]
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/about">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> @L["Label_About"]
+            </NavLink>
+        </div>
+    </nav>
+</div>
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await L.InitializeAsync();
+    }
+}

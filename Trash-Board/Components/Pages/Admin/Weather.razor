@@ -1,0 +1,57 @@
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/weather"
+@using Microsoft.AspNetCore.Authorization
+@using TrashBoard.Services
+@inject ITrashDataService TrashDataService
+@rendermode InteractiveServer
+<h3>Weather Data Update</h3>
+
+@if (!isRunning)
+{
+    <button class="btn btn-primary" @onclick="StartUpdate">Start Weather Update</button>
+}
+else
+{
+    <p><strong>Updating weather data...</strong></p>
+    <div class="progress mb-2">
+        <div class="progress-bar" role="progressbar" style="width:@progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+            @progress%
+        </div>
+    </div>
+}
+
+<ul class="list-unstyled">
+    @foreach (var line in logLines)
+    {
+        <li>@line</li>
+    }
+</ul>
+
+@code {
+    private List<string> logLines = new();
+    private bool isRunning = false;
+    private int progress = 0;
+
+    private async Task StartUpdate()
+    {
+        isRunning = true;
+        logLines.Clear();
+        progress = 0;
+        StateHasChanged();
+
+        var count = 0;
+
+        await foreach (var log in TrashDataService.UpdateAllWeatherInfoWithProgressAsync())
+        {
+            logLines.Add(log);
+            count++;
+
+            progress = Math.Min(100, count * 100 / (await TrashDataService.GetCount() / 25));
+            StateHasChanged();
+        }
+
+        isRunning = false;
+        progress = 100;
+        StateHasChanged();
+    }
+}
