@@ -24,13 +24,28 @@ namespace TrashBoard.Services
             _weatherService = weatherService;
         }
 
+        public async Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService)
+        {
+            var apiDetections = await apiTrashDataService.GetAllAsync();
+            foreach (var detection in apiDetections)
+            {
+                await AddAsync(detection);
+            }
+
+            await using var context = _contextFactory.CreateDbContext();
+            if (context.ChangeTracker.HasChanges())
+            {
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<int> GetCount()
         {
             await using var context = _contextFactory.CreateDbContext();
-            return  context.TrashDetections
-            .Count();
-
+            return context.TrashDetections
+                .Count();
         }
+
         public async Task<IEnumerable<TrashDetection>> GetAllAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -69,7 +84,6 @@ namespace TrashBoard.Services
                 .OrderByDescending(t => t.Timestamp)
                 .ToListAsync();
         }
-
 
         public async Task<TrashDetection?> GetByIdAsync(int id)
         {
@@ -110,6 +124,7 @@ namespace TrashBoard.Services
                 .OrderBy(t => t)
                 .ToListAsync();
         }
+
         public async IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -245,7 +260,6 @@ namespace TrashBoard.Services
             yield return "All Breda event data updated!";
         }
 
-        
         public async IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -280,7 +294,6 @@ namespace TrashBoard.Services
                     context.Entry(detection).State = EntityState.Modified;
                 }
 
-
                 updated++;
 
                 // Yield progress every 25 updates or at end
@@ -297,6 +310,7 @@ namespace TrashBoard.Services
 
             yield return "All weather data updated!";
         }
+
         public async Task<int> ResetDetectionDataAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -328,6 +342,7 @@ namespace TrashBoard.Services
             var changes = await context.SaveChangesAsync();
             return changes;
         }
+
         public async Task<int> DeleteAllDetectionsAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -335,7 +350,5 @@ namespace TrashBoard.Services
             context.TrashDetections.RemoveRange(detections);
             return await context.SaveChangesAsync();
         }
-
-
     }
 }

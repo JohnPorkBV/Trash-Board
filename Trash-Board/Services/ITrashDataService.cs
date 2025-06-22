@@ -25,5 +25,6 @@ namespace TrashBoard.Services
         IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync();
         Task<int> ResetDetectionDataAsync();
         Task<int> DeleteAllDetectionsAsync();
+        Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService);
     }
 }
