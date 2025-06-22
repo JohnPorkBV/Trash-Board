@@ -54,3 +54,44 @@
 <script>
     // document.body.classList.add('minecraft-mode');
 </script>
+
+<style>
+.page {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px; /* breedte sidebar */
+    background-color: #004d00; /* donkergroen */
+    color: white;
+    flex-shrink: 0;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .nav-link {
+    color: white;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background-color: #006600;
+    color: white;
+}
+
+main {
+    flex-grow: 1;
+    background-color: #f8f9fa; /* lichte achtergrond voor content */
+    overflow-y: auto;
+}
+
+.top-row {
+    background-color: #003d00 !important; /* donkergroen */
+        color: black;
+}
+
+</style>

@@ -9,6 +9,8 @@
     <div>
         <h1>@L["Title"]</h1>
 
+        <div class="row-border"></div>
+
         <p>@L["Introduction"]</p>
 
         <p>@L["Initiative"]</p>
@@ -19,7 +21,7 @@
 
     </div>
 
-    <hr />
+    <div class="row-border"></div>
 
     <div>
         <img src="./Branding3.png" class="rounded" alt="John Pork" width="300" height="300">
@@ -29,6 +31,25 @@
     <br />
 
 </div>
+
+<style>
+    h1, h2, h3, h4, h5, h6 {
+        color: #006400; /* Donkergroen */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+        .row-border{
+        border-top: 2px solid rgb(56, 56, 56);
+        grid-column: 1 / 5;
+        padding-bottom: 20px;
+    }
+
+
+</style>
+
 @code{
     protected override async Task OnInitializedAsync()
     {
