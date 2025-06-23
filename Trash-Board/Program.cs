@@ -67,6 +67,9 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
 
+// Api Auto Update
+builder.Services.AddHostedService<TrashImportBackgroundService>();
+
 
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();

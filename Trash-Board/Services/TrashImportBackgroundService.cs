@@ -27,7 +27,9 @@ namespace TrashBoard.Services
 
                     try
                     {
+                        Console.WriteLine($" Import From api");
                         await trashDataService.ImportFromApiAsync(apiTrashDataService);
+
                     }
                     catch (Exception ex)
                     {
