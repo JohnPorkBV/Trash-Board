@@ -1,29 +1,61 @@
-﻿@page "/admin/test-api"
-@using TrashBoard.Models
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/import"
+@using Microsoft.AspNetCore.Authorization
 @using TrashBoard.Services
-@inject IApiTrashDataService ApiService
+@inject ITrashDataService TrashDataService
+@inject IApiTrashDataService ApiTrashDataService
 @rendermode InteractiveServer
 
-<h3>Test API Data</h3>
+<h3>Import Trash Detections from API</h3>
 
-<button class="btn btn-primary" @onclick="LoadData">Load All Data</button>
-
-@if (data != null)
+@if (!isRunning)
 {
-    <p>@data.Count item(s) loaded</p>
-    <ul>
-        @foreach (var item in data)
-        {
-            <li>@item.Timestamp - @item.DetectedObject - @item.ConfidenceScore</li>
-        }
-    </ul>
+    <button class="btn btn-primary" @onclick="StartImport">Start API Import</button>
 }
 
-@code {
-    private List<TrashDetection>? data;
+@if (progress > 0)
+{
+    <p><strong>Importing data...</strong></p>
+    <div class="progress mb-2">
+        <div class="progress-bar" role="progressbar" style="width:@progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+            @progress%
+        </div>
+    </div>
+}
 
-    private async Task LoadData()
+<ul class="list-unstyled">
+    @foreach (var line in logLines)
     {
-        data = await ApiService.GetAllAsync();
+        <li>@line</li>
+    }
+</ul>
+
+@code {
+    private List<string> logLines = new();
+    private bool isRunning = false;
+    private int progress = 0;
+
+    private async Task StartImport()
+    {
+        isRunning = true;
+        logLines.Clear();
+        progress = 0;
+        StateHasChanged();
+
+        var totalCount = 1 + await TrashDataService.GetCount(); // prevent divide by zero
+
+        int count = 0;
+        await foreach (var log in TrashDataService.ImportFromApiWithProgressAsync(ApiTrashDataService))
+        {
+            logLines.Add(log);
+            count++;
+
+            progress = Math.Min(100, count * 100 / (totalCount / 25));
+            StateHasChanged();
+        }
+
+        isRunning = false;
+        progress = 100;
+        StateHasChanged();
     }
 }

@@ -23,6 +23,7 @@ namespace TrashBoard.Services
         IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllBredaEventWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync();
+        IAsyncEnumerable<string> ImportFromApiWithProgressAsync(IApiTrashDataService apiTrashDataService);
         Task<int> ResetDetectionDataAsync();
         Task<int> DeleteAllDetectionsAsync();
         Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService);

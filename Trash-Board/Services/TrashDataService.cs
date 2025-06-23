@@ -29,7 +29,7 @@ namespace TrashBoard.Services
             var apiDetections = await apiTrashDataService.GetAllAsync();
             foreach (var detection in apiDetections)
             {
-                //await AddAsync(detection);
+                await AddAsync(detection);
             }
 
             await using var context = _contextFactory.CreateDbContext();
@@ -310,6 +310,51 @@ namespace TrashBoard.Services
 
             yield return "All weather data updated!";
         }
+
+        public async IAsyncEnumerable<string> ImportFromApiWithProgressAsync(IApiTrashDataService apiTrashDataService)
+        {
+            yield return "Getting detections from the API.";
+
+            var apiDetections = await apiTrashDataService.GetAllAsync();
+
+            if (apiDetections.Count == 0)
+            {
+                yield return "No new trash detections received from the API.";
+                yield break;
+            }
+
+            yield return $"Received {apiDetections.Count} detections from the API.";
+
+            await using var context = _contextFactory.CreateDbContext();
+
+            var existingIds = context.TrashDetections
+                .Select(t => t.Id)
+                .ToHashSet();
+
+            int added = 0;
+            for (int i = 0; i < apiDetections.Count; i++)
+            {
+                var detection = apiDetections[i];
+
+                if (!existingIds.Contains(detection.Id))
+                {
+                    await AddAsync(detection); // handles weather, holiday, events
+
+                    added++;
+                    //yield return $"Added detection #{detection.Id} at {detection.Timestamp}.";
+                }
+
+                if (i % 25 == 0 || i == apiDetections.Count - 1)
+                {
+                    yield return $"Processed {i + 1}/{apiDetections.Count} items...";
+                }
+            }
+
+            yield return added == 0
+                ? "No new data was added. All detections already exist."
+                : $"Finished! {added} new detection(s) added.";
+        }
+
 
         public async Task<int> ResetDetectionDataAsync()
         {

@@ -18,7 +18,6 @@ namespace TrashBoard.Services
         {
             return new TrashDetection
             {
-                Id = apiItem.Id,
                 DetectedObject = apiItem.Label,
                 ConfidenceScore = apiItem.Confidence.ToString("F2", CultureInfo.InvariantCulture),
                 Timestamp = apiItem.Timestamp,
