@@ -13,24 +13,45 @@ namespace TrashBoard.Services
         {
             _httpClient = httpClient;
         }
-        //public async Task<IEnumerable<TrashDetection>> GetAllAsync()
-        //{
-        //    return await _httpClient.GetFromJsonAsync<IEnumerable<TrashDetection>>("api/trashdetections")
-        //           ?? Enumerable.Empty<TrashDetection>();
-        //}
-        public async Task<List<TrashDetectionApiModel>> GetAllAsync()
+
+        private TrashDetection MapToTrashDetection(TrashDetectionApiModel apiItem)
+        {
+            return new TrashDetection
+            {
+                Id = apiItem.Id,
+                DetectedObject = apiItem.Label,
+                ConfidenceScore = apiItem.Confidence.ToString("F2", CultureInfo.InvariantCulture),
+                Timestamp = apiItem.Timestamp,
+                Date = apiItem.Timestamp.Date,
+                Hour = apiItem.Timestamp.Hour,
+                Temp = (float)apiItem.Temperature,
+                Humidity = (float)apiItem.Humidity,
+                Windforce = (float)apiItem.Wind,
+
+                // Default for enrichment later
+                Precipitation = 0f,
+                IsHoliday = false,
+                HolidayName = null,
+                IsBredaEvent = false,
+                BredaEventName = null
+            };
+        }
+
+        public async Task<List<TrashDetection>> GetAllAsync()
         {
             var response = await _httpClient.GetAsync("api/trashdetect");
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
+            var rawList = JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             }) ?? new();
+
+            return rawList.Select(MapToTrashDetection).ToList();
         }
 
-        public async Task<List<TrashDetectionApiModel>> GetSinceAsync(DateTime since)
+        public async Task<List<TrashDetection>> GetSinceAsync(DateTime since)
         {
             var dateOnly = since.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             var url = $"api/trashdetect/date?date={dateOnly}";
@@ -38,12 +59,15 @@ namespace TrashBoard.Services
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
+            var rawList = JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
+            }) ?? new();
 
-            return result?.Where(x => x.Timestamp > since).ToList() ?? new();
+            return rawList
+                .Where(x => x.Timestamp > since)
+                .Select(MapToTrashDetection)
+                .ToList();
         }
     }
 }

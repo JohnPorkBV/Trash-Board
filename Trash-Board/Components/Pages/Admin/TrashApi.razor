@@ -14,13 +14,13 @@
     <ul>
         @foreach (var item in data)
         {
-            <li>@item.Timestamp - @item.Label - @item.Confidence</li>
+            <li>@item.Timestamp - @item.DetectedObject - @item.ConfidenceScore</li>
         }
     </ul>
 }
 
 @code {
-    private List<TrashDetectionApiModel>? data;
+    private List<TrashDetection>? data;
 
     private async Task LoadData()
     {
