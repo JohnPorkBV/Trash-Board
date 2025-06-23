@@ -8,6 +8,7 @@
 @rendermode InteractiveServer
 @inject ITrashDataService TrashDataService
 
+
 <h1>Trashboard</h1>
 
 <div class="row-border"></div>
@@ -282,6 +283,26 @@ else
     border: 1px solid #004d00;
     padding: 0.75rem;
 }
+
+    /* Groene stijl voor paginering */
+    .pagination .page-item .page-link {
+        color: #006400 !important;
+      
+    }
+
+    .pagination .page-item.active .page-link {
+
+        background-color: #006d00;
+        color: white !important;
+        border-color: #228B22 !important;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: #228B22 !important; /* ForestGreen bij hover */
+        border-color: #228B22 !important;
+        color: white !important;
+    }
+
 
 </style>
 

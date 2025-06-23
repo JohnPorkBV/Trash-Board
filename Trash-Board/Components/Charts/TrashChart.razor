@@ -146,15 +146,16 @@ else
                 Datasets = new List<IChartDataset>
         {
             new LineChartDataset
-            {
-                Label = L["ChartLabel"],
-                Data = dataPoints,
-                BackgroundColor = "rgba(54, 162, 235, 0.2)",
-                BorderColor = "rgba(54, 162, 235, 1)",
-                BorderWidth = 2,
-                PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
-                PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
-            }
+{
+    Label = L["ChartLabel"],
+    Data = dataPoints,
+    BackgroundColor = "rgba(0, 100, 0, 0.2)", // donkergroen met transparantie
+    BorderColor = "rgba(0, 100, 0, 1)",       // donkergroen
+    BorderWidth = 2,
+    PointBackgroundColor = new() { "rgba(0, 100, 0, 1)" },
+    PointBorderColor = new() { "rgba(0, 100, 0, 1)" }
+}
+
         }
             };
 
