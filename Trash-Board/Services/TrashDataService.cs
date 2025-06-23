@@ -24,13 +24,28 @@ namespace TrashBoard.Services
             _weatherService = weatherService;
         }
 
+        public async Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService)
+        {
+            var apiDetections = await apiTrashDataService.GetAllAsync();
+            foreach (var detection in apiDetections)
+            {
+                await AddAsync(detection);
+            }
+
+            await using var context = _contextFactory.CreateDbContext();
+            if (context.ChangeTracker.HasChanges())
+            {
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<int> GetCount()
         {
             await using var context = _contextFactory.CreateDbContext();
-            return  context.TrashDetections
-            .Count();
-
+            return context.TrashDetections
+                .Count();
         }
+
         public async Task<IEnumerable<TrashDetection>> GetAllAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -69,7 +84,6 @@ namespace TrashBoard.Services
                 .OrderByDescending(t => t.Timestamp)
                 .ToListAsync();
         }
-
 
         public async Task<TrashDetection?> GetByIdAsync(int id)
         {
@@ -110,6 +124,7 @@ namespace TrashBoard.Services
                 .OrderBy(t => t)
                 .ToListAsync();
         }
+
         public async IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -245,7 +260,6 @@ namespace TrashBoard.Services
             yield return "All Breda event data updated!";
         }
 
-        
         public async IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -280,7 +294,6 @@ namespace TrashBoard.Services
                     context.Entry(detection).State = EntityState.Modified;
                 }
 
-
                 updated++;
 
                 // Yield progress every 25 updates or at end
@@ -297,6 +310,52 @@ namespace TrashBoard.Services
 
             yield return "All weather data updated!";
         }
+
+        public async IAsyncEnumerable<string> ImportFromApiWithProgressAsync(IApiTrashDataService apiTrashDataService)
+        {
+            yield return "Getting detections from the API.";
+
+            var apiDetections = await apiTrashDataService.GetAllAsync();
+
+            if (apiDetections.Count == 0)
+            {
+                yield return "No new trash detections received from the API.";
+                yield break;
+            }
+
+            yield return $"Received {apiDetections.Count} detections from the API.";
+
+            await using var context = _contextFactory.CreateDbContext();
+
+            var existingIds = context.TrashDetections
+                .Select(t => t.Id)
+                .ToHashSet();
+
+            int added = 0;
+            for (int i = 0; i < apiDetections.Count; i++)
+            {
+                var detection = apiDetections[i];
+
+                if (!existingIds.Contains(detection.Id))
+                {
+                    await AddAsync(detection); // handles weather, holiday, events
+
+                    added++;
+                    //yield return $"Added detection #{detection.Id} at {detection.Timestamp}.";
+                }
+
+                if (i % 25 == 0 || i == apiDetections.Count - 1)
+                {
+                    yield return $"Processed {i + 1}/{apiDetections.Count} items...";
+                }
+            }
+
+            yield return added == 0
+                ? "No new data was added. All detections already exist."
+                : $"Finished! {added} new detection(s) added.";
+        }
+
+
         public async Task<int> ResetDetectionDataAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -328,6 +387,7 @@ namespace TrashBoard.Services
             var changes = await context.SaveChangesAsync();
             return changes;
         }
+
         public async Task<int> DeleteAllDetectionsAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -335,7 +395,5 @@ namespace TrashBoard.Services
             context.TrashDetections.RemoveRange(detections);
             return await context.SaveChangesAsync();
         }
-
-
     }
 }
