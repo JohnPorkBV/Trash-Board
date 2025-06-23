@@ -29,7 +29,7 @@ namespace TrashBoard.Services
             var apiDetections = await apiTrashDataService.GetAllAsync();
             foreach (var detection in apiDetections)
             {
-                await AddAsync(detection);
+                //await AddAsync(detection);
             }
 
             await using var context = _contextFactory.CreateDbContext();

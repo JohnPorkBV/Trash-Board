@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TrashBoard.Models;
 
 namespace TrashBoard.Services
@@ -11,41 +13,37 @@ namespace TrashBoard.Services
         {
             _httpClient = httpClient;
         }
-
-        public async Task<int> GetCount()
+        //public async Task<IEnumerable<TrashDetection>> GetAllAsync()
+        //{
+        //    return await _httpClient.GetFromJsonAsync<IEnumerable<TrashDetection>>("api/trashdetections")
+        //           ?? Enumerable.Empty<TrashDetection>();
+        //}
+        public async Task<List<TrashDetectionApiModel>> GetAllAsync()
         {
-            var detections = await GetAllAsync();
-            return detections.Count();
+            var response = await _httpClient.GetAsync("api/trashdetect");
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new();
         }
 
-        public async Task<IEnumerable<TrashDetection>> GetAllAsync()
+        public async Task<List<TrashDetectionApiModel>> GetSinceAsync(DateTime since)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TrashDetection>>("api/trashdetections")
-                   ?? Enumerable.Empty<TrashDetection>();
-        }
+            var dateOnly = since.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var url = $"api/trashdetect/date?date={dateOnly}";
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
 
-        public async Task<IEnumerable<TrashDetection>> GetFilteredAsync(
-            DateTime? from, DateTime? to, List<string>? trashTypes, bool? isHoliday, bool? isBredaEvent)
-        {
-            var query = new List<string>();
-            if (from.HasValue) query.Add($"from={from.Value:O}");
-            if (to.HasValue) query.Add($"to={to.Value:O}");
-            if (trashTypes != null && trashTypes.Any()) query.Add($"types={string.Join(",", trashTypes)}");
-            if (isHoliday.HasValue) query.Add($"isHoliday={isHoliday.Value}");
-            if (isBredaEvent.HasValue) query.Add($"isBredaEvent={isBredaEvent.Value}");
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<List<TrashDetectionApiModel>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
-            var url = "api/trashdetections";
-            if (query.Count > 0)
-                url += "?" + string.Join("&", query);
-
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TrashDetection>>(url)
-                   ?? Enumerable.Empty<TrashDetection>();
-        }
-
-        public async Task<IEnumerable<string>> GetAvailableTrashTypesAsync()
-        {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<string>>("api/trashdetections/types")
-                   ?? Enumerable.Empty<string>();
+            return result?.Where(x => x.Timestamp > since).ToList() ?? new();
         }
     }
 }

@@ -1,0 +1,29 @@
+﻿@page "/admin/test-api"
+@using TrashBoard.Models
+@using TrashBoard.Services
+@inject IApiTrashDataService ApiService
+@rendermode InteractiveServer
+
+<h3>Test API Data</h3>
+
+<button class="btn btn-primary" @onclick="LoadData">Load All Data</button>
+
+@if (data != null)
+{
+    <p>@data.Count item(s) loaded</p>
+    <ul>
+        @foreach (var item in data)
+        {
+            <li>@item.Timestamp - @item.Label - @item.Confidence</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<TrashDetectionApiModel>? data;
+
+    private async Task LoadData()
+    {
+        data = await ApiService.GetAllAsync();
+    }
+}
