@@ -13,8 +13,8 @@ using TrashBoard.Components.Layout;
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
-var apiKey = builder.Configuration["X-API-KEY"];
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
+var apiKey = builder.Configuration.GetValue<string>("X-API-KEY");
 
 // Language Services
 builder.Services.AddScoped(typeof(CustomLocalizer<>));
