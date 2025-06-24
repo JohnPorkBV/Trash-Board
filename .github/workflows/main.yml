@@ -31,8 +31,13 @@ jobs:
 
       - name: Run unit tests
         run: |
-          TEST_PROJECT_PATH="./TestsWebAPIJP/${{ secrets.TEST_PROJECT_NAME }}.csproj"
-          dotnet test "$TEST_PROJECT_PATH" --no-build --configuration Release --verbosity normal
+          dotnet test "./TestsWebAPIJP/${{ secrets.TEST_PROJECT_NAME }}.csproj" --no-build --configuration Release --logger "trx;LogFileName=test-results.trx"
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
+
 
       - name: Setup EF Tools
         run: |
