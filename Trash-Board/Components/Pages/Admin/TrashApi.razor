@@ -42,7 +42,7 @@
         progress = 0;
         StateHasChanged();
 
-        var totalCount = 1 + await TrashDataService.GetCount(); // prevent divide by zero
+        var totalCount = 1 + await TrashDataService.GetCount();
 
         int count = 0;
         await foreach (var log in TrashDataService.ImportFromApiWithProgressAsync(ApiTrashDataService))
@@ -50,7 +50,7 @@
             logLines.Add(log);
             count++;
 
-            progress = Math.Min(100, count * 100 / (totalCount / 25));
+            progress = (int) Math.Min(100, count * 100 / (totalCount / 25.0));
             StateHasChanged();
         }
 
