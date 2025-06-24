@@ -331,6 +331,13 @@ else
 
     private string adImageUrl = "";
 
+    private static DateTime ConvertUtcToGmt(DateTime utc)
+    {
+        string timeZoneId = OperatingSystem.IsWindows() ? "GMT Standard Time" : "Europe/London";
+        var gmtZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        return TimeZoneInfo.ConvertTimeFromUtc(utc, gmtZone);
+    }
+
     private void SelectAdImage()
     {
         // External URLs for your images - replace these with your actual hosting URLs
@@ -422,8 +429,6 @@ else
         catch (TaskCanceledException) { }
     }
 
-
-
     private async Task ApplyFilter()
     {
         errorMessage = null;
@@ -433,13 +438,15 @@ else
         if (fromDate.HasValue)
         {
             var time = fromTime ?? TimeOnly.MinValue;
-            from = fromDate.Value.Date + time.ToTimeSpan();
+            var local = fromDate.Value.Date + time.ToTimeSpan();
+            from = ConvertUtcToGmt(local.ToUniversalTime());
         }
 
         if (toDate.HasValue)
         {
             var time = toTime ?? new TimeOnly(23, 59, 59);
-            to = toDate.Value.Date + time.ToTimeSpan();
+            var local = toDate.Value.Date + time.ToTimeSpan();
+            to = ConvertUtcToGmt(local.ToUniversalTime());
         }
 
         if (from.HasValue && to.HasValue && from.Value == to.Value)
@@ -477,7 +484,7 @@ else
         errorMessage = null;
         try
         {
-            DateTime nu = DateTime.Now;
+            DateTime nu = ConvertUtcToGmt(DateTime.UtcNow);
             DateTime from;
             DateTime to;
 
