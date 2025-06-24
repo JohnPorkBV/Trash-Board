@@ -26,13 +26,25 @@ namespace TrashBoard.Services
 
         public async Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService)
         {
-            var apiDetections = await apiTrashDataService.GetAllAsync();
+            await using var context = _contextFactory.CreateDbContext();
+
+            DateTime lastGet;
+
+            if (context.TrashDetections.Any())
+            {
+                lastGet = context.TrashDetections.Max(t => t.Timestamp);
+            }
+            else
+            {
+                lastGet = DateTime.MinValue;
+            }
+
+            var apiDetections = await apiTrashDataService.GetSinceAsync(lastGet);
             foreach (var detection in apiDetections)
             {
                 await AddAsync(detection);
             }
 
-            await using var context = _contextFactory.CreateDbContext();
             if (context.ChangeTracker.HasChanges())
             {
                 await context.SaveChangesAsync();
@@ -95,6 +107,15 @@ namespace TrashBoard.Services
         {
             await using var context = _contextFactory.CreateDbContext();
 
+            bool exists = await context.TrashDetections
+                .AnyAsync(t => t.Timestamp == detection.Timestamp);
+
+            if (exists)
+            {
+                Console.WriteLine("Detection bestaat al, wordt overgeslagen.");
+                return;
+            }
+
             var holiday = await _holidayService.IsHolidayAsync(detection.Timestamp);
             if (holiday != null)
             {
@@ -112,6 +133,7 @@ namespace TrashBoard.Services
             context.TrashDetections.Add(detection);
             await context.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<string>> GetAvailableTrashTypesAsync()
         {

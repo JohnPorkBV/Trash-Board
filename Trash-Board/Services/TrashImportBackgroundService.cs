@@ -9,7 +9,7 @@ namespace TrashBoard.Services
     public class TrashImportBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _interval = TimeSpan.FromMinutes(15);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(20);
 
         public TrashImportBackgroundService(IServiceProvider serviceProvider)
         {
