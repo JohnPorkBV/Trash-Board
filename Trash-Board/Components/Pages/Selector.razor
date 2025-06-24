@@ -212,7 +212,7 @@ else
 
 <style>
     h1, h2, h3, h4, h5, h6 {
-        color: #006400; /* Donkergroen */
+        color: #006400;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: 600;
         margin-top: 1rem;
@@ -220,9 +220,7 @@ else
     }
 
     .ad-wrapper {
-        /* width: auto; */
         max-width: 300px;
-        /* display: flex; */
         flex-direction: column;
         justify-content: flex-start;
         padding: 0 0.5rem;
@@ -246,16 +244,14 @@ else
         grid-column: 1 / 5;
         padding-bottom: 20px;
     }
-    /* Donkergroene knoppen in filtersectie */
-    /* Donkergroene knoppen in filtersectie */
     .filter-panel .btn {
-        background-color: #006400 !important; /* Donkergroen */
+        background-color: #006400 !important;
         border-color: #006400 !important;
         color: white !important;
     }
 
         .filter-panel .btn:hover {
-            background-color: #228B22 !important; /* Iets lichter groen bij hover */
+            background-color: #228B22 !important;
             border-color: #228B22 !important;
             color: white !important;
         }
@@ -264,18 +260,18 @@ else
         .filter-panel .btn:focus-visible {
             outline: none !important;
             border-color: #006400 !important;
-            box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important; /* Donkergroene glow */
+            box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important;
         }
 
 
   
     .table thead {
-        background-color: #004d00; /* Donkergroen voor koptekst */
+        background-color: #004d00;
         color: white;
     }
 
     .table tbody tr:hover {
-        background-color: #228B22; /* ForestGreen bij hover */
+        background-color: #228B22;
         color: white;
     }
 
@@ -297,7 +293,6 @@ else
     padding: 0.75rem;
 }
 
-    /* Groene stijl voor paginering */
     .pagination .page-item .page-link {
         color: #006400 !important;
       
@@ -311,7 +306,7 @@ else
     }
 
     .pagination .page-item .page-link:hover {
-        background-color: #228B22 !important; /* ForestGreen bij hover */
+        background-color: #228B22 !important;
         border-color: #228B22 !important;
         color: white !important;
     }
@@ -355,7 +350,6 @@ else
 
     private void SelectAdImage()
     {
-        // External URLs for your images - replace these with your actual hosting URLs
         var imagesByDay = new Dictionary<DayOfWeek, string>()
             {
                 [DayOfWeek.Monday] = "https://i.imgur.com/BUH0RWb.jpg",
@@ -370,7 +364,7 @@ else
         string shinyImage = "https://i.imgur.com/eBLrmXK.jpg";
 
         var rand = new Random();
-        if (rand.Next(100) < 1) // 1% chance
+        if (rand.Next(100) < 1)
         {
             adImageUrl = shinyImage;
         }
@@ -435,7 +429,7 @@ else
 
         try
         {
-            await Task.Delay(300, token); // 300ms debounce window
+            await Task.Delay(300, token);
             if (!token.IsCancellationRequested)
             {
                 await ApplyFilter();
@@ -503,12 +497,12 @@ else
             DateTime from;
             DateTime to;
 
-            if (daysBack == 0) // Vandaag
+            if (daysBack == 0)
             {
                 from = nu.Date;
                 to = nu;
             }
-            else if (daysBack == 1) // Gisteren
+            else if (daysBack == 1)
             {
                 from = nu.Date.AddDays(-1);
                 to = nu.Date.AddTicks(-1);
@@ -519,7 +513,6 @@ else
                 to = nu;
             }
 
-            // UI-velden bijwerken
             fromDate = from.Date;
             fromTime = TimeOnly.FromDateTime(from);
             toDate = to.Date;

@@ -86,36 +86,45 @@ namespace TrashBoard.Services
             if (!doc.RootElement.TryGetProperty("hourly", out var hourly))
                 return null;
 
-            var times = hourly.GetProperty("time").EnumerateArray().ToList();
-            var temps = hourly.GetProperty("temperature_2m").EnumerateArray().ToList();
-            var precs = hourly.GetProperty("precipitation").EnumerateArray().ToList();
-            var winds = hourly.GetProperty("wind_speed_10m").EnumerateArray().ToList();
-            var hums = hourly.GetProperty("relative_humidity_2m").EnumerateArray().ToList();
+            bool TryGetArray(string name, out List<JsonElement> list)
+            {
+                list = new();
+                if (hourly.TryGetProperty(name, out var arr) && arr.ValueKind == JsonValueKind.Array)
+                {
+                    list = arr.EnumerateArray().ToList();
+                    return true;
+                }
+                return false;
+            }
+
+            if (!TryGetArray("time", out var times) ||
+                !TryGetArray("temperature_2m", out var temps))
+                return null;
+
+            TryGetArray("precipitation", out var precs);
+            TryGetArray("wind_speed_10m", out var winds);
+            TryGetArray("relative_humidity_2m", out var hums);
 
             int index = times.FindIndex(t => t.GetString() == isoHour);
             if (index == -1 || index >= temps.Count)
                 return null;
 
-            float? GetFloat(JsonElement e) => e.ValueKind == JsonValueKind.Number ? e.GetSingle() : null;
-            int? GetInt(JsonElement e) => e.ValueKind == JsonValueKind.Number ? e.GetInt32() : null;
+            float GetFloat(List<JsonElement> list) =>
+                index < list.Count && list[index].ValueKind == JsonValueKind.Number ? list[index].GetSingle() : 0f;
 
-            var temperature = GetFloat(temps[index]);
-            var precipitation = GetFloat(precs[index]);
-            var windSpeed = GetFloat(winds[index]);
-            var humidity = GetInt(hums[index]);
-
-            if (temperature == null || precipitation == null || windSpeed == null || humidity == null)
-                return null;
+            int GetInt(List<JsonElement> list) =>
+                index < list.Count && list[index].ValueKind == JsonValueKind.Number ? list[index].GetInt32() : 0;
 
             return new WeatherData
             {
                 Timestamp = DateTime.Parse(isoHour),
-                Temp = temperature.Value,
-                Precipitation = precipitation.Value,
-                Windforce = windSpeed.Value,
-                Humidity = humidity.Value
+                Temp = GetFloat(temps),
+                Precipitation = GetFloat(precs),
+                Windforce = GetFloat(winds),
+                Humidity = GetInt(hums)
             };
         }
+
         private async Task<Dictionary<string, WeatherData>> GetWeatherMapFromUrl(string url)
         {
             var weatherByHour = new Dictionary<string, WeatherData>();
@@ -130,36 +139,50 @@ namespace TrashBoard.Services
             if (!doc.RootElement.TryGetProperty("hourly", out var hourly))
                 return weatherByHour;
 
-            var times = hourly.GetProperty("time").EnumerateArray().ToList();
-            var temps = hourly.GetProperty("temperature_2m").EnumerateArray().ToList();
-            var precs = hourly.GetProperty("precipitation").EnumerateArray().ToList();
-            var winds = hourly.GetProperty("wind_speed_10m").EnumerateArray().ToList();
-            var hums = hourly.GetProperty("relative_humidity_2m").EnumerateArray().ToList();
+            bool TryGetArray(string name, out List<JsonElement> list)
+            {
+                list = new();
+                if (hourly.TryGetProperty(name, out var arr) && arr.ValueKind == JsonValueKind.Array)
+                {
+                    list = arr.EnumerateArray().ToList();
+                    return true;
+                }
+                return false;
+            }
+
+            if (!TryGetArray("time", out var times) ||
+                !TryGetArray("temperature_2m", out var temps))
+                return weatherByHour;
+
+            TryGetArray("precipitation", out var precs);
+            TryGetArray("wind_speed_10m", out var winds);
+            TryGetArray("relative_humidity_2m", out var hums);
 
             for (int i = 0; i < times.Count; i++)
             {
                 var isoHour = times[i].GetString();
-                if (isoHour == null || i >= temps.Count || i >= precs.Count || i >= winds.Count || i >= hums.Count)
+                if (isoHour == null || i >= temps.Count)
                     continue;
 
-                if (temps[i].ValueKind != JsonValueKind.Number ||
-                    precs[i].ValueKind != JsonValueKind.Number ||
-                    winds[i].ValueKind != JsonValueKind.Number ||
-                    hums[i].ValueKind != JsonValueKind.Number)
-                    continue;
+                float GetFloat(List<JsonElement> list) =>
+                    i < list.Count && list[i].ValueKind == JsonValueKind.Number ? list[i].GetSingle() : 0f;
+
+                int GetInt(List<JsonElement> list) =>
+                    i < list.Count && list[i].ValueKind == JsonValueKind.Number ? list[i].GetInt32() : 0;
 
                 weatherByHour[isoHour] = new WeatherData
                 {
                     Timestamp = DateTime.Parse(isoHour),
-                    Temp = temps[i].GetSingle(),
-                    Precipitation = precs[i].GetSingle(),
-                    Windforce = winds[i].GetSingle(),
-                    Humidity = hums[i].GetInt32()
+                    Temp = GetFloat(temps),
+                    Precipitation = GetFloat(precs),
+                    Windforce = GetFloat(winds),
+                    Humidity = GetInt(hums)
                 };
             }
 
             return weatherByHour;
         }
+
 
 
     }

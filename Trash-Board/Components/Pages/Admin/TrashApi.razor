@@ -41,8 +41,8 @@
         logLines.Clear();
         progress = 0;
         StateHasChanged();
-
-        var totalCount = 1 + await TrashDataService.GetCount();
+        var apiDetections = await ApiTrashDataService.GetAllAsync();
+        var totalCount = apiDetections.Count;
 
         int count = 0;
         await foreach (var log in TrashDataService.ImportFromApiWithProgressAsync(ApiTrashDataService))

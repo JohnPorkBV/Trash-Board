@@ -18,7 +18,7 @@ namespace TrashBoard.Services
 
         Task<TrashDetection?> GetByIdAsync(int id);
 
-        Task AddAsync(TrashDetection detection);
+        Task<bool> AddAsync(TrashDetection detection);
         Task<IEnumerable<string>> GetAvailableTrashTypesAsync();
         IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllBredaEventWithProgressAsync();

@@ -103,7 +103,7 @@ namespace TrashBoard.Services
             return await context.TrashDetections.FindAsync(id);
         }
 
-        public async Task AddAsync(TrashDetection detection)
+        public async Task<bool> AddAsync(TrashDetection detection)
         {
             await using var context = _contextFactory.CreateDbContext();
 
@@ -113,7 +113,7 @@ namespace TrashBoard.Services
             if (exists)
             {
                 Console.WriteLine("Detection bestaat al, wordt overgeslagen.");
-                return;
+                return false;
             }
 
             var holiday = await _holidayService.IsHolidayAsync(detection.Timestamp);
@@ -132,6 +132,7 @@ namespace TrashBoard.Services
 
             context.TrashDetections.Add(detection);
             await context.SaveChangesAsync();
+            return true;
         }
 
 
@@ -354,28 +355,34 @@ namespace TrashBoard.Services
                 .ToHashSet();
 
             int added = 0;
+            int skipped = 0;
+
             for (int i = 0; i < apiDetections.Count; i++)
             {
                 var detection = apiDetections[i];
 
                 if (!existingIds.Contains(detection.Id))
                 {
-                    await AddAsync(detection); // handles weather, holiday, events
-
-                    added++;
-                    //yield return $"Added detection #{detection.Id} at {detection.Timestamp}.";
+                    bool success = await AddAsync(detection); // Should return true if added
+                    if (success) added++;
+                    else skipped++;
+                }
+                else
+                {
+                    skipped++;
                 }
 
-                if (i % 25 == 0 || i == apiDetections.Count - 1)
+                if ((i + 1) % 25 == 0 || i == apiDetections.Count - 1)
                 {
-                    yield return $"Processed {i + 1}/{apiDetections.Count} items...";
+                    yield return $"Processed {i + 1}/{apiDetections.Count} items... ({added} added, {skipped} skipped)";
                 }
             }
 
             yield return added == 0
                 ? "No new data was added. All detections already exist."
-                : $"Finished! {added} new detection(s) added.";
+                : $"Finished! {added} added, {skipped} skipped.";
         }
+
 
 
         public async Task<int> ResetDetectionDataAsync()
