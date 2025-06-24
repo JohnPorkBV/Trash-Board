@@ -84,7 +84,7 @@
                 </DropdownMenu>
             </Dropdown>
         </div>
-
+        
         <div>
             <label>@L["Label_FilterOnHoliday"]</label>
             <div class="holiday-type-container">
@@ -123,6 +123,7 @@
         </div>
     </Collapse>
 </section>
+<div class="row-border"></div>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
@@ -153,6 +154,7 @@ else if (results != null && results.Any())
             </div>
         </div>
     </div>
+    <div class="row-border"></div>
 
     <div class="table-responsive">
         <Grid TItem="TrashDetection"
@@ -206,6 +208,7 @@ else
 {
     <p><em>@L["Message_NoResults"]</em></p>
 }
+<div class="row-border"></div>
 
 <style>
     h1, h2, h3, h4, h5, h6 {
@@ -244,6 +247,7 @@ else
         padding-bottom: 20px;
     }
     /* Donkergroene knoppen in filtersectie */
+    /* Donkergroene knoppen in filtersectie */
     .filter-panel .btn {
         background-color: #006400 !important; /* Donkergroen */
         border-color: #006400 !important;
@@ -251,9 +255,18 @@ else
     }
 
         .filter-panel .btn:hover {
-            background-color: #004d00 !important; /* Iets donkerder bij hover */
-            border-color: #004d00 !important;
+            background-color: #228B22 !important; /* Iets lichter groen bij hover */
+            border-color: #228B22 !important;
+            color: white !important;
         }
+
+        .filter-panel .btn:focus,
+        .filter-panel .btn:focus-visible {
+            outline: none !important;
+            border-color: #006400 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important; /* Donkergroene glow */
+        }
+
 
   
     .table thead {
@@ -301,6 +314,14 @@ else
         background-color: #228B22 !important; /* ForestGreen bij hover */
         border-color: #228B22 !important;
         color: white !important;
+    }
+
+    .filter-panel {
+        background-color: #e6f4ea;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 5px rgba(0, 100, 0, 0.2);
     }
 
 

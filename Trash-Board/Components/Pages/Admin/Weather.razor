@@ -27,6 +27,54 @@ else
     }
 </ul>
 
+<style>
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #006400; /* Donkergroen */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+          /* Donkergroene knoppen */
+
+        .btn-primary,
+        .btn-warning {
+            background-color: #006400 !important; /* Donkergroen */
+            border-color: #006400 !important;
+            color: white !important;
+        }
+
+
+            .btn-primary:hover,
+            .btn-warning:hover {
+                background-color: #228B22 !important; /* Iets lichter groen bij hover */
+                border-color: #228B22 !important;
+                color: white !important;
+            }
+
+            /* Donkergroene focusstijl voor knoppen */
+
+            .btn-primary:focus,
+            .btn-warning:focus,
+            .btn:focus-visible,
+            .btn-primary:focus-visible,
+            .btn-warning:focus-visible {
+                outline: none !important;
+                border-color: #006400 !important;
+                box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important; /* Donkergroene glow */
+            }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none; /* Verwijdert de standaard blauwe outline */
+        border-color: #006400 !important; /* Donkergroen */
+        box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important; /* lichte groene glow */
+    }
+</style>
+
 @code {
     private List<string> logLines = new();
     private bool isRunning = false;

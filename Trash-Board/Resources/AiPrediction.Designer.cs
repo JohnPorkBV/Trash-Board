@@ -178,7 +178,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ai voorspellingen.
+        ///   Looks up a localized string similar to AI voorspellingen.
         /// </summary>
         internal static string Title {
             get {
