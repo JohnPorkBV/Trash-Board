@@ -13,6 +13,8 @@ services:
     environment:
       - SqlConnectionStringLocal=${SQL_CONNECTION_STRING}
       - AiApiEndpoint=http://ai:8000
+      - X-API-KEY=${X-API-KEY}
+      - ApiBaseUrl=${ApiBaseUrl}
 
   ai:
     build: ./AI-model-api
