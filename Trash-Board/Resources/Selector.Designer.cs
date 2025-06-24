@@ -313,7 +313,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Vertrouwensscore.
+        ///   Looks up a localized string similar to Vertrouwensscore (%).
         /// </summary>
         internal static string Table_Confidence {
             get {
@@ -331,7 +331,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Vochtigheid.
+        ///   Looks up a localized string similar to Vochtigheid (%).
         /// </summary>
         internal static string Table_Humidity {
             get {
@@ -367,7 +367,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Neerslag.
+        ///   Looks up a localized string similar to Neerslag (mm).
         /// </summary>
         internal static string Table_Precipitation {
             get {
@@ -376,7 +376,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Temperatuur.
+        ///   Looks up a localized string similar to Temperatuur (°C).
         /// </summary>
         internal static string Table_Temperature {
             get {
@@ -385,7 +385,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tijd.
+        ///   Looks up a localized string similar to Tijd (dd/mm/yy).
         /// </summary>
         internal static string Table_Timestamp {
             get {
@@ -394,7 +394,7 @@ namespace TrashBoard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Windkracht.
+        ///   Looks up a localized string similar to Windkracht (km/u).
         /// </summary>
         internal static string Table_Windforce {
             get {

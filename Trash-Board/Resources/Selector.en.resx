@@ -184,19 +184,19 @@
     <value>Object</value>
   </data>
   <data name="Table_Confidence" xml:space="preserve">
-    <value>Confidence score</value>
+    <value>Confidence score (%)</value>
   </data>
   <data name="Table_Temperature" xml:space="preserve">
-    <value>Temperature</value>
+    <value>Temperature (°C)</value>
   </data>
   <data name="Table_Humidity" xml:space="preserve">
-    <value>Humidity</value>
+    <value>Humidity (%)</value>
   </data>
   <data name="Table_Precipitation" xml:space="preserve">
-    <value>Precipitation</value>
+    <value>Precipitation (mm)</value>
   </data>
   <data name="Table_Windforce" xml:space="preserve">
-    <value>Wind force</value>
+    <value>Wind force (km/u)</value>
   </data>
   <data name="Table_IsHoliday" xml:space="preserve">
     <value>Holiday</value>

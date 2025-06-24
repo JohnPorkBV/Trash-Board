@@ -100,6 +100,50 @@
         box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.25) !important; /* lichte groene glow */
     }
 
+    /* Donkergroene knoppen */
+    
+    .btn-primary,
+    .btn-warning {
+        background-color: #006400 !important; /* Donkergroen */
+        border-color: #006400 !important;
+        color: white !important;
+    }
+
+        
+        .btn-primary:hover,
+        .btn-warning:hover {
+            background-color: #228B22 !important; /* Iets lichter groen bij hover */
+            border-color: #228B22 !important;
+            color: white !important;
+        }
+
+        /* Donkergroene focusstijl voor knoppen */
+        
+        .btn-primary:focus,
+        .btn-warning:focus,
+        .btn:focus-visible,
+        .btn-primary:focus-visible,
+        .btn-warning:focus-visible {
+            outline: none !important;
+            border-color: #006400 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important; /* Donkergroene glow */
+        }
+
+    /* Pas alert-warning aan naar lichtgroen */
+    .alert.alert-warning {
+        background-color: #dfffe0 !important; /* Lichtgroen */
+        border-color: #b2e2b5 !important; /* Bijpassende borderkleur */
+        color: #004d00 !important; /* Donkergroene tekstkleur */
+    }
+
+    /* Maak alert-info groen */
+    .alert.alert-info {
+        background-color: #dfffe0 !important; /* Lichtgroen achtergrond */
+        border-color: #b2e2b5 !important; /* Groenige rand */
+        color: #004d00 !important; /* Donkergroene tekst */
+    }
+
+
 
 	</style>
 
@@ -111,6 +155,7 @@
     private string? result;
     protected override async Task OnInitializedAsync()
     {
+        input.Date = DateTime.Today; // Zet standaard op vandaag
         await L.InitializeAsync();
     }
     private async Task HandleSubmit()

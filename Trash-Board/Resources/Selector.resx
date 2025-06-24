@@ -178,25 +178,25 @@
     <value>Geen detecties gevonden</value>
   </data>
   <data name="Table_Timestamp" xml:space="preserve">
-    <value>Tijd</value>
+    <value>Tijd (dd/mm/yy)</value>
   </data>
   <data name="Table_Object" xml:space="preserve">
     <value>Voorwerp</value>
   </data>
   <data name="Table_Confidence" xml:space="preserve">
-    <value>Vertrouwensscore</value>
+    <value>Vertrouwensscore (%)</value>
   </data>
   <data name="Table_Temperature" xml:space="preserve">
-    <value>Temperatuur</value>
+    <value>Temperatuur (°C)</value>
   </data>
   <data name="Table_Humidity" xml:space="preserve">
-    <value>Vochtigheid</value>
+    <value>Vochtigheid (%)</value>
   </data>
   <data name="Table_Precipitation" xml:space="preserve">
-    <value>Neerslag</value>
+    <value>Neerslag (mm)</value>
   </data>
   <data name="Table_Windforce" xml:space="preserve">
-    <value>Windkracht</value>
+    <value>Windkracht (km/u)</value>
   </data>
   <data name="Table_IsHoliday" xml:space="preserve">
     <value>Vakantie</value>
