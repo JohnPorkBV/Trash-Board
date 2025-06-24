@@ -29,6 +29,9 @@ jobs:
           PROJECT_PATH="./Trash-Board/${{ secrets.PROJECT_NAME }}.csproj"
           dotnet build "$PROJECT_PATH" --no-restore --configuration Release
 
+      - name: Debug test discovery
+        run: dotnet test --list-tests
+
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
