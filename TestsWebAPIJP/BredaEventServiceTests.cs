@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,47 +13,33 @@ namespace TrashBoard.Tests.Services
     [TestClass]
     public class BredaEventServiceTests
     {
-        private Mock<DbSet<BredaEvent>> CreateMockDbSet(List<BredaEvent> data)
+        private TrashboardDbContext CreateInMemoryDbContext()
         {
-            var queryable = data.AsQueryable();
-
-            var mockSet = new Mock<DbSet<BredaEvent>>();
-            mockSet.As<IQueryable<BredaEvent>>().Setup(m => m.Provider).Returns(queryable.Provider);
-            mockSet.As<IQueryable<BredaEvent>>().Setup(m => m.Expression).Returns(queryable.Expression);
-            mockSet.As<IQueryable<BredaEvent>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-            mockSet.As<IQueryable<BredaEvent>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
-
-            return mockSet;
+            var options = new DbContextOptionsBuilder<TrashboardDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Ensures isolation per test
+                .Options;
+            return new TrashboardDbContext(options);
         }
 
         [TestMethod]
         public async Task HasBredaEventAsync_Returns_Event_On_Single_Day()
         {
-            // Arrange
-            var events = new List<BredaEvent>
+            using var context = CreateInMemoryDbContext();
+
+            context.BredaEvents.Add(new BredaEvent
             {
-                new BredaEvent
-                {
-                    Id = 1,
-                    StartDate = new DateTime(2024, 6, 24),
-                    EndDate = null,
-                    Name = "Eendaags Event",
-                    Location = "Breda",
-                    Description = "Test"
-                }
-            };
+                Id = 1,
+                StartDate = new DateTime(2024, 6, 24),
+                EndDate = null,
+                Name = "Eendaags Event",
+                Location = "Breda",
+                Description = "Test"
+            });
+            await context.SaveChangesAsync();
 
-            var mockSet = CreateMockDbSet(events);
-
-            var mockContext = new Mock<TrashboardDbContext>();
-            mockContext.Setup(c => c.BredaEvents).Returns(mockSet.Object);
-
-            var service = new BredaEventService(mockContext.Object, new HttpClient());
-
-            // Act
+            var service = new BredaEventService(context, new HttpClient());
             var result = await service.HasBredaEventAsync(new DateTime(2024, 6, 24));
 
-            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("Eendaags Event", result!.Name);
         }
@@ -62,26 +47,20 @@ namespace TrashBoard.Tests.Services
         [TestMethod]
         public async Task HasBredaEventAsync_Returns_Event_On_MultiDay_Event()
         {
-            var events = new List<BredaEvent>
+            using var context = CreateInMemoryDbContext();
+
+            context.BredaEvents.Add(new BredaEvent
             {
-                new BredaEvent
-                {
-                    Id = 2,
-                    StartDate = new DateTime(2024, 6, 20),
-                    EndDate = new DateTime(2024, 6, 25),
-                    Name = "Meerdaags Event",
-                    Location = "Breda",
-                    Description = "Test"
-                }
-            };
+                Id = 2,
+                StartDate = new DateTime(2024, 6, 20),
+                EndDate = new DateTime(2024, 6, 25),
+                Name = "Meerdaags Event",
+                Location = "Breda",
+                Description = "Test"
+            });
+            await context.SaveChangesAsync();
 
-            var mockSet = CreateMockDbSet(events);
-
-            var mockContext = new Mock<TrashboardDbContext>();
-            mockContext.Setup(c => c.BredaEvents).Returns(mockSet.Object);
-
-            var service = new BredaEventService(mockContext.Object, new HttpClient());
-
+            var service = new BredaEventService(context, new HttpClient());
             var result = await service.HasBredaEventAsync(new DateTime(2024, 6, 22));
 
             Assert.IsNotNull(result);
@@ -91,15 +70,10 @@ namespace TrashBoard.Tests.Services
         [TestMethod]
         public async Task HasBredaEventAsync_Returns_Null_When_No_Event()
         {
-            var events = new List<BredaEvent>();
+            using var context = CreateInMemoryDbContext();
 
-            var mockSet = CreateMockDbSet(events);
-
-            var mockContext = new Mock<TrashboardDbContext>();
-            mockContext.Setup(c => c.BredaEvents).Returns(mockSet.Object);
-
-            var service = new BredaEventService(mockContext.Object, new HttpClient());
-
+            // No events added
+            var service = new BredaEventService(context, new HttpClient());
             var result = await service.HasBredaEventAsync(new DateTime(2024, 6, 24));
 
             Assert.IsNull(result);
@@ -108,8 +82,9 @@ namespace TrashBoard.Tests.Services
         [TestMethod]
         public async Task GetBredaEventsAsync_Returns_Events_For_Year()
         {
-            var events = new List<BredaEvent>
-            {
+            using var context = CreateInMemoryDbContext();
+
+            context.BredaEvents.AddRange(
                 new BredaEvent
                 {
                     Id = 1,
@@ -137,15 +112,10 @@ namespace TrashBoard.Tests.Services
                     Location = "Breda",
                     Description = "Volgend jaar"
                 }
-            };
+            );
+            await context.SaveChangesAsync();
 
-            var mockSet = CreateMockDbSet(events);
-
-            var mockContext = new Mock<TrashboardDbContext>();
-            mockContext.Setup(c => c.BredaEvents).Returns(mockSet.Object);
-
-            var service = new BredaEventService(mockContext.Object, new HttpClient());
-
+            var service = new BredaEventService(context, new HttpClient());
             var result = await service.GetBredaEventsAsync(2024);
 
             Assert.AreEqual(2, result.Count);
@@ -156,15 +126,9 @@ namespace TrashBoard.Tests.Services
         [TestMethod]
         public async Task GetBredaEventsAsync_Returns_Empty_When_No_Events()
         {
-            var events = new List<BredaEvent>();
+            using var context = CreateInMemoryDbContext();
 
-            var mockSet = CreateMockDbSet(events);
-
-            var mockContext = new Mock<TrashboardDbContext>();
-            mockContext.Setup(c => c.BredaEvents).Returns(mockSet.Object);
-
-            var service = new BredaEventService(mockContext.Object, new HttpClient());
-
+            var service = new BredaEventService(context, new HttpClient());
             var result = await service.GetBredaEventsAsync(2024);
 
             Assert.AreEqual(0, result.Count);
