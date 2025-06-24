@@ -31,7 +31,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          PROJECT_PATH="./Trash-Board/${{ secrets.PROJECT_NAME }}.csproj"
+          PROJECT_PATH="./Trash-Board/${{ secrets.TEST_PROJECT_NAME }}.csproj"
           dotnet test "$PROJECT_PATH" --no-build --configuration Release --verbosity normal
 
       - name: Setup EF Tools
