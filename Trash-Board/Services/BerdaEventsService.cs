@@ -28,9 +28,6 @@ namespace TrashBoard.Services
                 );
         }
 
-
-
-
         public async Task<List<BredaEvent>> GetBredaEventsAsync(int year)
         {
             return await _context.BredaEvents
