@@ -14,8 +14,8 @@ namespace TrashBoard.Data
         {
         }
 
-        public DbSet<TrashDetection> TrashDetections { get; set; }
-        public DbSet<BredaEvent> BredaEvents { get; set; }
+        public virtual DbSet<TrashDetection> TrashDetections { get; set; }
+        public virtual DbSet<BredaEvent> BredaEvents { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             foreach (var entry in ChangeTracker.Entries<BredaEvent>())

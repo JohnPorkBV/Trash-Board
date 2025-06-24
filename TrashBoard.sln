@@ -7,6 +7,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AI-model-api", "AI-model-ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrashBoard", "Trash-Board\TrashBoard.csproj", "{22599FC2-AC4E-4E34-0587-F4581492EEB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsWebAPIJP", "TestsWebAPIJP\TestsWebAPIJP.csproj", "{79076BFA-0BD2-4875-BCDF-2D32EA30F27E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,13 +21,17 @@ Global
 		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22599FC2-AC4E-4E34-0587-F4581492EEB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79076BFA-0BD2-4875-BCDF-2D32EA30F27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79076BFA-0BD2-4875-BCDF-2D32EA30F27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79076BFA-0BD2-4875-BCDF-2D32EA30F27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79076BFA-0BD2-4875-BCDF-2D32EA30F27E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		RESX_NeutralResourcesLanguage = nl-NL
-		SolutionGuid = {D4132B08-5C8D-43C8-A0E9-F2E28245921F}
 		RESX_PrefixTranslations = False
+		SolutionGuid = {D4132B08-5C8D-43C8-A0E9-F2E28245921F}
+		RESX_NeutralResourcesLanguage = nl-NL
 	EndGlobalSection
 EndGlobal
