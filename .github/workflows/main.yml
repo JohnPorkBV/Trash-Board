@@ -31,16 +31,13 @@ jobs:
 
       - name: Run unit tests
         run: |
-          dotnet test "./TestsWebAPIJP/${{ secrets.TEST_PROJECT_NAME }}.csproj" \
-            --no-build \
-            --configuration Release \
-            --logger "trx;LogFileName=test-results.trx" \
-            --results-directory ./TestResults
+          dotnet test --no-build --configuration Release --logger "trx;LogFileName=test-results.trx" --results-directory ./TestResults
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: ./TestResults/test-results.trx
+
 
 
 
