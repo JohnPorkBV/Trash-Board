@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TrashBoard.Data;
 using TrashBoard.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TrashBoard.Services
 {

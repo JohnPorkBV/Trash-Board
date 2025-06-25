@@ -1,10 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichardSzalay.MockHttp;
-using System;
-using System.Net;
-using System.Text.Json;
-using System.Threading.Tasks;
-using TrashBoard.Models;
 using TrashBoard.Services;
 
 namespace TrashBoard.Tests.Services

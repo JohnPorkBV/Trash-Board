@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using TrashBoard.Data;
 using TrashBoard.Models;
 

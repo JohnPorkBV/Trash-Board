@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using System.Globalization;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
-using System.Globalization;
 
 namespace TrashBoard.Services
 {

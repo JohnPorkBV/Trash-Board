@@ -1,6 +1,6 @@
-﻿using RichardSzalay.MockHttp;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
+using RichardSzalay.MockHttp;
 using TrashBoard.Models;
 using TrashBoard.Services;
 

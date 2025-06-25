@@ -1,12 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TrashBoard.Data;
 using TrashBoard.Models;
 using TrashBoard.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace TrashBoard.Tests.Services
 {

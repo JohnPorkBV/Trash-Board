@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TrashBoard.Components;
 using TrashBoard.Data;
 using TrashBoard.Services;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using TrashBoard.Components.Layout;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,7 +74,7 @@ builder.Services.AddHostedService<TrashImportBackgroundService>();
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 builder.Services.AddHttpClient<IBredaEventService, BredaEventService>();
-builder.Services.AddHttpClient<IAiPredictionService,AiPredictionService>(client =>
+builder.Services.AddHttpClient<IAiPredictionService, AiPredictionService>(client =>
 {
     client.BaseAddress = new Uri(AiApiEndpoint);
 });
