@@ -178,25 +178,25 @@
     <value>Keine Erkennungen gefunden</value>
   </data>
   <data name="Table_Timestamp" xml:space="preserve">
-    <value>Zeit</value>
+    <value>Zeit (dd/mm/yy)</value>
   </data>
   <data name="Table_Object" xml:space="preserve">
     <value>Objekt</value>
   </data>
   <data name="Table_Confidence" xml:space="preserve">
-    <value>Vertrauensbewertung</value>
+    <value>Vertrauensbewertung (%)</value>
   </data>
   <data name="Table_Temperature" xml:space="preserve">
-    <value>Temperatur</value>
+    <value>Temperatur (°C)</value>
   </data>
   <data name="Table_Humidity" xml:space="preserve">
-    <value>Luftfeuchtigkeit</value>
+    <value>Luftfeuchtigkeit (%)</value>
   </data>
   <data name="Table_Precipitation" xml:space="preserve">
-    <value>Fällung</value>
+    <value>Fällung (mm)</value>
   </data>
   <data name="Table_Windforce" xml:space="preserve">
-    <value>Windkraft</value>
+    <value>Windkraft (km/u)</value>
   </data>
   <data name="Table_IsHoliday" xml:space="preserve">
     <value>Urlaub</value>

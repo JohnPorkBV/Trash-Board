@@ -30,12 +30,6 @@
     <Compile Include="AI_model_api.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Trash-Board\Components\Pages\Admin\Component.razor">
-      <Link>Component.razor</Link>
-    </Content>
-    <Content Include="..\Trash-Board\Components\Pages\Component.razor">
-      <Link>Component.razor</Link>
-    </Content>
     <Content Include="docker-compose.yml" />
     <Content Include="Dockerfile" />
     <Content Include="model.pkl" />

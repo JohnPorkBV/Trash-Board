@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TrashBoard.Data;
 using TrashBoard.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TrashBoard.Services
 {
@@ -24,13 +23,40 @@ namespace TrashBoard.Services
             _weatherService = weatherService;
         }
 
+        public async Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+
+            DateTime lastGet;
+
+            if (context.TrashDetections.Any())
+            {
+                lastGet = context.TrashDetections.Max(t => t.Timestamp);
+            }
+            else
+            {
+                lastGet = DateTime.MinValue;
+            }
+
+            var apiDetections = await apiTrashDataService.GetSinceAsync(lastGet);
+            foreach (var detection in apiDetections)
+            {
+                await AddAsync(detection);
+            }
+
+            if (context.ChangeTracker.HasChanges())
+            {
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<int> GetCount()
         {
             await using var context = _contextFactory.CreateDbContext();
-            return  context.TrashDetections
-            .Count();
-
+            return context.TrashDetections
+                .Count();
         }
+
         public async Task<IEnumerable<TrashDetection>> GetAllAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -70,16 +96,24 @@ namespace TrashBoard.Services
                 .ToListAsync();
         }
 
-
         public async Task<TrashDetection?> GetByIdAsync(int id)
         {
             await using var context = _contextFactory.CreateDbContext();
             return await context.TrashDetections.FindAsync(id);
         }
 
-        public async Task AddAsync(TrashDetection detection)
+        public async Task<bool> AddAsync(TrashDetection detection)
         {
             await using var context = _contextFactory.CreateDbContext();
+
+            bool exists = await context.TrashDetections
+                .AnyAsync(t => t.Timestamp == detection.Timestamp);
+
+            if (exists)
+            {
+                Console.WriteLine("Detection bestaat al, wordt overgeslagen.");
+                return false;
+            }
 
             var holiday = await _holidayService.IsHolidayAsync(detection.Timestamp);
             if (holiday != null)
@@ -97,7 +131,9 @@ namespace TrashBoard.Services
 
             context.TrashDetections.Add(detection);
             await context.SaveChangesAsync();
+            return true;
         }
+
 
         public async Task<IEnumerable<string>> GetAvailableTrashTypesAsync()
         {
@@ -110,6 +146,7 @@ namespace TrashBoard.Services
                 .OrderBy(t => t)
                 .ToListAsync();
         }
+
         public async IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -245,7 +282,6 @@ namespace TrashBoard.Services
             yield return "All Breda event data updated!";
         }
 
-        
         public async IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -280,7 +316,6 @@ namespace TrashBoard.Services
                     context.Entry(detection).State = EntityState.Modified;
                 }
 
-
                 updated++;
 
                 // Yield progress every 25 updates or at end
@@ -297,6 +332,58 @@ namespace TrashBoard.Services
 
             yield return "All weather data updated!";
         }
+
+        public async IAsyncEnumerable<string> ImportFromApiWithProgressAsync(IApiTrashDataService apiTrashDataService)
+        {
+            yield return "Getting detections from the API.";
+
+            var apiDetections = await apiTrashDataService.GetAllAsync();
+
+            if (apiDetections.Count == 0)
+            {
+                yield return "No new trash detections received from the API.";
+                yield break;
+            }
+
+            yield return $"Received {apiDetections.Count} detections from the API.";
+
+            await using var context = _contextFactory.CreateDbContext();
+
+            var existingIds = context.TrashDetections
+                .Select(t => t.Id)
+                .ToHashSet();
+
+            int added = 0;
+            int skipped = 0;
+
+            for (int i = 0; i < apiDetections.Count; i++)
+            {
+                var detection = apiDetections[i];
+
+                if (!existingIds.Contains(detection.Id))
+                {
+                    bool success = await AddAsync(detection); // Should return true if added
+                    if (success) added++;
+                    else skipped++;
+                }
+                else
+                {
+                    skipped++;
+                }
+
+                if ((i + 1) % 25 == 0 || i == apiDetections.Count - 1)
+                {
+                    yield return $"Processed {i + 1}/{apiDetections.Count} items... ({added} added, {skipped} skipped)";
+                }
+            }
+
+            yield return added == 0
+                ? "No new data was added. All detections already exist."
+                : $"Finished! {added} added, {skipped} skipped.";
+        }
+
+
+
         public async Task<int> ResetDetectionDataAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -328,6 +415,7 @@ namespace TrashBoard.Services
             var changes = await context.SaveChangesAsync();
             return changes;
         }
+
         public async Task<int> DeleteAllDetectionsAsync()
         {
             await using var context = _contextFactory.CreateDbContext();
@@ -335,7 +423,5 @@ namespace TrashBoard.Services
             context.TrashDetections.RemoveRange(detections);
             return await context.SaveChangesAsync();
         }
-
-
     }
 }

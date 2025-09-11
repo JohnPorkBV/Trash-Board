@@ -59,7 +59,10 @@ a,
     background-color: #1b6ec2;
     border-color: #1861ac;
 }
-
+row-border {
+    border-top: 2px solid rgb(56, 56, 56);
+    grid-column: 1 / 5;
+}
 .btn:focus,
 .btn:active:focus,
 .btn-link.nav-link:focus,
@@ -177,3 +180,8 @@ h1:focus {
     border-radius: 4px;
     align-content: center;
 }
+
+
+
+
+

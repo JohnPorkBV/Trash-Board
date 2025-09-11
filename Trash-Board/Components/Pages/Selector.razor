@@ -9,19 +9,25 @@
 @inject ITrashDataService TrashDataService
 
 
+<h1>Trashboard</h1>
+
+<div class="row-border"></div>
+
 <section class="filter-panel">
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h3>@L["Header_FilterSection"]</h3>
+        
         <BlazorBootstrap.Button Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="ToggleFilters">
             @(filtersVisible ? @L["Button_HideFilters"] : @L["Button_ShowFilters"])
         </BlazorBootstrap.Button>
     </div>
+
     <Collapse @ref="filters">
 
         <section class="intro-text">
             <p>@L["Intro_FilterInstructions"]</p>
         </section>
-
+        <div class="row-border"></div>
 
         <div class="filter-row">
             <BlazorBootstrap.Button class="btn btn-primary" @onclick="() => ApplyQuickFilter(0)">@L["QuickFilter_Today"]</BlazorBootstrap.Button>
@@ -78,7 +84,7 @@
                 </DropdownMenu>
             </Dropdown>
         </div>
-
+        
         <div>
             <label>@L["Label_FilterOnHoliday"]</label>
             <div class="holiday-type-container">
@@ -117,6 +123,7 @@
         </div>
     </Collapse>
 </section>
+<div class="row-border"></div>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
@@ -143,10 +150,11 @@ else if (results != null && results.Any())
                 <h1>@L["Title_John"]</h1>
                 <p>@L["Label_John"]</p>
                 <img src="@adImageUrl" alt="Advertisement" class="ad-image" />
-                <p class="text-muted mb-2">@L["Label_Sponsor"]<strong>@L["Title_John"]</strong></p>
+                <p class="text-muted mb-2">@L["Label_Sponsor"] <strong>@L["Title_John"]</strong></p>
             </div>
         </div>
     </div>
+    <div class="row-border"></div>
 
     <div class="table-responsive">
         <Grid TItem="TrashDetection"
@@ -200,7 +208,119 @@ else
 {
     <p><em>@L["Message_NoResults"]</em></p>
 }
+<div class="row-border"></div>
 
+<style>
+    h1, h2, h3, h4, h5, h6 {
+        color: #006400;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .ad-wrapper {
+        max-width: 300px;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+        background-color: #ffffff;
+    }
+
+    .ad-image {
+        margin-top: auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        align-content: center;
+    }
+
+    .row-border {
+        border-top: 2px solid rgb(56, 56, 56);
+        grid-column: 1 / 5;
+        padding-bottom: 20px;
+    }
+    .filter-panel .btn {
+        background-color: #006400 !important;
+        border-color: #006400 !important;
+        color: white !important;
+    }
+
+        .filter-panel .btn:hover {
+            background-color: #228B22 !important;
+            border-color: #228B22 !important;
+            color: white !important;
+        }
+
+        .filter-panel .btn:focus,
+        .filter-panel .btn:focus-visible {
+            outline: none !important;
+            border-color: #006400 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 100, 0, 0.5) !important;
+        }
+
+
+  
+    .table thead {
+        background-color: #004d00;
+        color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #228B22;
+        color: white;
+    }
+
+    .table td, .table th {
+        border: 1px solid #004d00;
+        padding: 0.75rem;
+    }
+
+
+    .table tbody tr {
+        color: #006600 !important;
+    }
+
+
+  
+
+.table td, .table th {
+    border: 1px solid #004d00;
+    padding: 0.75rem;
+}
+
+    .pagination .page-item .page-link {
+        color: #006400 !important;
+      
+    }
+
+    .pagination .page-item.active .page-link {
+
+        background-color: #006d00;
+        color: white !important;
+        border-color: #228B22 !important;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: #228B22 !important;
+        border-color: #228B22 !important;
+        color: white !important;
+    }
+
+    .filter-panel {
+        background-color: #e6f4ea;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 5px rgba(0, 100, 0, 0.2);
+    }
+
+
+</style>
 
 @code {
     private DateTime? fromDate;
@@ -227,9 +347,9 @@ else
 
     private string adImageUrl = "";
 
+
     private void SelectAdImage()
     {
-        // External URLs for your images - replace these with your actual hosting URLs
         var imagesByDay = new Dictionary<DayOfWeek, string>()
             {
                 [DayOfWeek.Monday] = "https://i.imgur.com/BUH0RWb.jpg",
@@ -244,7 +364,7 @@ else
         string shinyImage = "https://i.imgur.com/eBLrmXK.jpg";
 
         var rand = new Random();
-        if (rand.Next(100) < 1) // 1% chance
+        if (rand.Next(100) < 1)
         {
             adImageUrl = shinyImage;
         }
@@ -309,7 +429,7 @@ else
 
         try
         {
-            await Task.Delay(300, token); // 300ms debounce window
+            await Task.Delay(300, token);
             if (!token.IsCancellationRequested)
             {
                 await ApplyFilter();
@@ -317,8 +437,6 @@ else
         }
         catch (TaskCanceledException) { }
     }
-
-
 
     private async Task ApplyFilter()
     {
@@ -329,13 +447,15 @@ else
         if (fromDate.HasValue)
         {
             var time = fromTime ?? TimeOnly.MinValue;
-            from = fromDate.Value.Date + time.ToTimeSpan();
+            var local = fromDate.Value.Date + time.ToTimeSpan();
+            from = local.ToUniversalTime();
         }
 
         if (toDate.HasValue)
         {
             var time = toTime ?? new TimeOnly(23, 59, 59);
-            to = toDate.Value.Date + time.ToTimeSpan();
+            var local = toDate.Value.Date + time.ToTimeSpan();
+            to = local.ToUniversalTime();
         }
 
         if (from.HasValue && to.HasValue && from.Value == to.Value)
@@ -377,12 +497,12 @@ else
             DateTime from;
             DateTime to;
 
-            if (daysBack == 0) // Vandaag
+            if (daysBack == 0)
             {
                 from = nu.Date;
                 to = nu;
             }
-            else if (daysBack == 1) // Gisteren
+            else if (daysBack == 1)
             {
                 from = nu.Date.AddDays(-1);
                 to = nu.Date.AddTicks(-1);
@@ -393,7 +513,6 @@ else
                 to = nu;
             }
 
-            // UI-velden bijwerken
             fromDate = from.Date;
             fromTime = TimeOnly.FromDateTime(from);
             toDate = to.Date;

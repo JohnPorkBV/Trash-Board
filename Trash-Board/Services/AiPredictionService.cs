@@ -1,10 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TrashBoard.Models;
 
 namespace TrashBoard.Services
 {

@@ -1,7 +1,4 @@
 using TrashBoard.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace TrashBoard.Services
 {
@@ -18,12 +15,14 @@ namespace TrashBoard.Services
 
         Task<TrashDetection?> GetByIdAsync(int id);
 
-        Task AddAsync(TrashDetection detection);
+        Task<bool> AddAsync(TrashDetection detection);
         Task<IEnumerable<string>> GetAvailableTrashTypesAsync();
         IAsyncEnumerable<string> UpdateAllHolidayWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllBredaEventWithProgressAsync();
         IAsyncEnumerable<string> UpdateAllWeatherInfoWithProgressAsync();
+        IAsyncEnumerable<string> ImportFromApiWithProgressAsync(IApiTrashDataService apiTrashDataService);
         Task<int> ResetDetectionDataAsync();
         Task<int> DeleteAllDetectionsAsync();
+        Task ImportFromApiAsync(IApiTrashDataService apiTrashDataService);
     }
 }

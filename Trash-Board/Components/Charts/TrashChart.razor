@@ -68,18 +68,33 @@ else
     {
         int totalItems = detections.Count;
 
-        TimeSpan bucketSize = totalItems switch
+        DateTime minTime = detections.Min(d => d.Timestamp);
+        DateTime maxTime = detections.Max(d => d.Timestamp);
+        TimeSpan totalSpan = maxTime - minTime;
+
+        // Desired max number of buckets for chart readability
+        int maxBuckets = 40;
+
+        // Calculate average time per detection
+        TimeSpan avgTimeBetween = TimeSpan.FromTicks(totalSpan.Ticks / Math.Max(1, totalItems - 1));
+
+        // Estimate ideal bucket size
+        TimeSpan roughBucketSize = TimeSpan.FromTicks(totalSpan.Ticks / Math.Max(1, maxBuckets));
+
+        // Round to nearest "nice" bucket size
+        TimeSpan bucketSize = roughBucketSize.TotalDays switch
         {
-            <= 20 => TimeSpan.FromMinutes(1),
-            <= 50 => TimeSpan.FromMinutes(15),
-            <= 100 => TimeSpan.FromHours(1),
-            <= 200 => TimeSpan.FromHours(6),
-            <= 400 => TimeSpan.FromHours(12),
-            <= 700 => TimeSpan.FromDays(1),
-            <= 1000 => TimeSpan.FromDays(2),
-            <= 1500 => TimeSpan.FromDays(3),
-            _ => TimeSpan.FromDays(7)
+            >= 7 => TimeSpan.FromDays(7),
+            >= 3 => TimeSpan.FromDays(3),
+            >= 2 => TimeSpan.FromDays(2),
+            >= 1 => TimeSpan.FromDays(1),
+            _ when roughBucketSize.TotalHours >= 12 => TimeSpan.FromHours(12),
+            _ when roughBucketSize.TotalHours >= 6 => TimeSpan.FromHours(6),
+            _ when roughBucketSize.TotalHours >= 1 => TimeSpan.FromHours(1),
+            _ when roughBucketSize.TotalMinutes >= 15 => TimeSpan.FromMinutes(15),
+            _ => TimeSpan.FromMinutes(1)
         };
+
         // TimeSpan bucketSize = TimeSpan.FromMinutes(1);
         bool smallBuckets = bucketSize < TimeSpan.FromDays(1);
 
@@ -146,15 +161,16 @@ else
                 Datasets = new List<IChartDataset>
         {
             new LineChartDataset
-            {
-                Label = L["ChartLabel"],
-                Data = dataPoints,
-                BackgroundColor = "rgba(54, 162, 235, 0.2)",
-                BorderColor = "rgba(54, 162, 235, 1)",
-                BorderWidth = 2,
-                PointBackgroundColor = new() { "rgba(54, 162, 235, 1)" },
-                PointBorderColor = new() { "rgba(54, 162, 235, 1)" }
-            }
+{
+    Label = L["ChartLabel"],
+    Data = dataPoints,
+    BackgroundColor = "rgba(0, 100, 0, 0.2)", // donkergroen met transparantie
+    BorderColor = "rgba(0, 100, 0, 1)",       // donkergroen
+    BorderWidth = 2,
+    PointBackgroundColor = new() { "rgba(0, 100, 0, 1)" },
+    PointBorderColor = new() { "rgba(0, 100, 0, 1)" }
+}
+
         }
             };
 

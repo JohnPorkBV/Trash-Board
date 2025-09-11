@@ -1,0 +1,61 @@
+﻿@attribute [Authorize(Roles = "Admin")]
+@page "/admin/import"
+@using Microsoft.AspNetCore.Authorization
+@using TrashBoard.Services
+@inject ITrashDataService TrashDataService
+@inject IApiTrashDataService ApiTrashDataService
+@rendermode InteractiveServer
+
+<h3>Import Trash Detections from API</h3>
+
+@if (!isRunning)
+{
+    <button class="btn btn-primary" @onclick="StartImport">Start API Import</button>
+}
+
+@if (progress > 0)
+{
+    <p><strong>Importing data...</strong></p>
+    <div class="progress mb-2">
+        <div class="progress-bar" role="progressbar" style="width:@progress%" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+            @progress%
+        </div>
+    </div>
+}
+
+<ul class="list-unstyled">
+    @foreach (var line in logLines)
+    {
+        <li>@line</li>
+    }
+</ul>
+
+@code {
+    private List<string> logLines = new();
+    private bool isRunning = false;
+    private int progress = 0;
+
+    private async Task StartImport()
+    {
+        isRunning = true;
+        logLines.Clear();
+        progress = 0;
+        StateHasChanged();
+        var apiDetections = await ApiTrashDataService.GetAllAsync();
+        var totalCount = apiDetections.Count;
+
+        int count = 0;
+        await foreach (var log in TrashDataService.ImportFromApiWithProgressAsync(ApiTrashDataService))
+        {
+            logLines.Add(log);
+            count++;
+
+            progress = (int) Math.Min(100, count * 100 / (totalCount / 25.0));
+            StateHasChanged();
+        }
+
+        isRunning = false;
+        progress = 100;
+        StateHasChanged();
+    }
+}

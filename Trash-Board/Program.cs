@@ -1,18 +1,19 @@
-using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using TrashBoard.Components;
 using TrashBoard.Data;
 using TrashBoard.Services;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using TrashBoard.Components.Layout;
 
 
 var builder = WebApplication.CreateBuilder(args);
 var sqlConnectionString = builder.Configuration.GetValue<string>("SqlConnectionStringLocal");
 var AiApiEndpoint = builder.Configuration.GetValue<string>("AiApiEndpoint");
+var apiBaseUrl = builder.Configuration.GetValue<string>("ApiBaseUrl");
+var apiKey = builder.Configuration.GetValue<string>("X-API-KEY");
 
 // Language Services
 builder.Services.AddScoped(typeof(CustomLocalizer<>));
@@ -65,14 +66,22 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
 
+// Api Auto Update
+builder.Services.AddHostedService<TrashImportBackgroundService>();
+
 
 // Api Services
 builder.Services.AddHttpClient<IHolidayService, HolidayService>();
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 builder.Services.AddHttpClient<IBredaEventService, BredaEventService>();
-builder.Services.AddHttpClient<IAiPredictionService,AiPredictionService>(client =>
+builder.Services.AddHttpClient<IAiPredictionService, AiPredictionService>(client =>
 {
     client.BaseAddress = new Uri(AiApiEndpoint);
+});
+builder.Services.AddHttpClient<IApiTrashDataService, ApiTrashDataService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl!);
+    client.DefaultRequestHeaders.Add("X-API-KEY", apiKey!);
 });
 
 

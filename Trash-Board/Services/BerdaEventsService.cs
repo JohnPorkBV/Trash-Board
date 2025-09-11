@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using TrashBoard.Data;
 using TrashBoard.Models;
 
@@ -27,9 +26,6 @@ namespace TrashBoard.Services
                     )
                 );
         }
-
-
-
 
         public async Task<List<BredaEvent>> GetBredaEventsAsync(int year)
         {
