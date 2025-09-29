@@ -37,7 +37,7 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 # image from the build stage where the necessary files are copied from the build
 # stage.
 #
-# The example below uses an aspnet alpine image as the foundation for running the app.
+# The example below uses an aspnet image as the foundation for running the app.
 # It will also use whatever happens to be the most recent version of that tag when you
 # build your Dockerfile. If reproducibility is important, consider using a more specific
 # version (e.g., aspnet:7.0.10-alpine-3.18),
@@ -45,7 +45,13 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-RUN apk add --no-cache icu
+RUN apt-get update && apt-get install -y \
+    gcc g++ gnupg curl unixodbc-dev \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql17 \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV LANG=en_US.UTF-8
